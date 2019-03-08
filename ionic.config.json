@@ -1,6 +1,8 @@
 {
   "name": "inventariosApp",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular",
   "id": "242d524a"
 }

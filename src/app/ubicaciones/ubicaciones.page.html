@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{sede}}</ion-title>
+  </ion-toolbar>
+  <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngFor="let ubicacion of ubicaciones">
+    <ion-item>
+      <ion-label (click)="open(ubicacion)">{{ubicacion.nombre}}</ion-label>
+      <ion-icon (click)="Removeubicacion(ubicacion)" name="trash" slot="end"></ion-icon>
+      <ion-icon (click)="Editubicacion(ubicacion)" name="more" slot="end"></ion-icon>
+    </ion-item>
+  </ion-list>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="Createubicacion()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+  
