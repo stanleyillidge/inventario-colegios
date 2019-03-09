@@ -92,7 +92,7 @@ export class SubUbicacionesPage implements OnInit {
   }
   open(SubUbicacion){
     console.log(this.sede,this.ubicacion,SubUbicacion)
-    this.navCtrl.navigateForward(['articulos-ubicacion',{ 
+    this.navCtrl.navigateForward(['inventario-sububicacion',{ 
       SubUbicacionNombre: SubUbicacion.nombre,
       SubUbicacionkey: SubUbicacion.key,
       ubicacionNombre: this.ubicacion.nombre,

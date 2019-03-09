@@ -20,7 +20,8 @@ const routes: Routes = [
   { path: 'articulos-ubicacion', loadChildren: './articulos-ubicacion/articulos-ubicacion.module#ArticulosUbicacionPageModule' },
   { path: 'sub-ubicaciones', loadChildren: './sub-ubicaciones/sub-ubicaciones.module#SubUbicacionesPageModule' },
   { path: 'ingreso', loadChildren: './ingreso/ingreso.module#IngresoPageModule' },
-  { path: 'articulo-ingreso', loadChildren: './articulo-ingreso/articulo-ingreso.module#ArticuloIngresoPageModule' }
+  { path: 'articulo-ingreso', loadChildren: './articulo-ingreso/articulo-ingreso.module#ArticuloIngresoPageModule' },
+  { path: 'inventario-sububicacion', loadChildren: './inventario-sububicacion/inventario-sububicacion.module#InventarioSububicacionPageModule' }
 ];
 
 @NgModule({

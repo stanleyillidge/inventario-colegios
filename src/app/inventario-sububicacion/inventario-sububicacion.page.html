@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Inventario de {{SubUbicacion.nombre}}</ion-title>
+  </ion-toolbar>
+  <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
+  <ion-item>
+    <ion-badge color="secondary" (click)="total()">Total {{inventario.numArticulos}}</ion-badge>
+    <ion-badge color="success" slot="end" (click)="Buenos()">Buenos {{inventario.buenos}}</ion-badge>
+    <ion-badge color="warning" slot="end" (click)="Regular()">Regular {{inventario.regulares}}</ion-badge>
+    <ion-badge color="danger" slot="end" (click)="Malos()">Malos {{inventario.malos}}</ion-badge>
+  </ion-item>
+</ion-header>
+
+<ion-content>
+
+  <ion-item *ngFor="let articulo of articulos" text-wrap>
+    <ion-thumbnail slot="start">
+      <ion-img [src]="articulo.imagen"></ion-img>
+    </ion-thumbnail>
+    <ion-label>
+      {{ articulo.nombre }}
+    </ion-label>
+    <!-- <ion-button slot="end" fill="clear" (click)="startUpload(Path)">
+      <ion-icon slot="icon-only" name="cloud-upload"></ion-icon>
+    </ion-button>
+    <ion-button slot="end" fill="clear" (click)="deleteImage(img, pos)">
+      <ion-icon slot="icon-only" name="trash"></ion-icon>
+    </ion-button> -->
+
+  </ion-item>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="ingresoNuevo()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

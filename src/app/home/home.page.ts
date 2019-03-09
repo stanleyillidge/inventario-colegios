@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Http } from '@angular/http';
 import { File } from '@ionic-native/file/ngx';
-import { SocialSharing } from "@ionic-native/social-sharing/ngx"
+// import { SocialSharing } from "@ionic-native/social-sharing/ngx"
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { ImageResizer, ImageResizerOptions } from '@ionic-native/image-resizer/ngx';
 import * as firebase from 'firebase/app';
@@ -20,7 +20,7 @@ export class HomePage {
   constructor(
     private barcodeScanner: BarcodeScanner,
     private http: Http,
-    private socialSharing: SocialSharing,
+    // private socialSharing: SocialSharing,
     private camera: Camera,
     private imageResizer: ImageResizer,
     private file: File

@@ -26,36 +26,56 @@ export class ArticulosUbicacionPage implements OnInit {
     private http: Http
   ) {
     let este = this
-    this.SubUbicacion['nombre'] = this.route.snapshot.paramMap.get('SubUbicacionNombre')
-    this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
-    this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
-    this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
-    this.sede = this.route.snapshot.paramMap.get('sede')
-    this.titulo = this.sede +' / '+ this.ubicacion['nombre'] +' / '+ this.SubUbicacion.nombre
-    let child = 'articulos/'+this.ubicacion.key;
     /* let ubic = [
       'Abanico de pared',
       'Abanico de techo',
       'Aire acondicionado split',
       'Archivador tipo locker',
+      'Atril',
+      'Batería sanitaria',
+      'Camara de seguridad',
+      'Computador de mesa',
+      'Computador portátil de computadores para educar',
+      'Control remoto para aire acondicionado split',
       'Dispensador de agua',
+      'Equipo de Sonido',
+      'Escaner',
       'Escritorio',
+      'Estufa a gas de DOS puestos tipo industrial',
+      'Estufa a gas de DOS puestos tipo industrial con gabinete',
+      'Estufa a gas de TRES puestos tipo industrial',
       'Gabinete aereo modular',
+      'Gabinete Metálico Aéreo ',
       'Gabinete modular metalico de 2 mts',
-      'Kit silla y mesa pequeña con superficie, espaldar plástico con estructura en tubo metalico',
+      'Kit contra incendio',
+      'Kit silla y mesa pequeña con superficie, espaldar PLASTICO con estructura en TUBO metalico',
       'Kit silla y mesa pequeña con superficie, espaldar y brazo PLASTICO con estructura en TUBO metalico',
       'Lámpara',
-      'Mesa de esrudiante',
+      'Lámpara Circular',
+      'Lampara incandescente de alta potencia ',
+      'Lavamanos',
+      'Lavaplatos',
+      'Mesa de MADERA con BASE metálica',
+      'Mesa de MADERA con BASE metálica PEQUEÑA',
       'Mesa de MADERA de CUATRO puestos PEQUEÑA',
+      'Mesa de MADERA de ocho puestos con toma ELECTRICO y BASE METÁLICA',
+      'Mesa modular con punto eléctrico',
+      'Mesa modular doble de color blanco',
       'Mesa PEQUEÑA con superficie PLASTICA y estructura en TUBO metalico',
       'Mesa PEQUEÑA en forma de ROMBO con superficie en MADERA y estructura en TUBO metalico',
+      'Mesa plástica color blanco',
       'Mesa plastica de cuatro (4) puestos',
       'Mesa plastica de seis (6) puestos',
       'Mesa PLASTICA PEQUEÑA',
+      'Micrófono alambrico',
+      'Micrófono inalambrico',
+      'Parlante de 60W y 8 ohmios',
+      'Probeta',
       'Pupitre con espaldar y brazo en MADERA, con estructura en ANGULO metalico',
       'Pupitre con espaldar y brazo PLASTICO, con estructura en TUBO metalico',
       'Silla ACOLCHADA en CUERO con estructura de MADERA',
       'Silla ACOLCHADA en TELA con estructura de TUBO metalico',
+      'Silla con espaldar PLASTICO y con estructura de TUBO metálico',
       'Silla con espaldar PLASTICO y con estructura en TUBO metalico',
       'Silla en MADERA sin descansa brazos',
       'Silla PEQUEÑA con espaldar y brazo PLASTICO y estructura en TUBO metalico',
@@ -63,24 +83,31 @@ export class ArticulosUbicacionPage implements OnInit {
       'Silla plastica con descansa brazo',
       'Silla PLASTICA PEQUEÑA sin descansa brazo',
       'Silla plastica sin descansa brazo',
+      'Silla plastica sin descansa brazo color AZUL',
+      'Silla plastica sin descansa brazo color VERDE',
       'Stand de madera',
-      'Stand metálico ',
+      'Stand metálico',
       'Tablero',
+      'Tanque de 100 litros',
+      'Tanque plástico de 50 litros',
+      'Tanque plástico de 75 litros',
+      'Teléfono fijo',
       'TV'
     ]
     for(let i in ubic){
-      firebase.database().ref(child).push({
-        nombre: ubic[i]
+      firebase.database().ref('articulos').push({
+        nombre: ubic[i],
+        cantidad: 0
       });
     } */
-    firebase.database().ref(child).on('value', function(articulosnapshot) {
+    firebase.database().ref('articulos').on('value', function(articulosnapshot) {
       este.articulos = []
       let art = {}
       articulosnapshot.forEach(articulo => {
         // console.log(articulo.val())
-        // art['nombre'] = articulo.val();
-        // art['key'] = articulo.key;
-        este.articulos.push(articulo.val())
+        art = articulo.val();
+        art['key'] = articulo.key;
+        este.articulos.push(art)
         este.articulosKeys.push(articulo.key)
       });
       este.articulost = este.articulos;
@@ -128,7 +155,7 @@ export class ArticulosUbicacionPage implements OnInit {
           handler: (d) => {
             // this.articulos.push(d.articulo)
             console.log(index)
-            firebase.database().ref('articulos/'+this.ubicacion+'/'+este.articulosKeys[index]+'/nombre').set(d.articulo)
+            firebase.database().ref('articulos'+articulo.key+'/nombre').set(d.articulo)
             // this.articulos[index]=d.articulo
             console.log('Edit Ok',this.articulos);
           }
@@ -159,7 +186,7 @@ export class ArticulosUbicacionPage implements OnInit {
         }, {
           text: 'Ok',
           handler: (d) => {
-            firebase.database().ref('articulos/'+this.ubicacion).push({
+            firebase.database().ref('articulos').push({
               nombre: d.articulo,
               cantidad: 0
             })
@@ -177,7 +204,7 @@ export class ArticulosUbicacionPage implements OnInit {
     let este = this
     const alert = await this.alertController.create({
       header: 'Cuidado!',
-      message: 'Se <strong>eliminará</strong> la articulo '+articulo+' !!!',
+      message: 'Se <strong>eliminará</strong> la articulo '+articulo.nombre+' !!!',
       buttons: [
         {
           text: 'cancelar',
@@ -189,8 +216,7 @@ export class ArticulosUbicacionPage implements OnInit {
         }, {
           text: 'eliminar',
           handler: () => {
-            let index = this.articulos.indexOf(articulo)
-            firebase.database().ref('articulos/'+this.ubicacion+'/'+este.articulosKeys[index]).remove()
+            firebase.database().ref('articulos/'+articulo.key).remove()
             // this.articulos.splice(index, 1);
             // this.articulost = this.articulos;
             console.log('Eliminar Okay');

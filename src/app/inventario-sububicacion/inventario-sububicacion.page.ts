@@ -5,18 +5,18 @@ import * as firebase from 'firebase/app';
 import { Http } from '@angular/http';
 
 @Component({
-  selector: 'app-articulo-ingreso',
-  templateUrl: './articulo-ingreso.page.html',
-  styleUrls: ['./articulo-ingreso.page.scss'],
+  selector: 'app-inventario-sububicacion',
+  templateUrl: './inventario-sububicacion.page.html',
+  styleUrls: ['./inventario-sububicacion.page.scss'],
 })
-export class ArticuloIngresoPage implements OnInit {
+export class InventarioSububicacionPage implements OnInit {
   articulos:any=[]
   articulost:any
-  articulosKeys:any=[]
   sede;
   ubicacion:any={};
   SubUbicacion:any={};
   titulo;
+  inventario:any={};
   constructor(
     public plataforma: Platform,
     public route: ActivatedRoute,
@@ -31,18 +31,102 @@ export class ArticuloIngresoPage implements OnInit {
     this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
     this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
     this.sede = this.route.snapshot.paramMap.get('sede')
-    firebase.database().ref('articulos').on('value', function(articulosnapshot) {
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).on('value', function(articulosnapshot) {
       este.articulos = []
       let art = {}
+      este.inventario['numArticulos'] = articulosnapshot.numChildren();
       articulosnapshot.forEach(articulo => {
         // console.log(articulo.val())
         art = articulo.val();
         art['key'] = articulo.key;
         este.articulos.push(art)
-        este.articulosKeys.push(articulo.key)
       });
+      este.inventario['articulos'] = este.articulos;
       este.articulost = este.articulos;
     });
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Bueno').once('value', function(BuenoSnapshot) {
+      este.inventario['buenos'] = BuenoSnapshot.numChildren();
+    });
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Malo').once('value', function(MaloSnapshot) {
+      este.inventario['malos'] = MaloSnapshot.numChildren();
+    });
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Regular').once('value', function(RegularSnapshot) {
+      este.inventario['regulares'] = RegularSnapshot.numChildren();
+    });
+  }
+  total(){
+    let este = this
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).on('value', function(articulosnapshot) {
+      este.articulos = []
+      let art = {}
+      este.inventario['numArticulos'] = articulosnapshot.numChildren();
+      articulosnapshot.forEach(articulo => {
+        // console.log(articulo.val())
+        art = articulo.val();
+        art['key'] = articulo.key;
+        este.articulos.push(art)
+      });
+      este.inventario['articulos'] = este.articulos;
+      este.articulost = este.articulos;
+    });
+  }
+  Buenos(){
+    let este = this
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Bueno').once('value', function(BuenoSnapshot) {
+      este.inventario['buenos'] = BuenoSnapshot.numChildren();
+      este.articulos = []
+      let art = {}
+      BuenoSnapshot.forEach(articulo => {
+        // console.log(articulo.val())
+        art = articulo.val();
+        art['key'] = articulo.key;
+        este.articulos.push(art)
+      });
+      este.inventario['articulos'] = este.articulos;
+      este.articulost = este.articulos;
+    });
+  }
+  Malos(){
+    let este = this
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Malo').once('value', function(MaloSnapshot) {
+      este.inventario['malos'] = MaloSnapshot.numChildren();
+      este.articulos = []
+      let art = {}
+      MaloSnapshot.forEach(articulo => {
+        // console.log(articulo.val())
+        art = articulo.val();
+        art['key'] = articulo.key;
+        este.articulos.push(art)
+      });
+      este.inventario['articulos'] = este.articulos;
+      este.articulost = este.articulos;
+    });
+  }
+  Regular(){
+    let este = this
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Regular').once('value', function(RegularSnapshot) {
+      este.inventario['regulares'] = RegularSnapshot.numChildren();
+      este.articulos = []
+      let art = {}
+      RegularSnapshot.forEach(articulo => {
+        // console.log(articulo.val())
+        art = articulo.val();
+        art['key'] = articulo.key;
+        este.articulos.push(art)
+      });
+      este.inventario['articulos'] = este.articulos;
+      este.articulost = este.articulos;
+    });
+  }
+  ingresoNuevo(){
+    console.log(this.sede,this.ubicacion,this.SubUbicacion)
+    this.navCtrl.navigateForward(['articulo-ingreso',{ 
+      SubUbicacionNombre: this.SubUbicacion.nombre,
+      SubUbicacionkey: this.SubUbicacion.key,
+      ubicacionNombre: this.ubicacion.nombre,
+      ubicacionkey: this.ubicacion.key,
+      sede: this.sede
+    }]);
   }
   onInput(ev:any){
     // Reset items back to all of the items
