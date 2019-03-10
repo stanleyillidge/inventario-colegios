@@ -12,8 +12,7 @@ import { Http } from '@angular/http';
 export class UbicacionesPage implements OnInit {
   ubicaciones:any=[]
   ubicacionest:any
-  ubicacionesKeys:any=[]
-  sede;
+  sede:any=[];
   constructor(
     public route: ActivatedRoute,
     public plataforma: Platform,
@@ -23,7 +22,8 @@ export class UbicacionesPage implements OnInit {
     private http: Http
   ) {
     let este = this
-    this.sede = this.route.snapshot.paramMap.get('sede')
+    this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
+    this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
     /* let ubic = [
       'Aulas de audiovisuales',
       'Aulas de clases',
@@ -45,11 +45,12 @@ export class UbicacionesPage implements OnInit {
       'Taller de dibujo técnico y/o artístico'
     ]
     for(let i in ubic){
-      firebase.database().ref('ubicaciones').push({
-        nombre: ubic[i]
+      firebase.database().ref('ubicaciones/'+this.sede.key).push({
+        nombre: ubic[i],
+        cantidad:0
       });
     } */
-    firebase.database().ref('ubicaciones').on('value', function(ubicacionesnapshot) {
+    firebase.database().ref('ubicaciones/'+this.sede.key).on('value', function(ubicacionesnapshot) {
       este.ubicaciones = []
       let ubi = {}
       ubicacionesnapshot.forEach(ubicacion => {
@@ -57,7 +58,6 @@ export class UbicacionesPage implements OnInit {
         ubi = ubicacion.val();
         ubi['key'] = ubicacion.key;
         este.ubicaciones.push(ubi)
-        este.ubicacionesKeys.push(ubicacion.key)
       });
       este.ubicacionest = este.ubicaciones;
     });
@@ -82,7 +82,8 @@ export class UbicacionesPage implements OnInit {
     this.navCtrl.navigateForward(['sub-ubicaciones',{ 
       ubicacionNombre:ubicacion.nombre,
       ubicacionkey:ubicacion.key,
-      sede: this.sede
+      sedeNombre: this.sede.nombre,
+      sedekey: this.sede.key
     }]);
   }
   async Editubicacion(ubicacion) {

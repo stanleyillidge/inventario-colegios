@@ -4,6 +4,13 @@ ion-img{
 .barcode-icon{
     margin: 1em 0 0 0;
 }
-ion-item{
-    // width: 50%;
+ion-fab{
+    margin: 1em;
+}
+input[type='file']::-webkit-file-upload-button {
+    /* style goes here */
+    opacity: 0;
+}
+ion-label{
+    white-space: pre-wrap !important;
 }

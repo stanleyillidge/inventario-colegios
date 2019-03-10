@@ -21,7 +21,7 @@
     <ion-thumbnail slot="start">
       <ion-img [src]="articulo.imagen"></ion-img>
     </ion-thumbnail>
-    <ion-label>
+    <ion-label (click)="open(articulo)">
       {{ articulo.nombre }}
     </ion-label>
     <!-- <ion-button slot="end" fill="clear" (click)="startUpload(Path)">

@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>view-articulo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="newIngresoForm" padding-right>
+    <ion-img *ngIf="plataforma.android" (click)="camara()" [src]="Path"></ion-img>
+    <label *ngIf="plataforma.desktop">
+      <input type="file" style="display: none;" class="button" (change)="onFile($event)">
+      <img class="user-image" src="{{Path}}">
+    </label>
+    <ion-item>
+      <ion-label>{{articulo.nombre}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Serie</ion-label>
+      <ion-input formControlName="serie"></ion-input>
+      <ion-icon (click)="escaner()" class="barcode-icon" name="barcode" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-label>Estado</ion-label>
+      <ion-select formControlName="estado" okText="Okay" cancelText="Dismiss">
+        <ion-select-option value="Bueno">Bueno</ion-select-option>
+        <ion-select-option value="Regular">Regular</ion-select-option>
+        <ion-select-option value="Malo">Malo</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Disponible para su uso</ion-label>
+      <ion-select formControlName="disponibilidad" okText="Okay" cancelText="Dismiss">
+        <ion-select-option value="Si">Si</ion-select-option>
+        <ion-select-option value="No">No</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea formControlName="descripcion"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Observaciones</ion-label>
+      <ion-textarea formControlName="observaciones"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Valor unitario</ion-label>
+      <ion-input type="number" formControlName="valor"></ion-input>
+    </ion-item>
+  </form>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="update()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

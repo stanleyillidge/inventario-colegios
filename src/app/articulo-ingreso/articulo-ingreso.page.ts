@@ -13,7 +13,7 @@ export class ArticuloIngresoPage implements OnInit {
   articulos:any=[]
   articulost:any
   articulosKeys:any=[]
-  sede;
+  sede:any=[];
   ubicacion:any={};
   SubUbicacion:any={};
   titulo;
@@ -30,7 +30,8 @@ export class ArticuloIngresoPage implements OnInit {
     this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
     this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
     this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
-    this.sede = this.route.snapshot.paramMap.get('sede')
+    this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
+    this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
     firebase.database().ref('articulos').on('value', function(articulosnapshot) {
       este.articulos = []
       let art = {}
@@ -68,7 +69,8 @@ export class ArticuloIngresoPage implements OnInit {
       SubUbicacionkey: this.SubUbicacion.key,
       ubicacionNombre: this.ubicacion.nombre,
       ubicacionkey: this.ubicacion.key,
-      sede: this.sede
+      sedeNombre: this.sede.nombre,
+      sedekey: this.sede.key
     }]);
   }
   async Editarticulo(articulo) {

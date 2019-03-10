@@ -11,7 +11,7 @@
 <ion-content>
   <ion-list *ngFor="let sede of sedes">
     <ion-item>
-      <ion-label (click)="open(sede)">{{sede}}</ion-label>
+      <ion-label (click)="open(sede)">{{sede.nombre}}</ion-label>
       <ion-icon (click)="RemoveSede(sede)" name="trash" slot="end"></ion-icon>
       <ion-icon (click)="Editsede(sede)" name="more" slot="end"></ion-icon>
     </ion-item>

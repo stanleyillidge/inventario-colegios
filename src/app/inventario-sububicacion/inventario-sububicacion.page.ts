@@ -12,7 +12,7 @@ import { Http } from '@angular/http';
 export class InventarioSububicacionPage implements OnInit {
   articulos:any=[]
   articulost:any
-  sede;
+  sede:any={};
   ubicacion:any={};
   SubUbicacion:any={};
   titulo;
@@ -30,7 +30,12 @@ export class InventarioSububicacionPage implements OnInit {
     this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
     this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
     this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
-    this.sede = this.route.snapshot.paramMap.get('sede')
+    this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
+    this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
+    este.inventario['numArticulos'] = 0;
+    este.inventario['buenos'] = 0;
+    este.inventario['malos'] = 0;
+    este.inventario['regulares'] = 0;
     firebase.database().ref('inventario/'+this.SubUbicacion.key).on('value', function(articulosnapshot) {
       este.articulos = []
       let art = {}
@@ -44,14 +49,17 @@ export class InventarioSububicacionPage implements OnInit {
       este.inventario['articulos'] = este.articulos;
       este.articulost = este.articulos;
     });
-    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Bueno').once('value', function(BuenoSnapshot) {
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Bueno').on('value', function(BuenoSnapshot) {
       este.inventario['buenos'] = BuenoSnapshot.numChildren();
+      console.log('b',este.inventario)
     });
-    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Malo').once('value', function(MaloSnapshot) {
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Malo').on('value', function(MaloSnapshot) {
       este.inventario['malos'] = MaloSnapshot.numChildren();
+      console.log('m',este.inventario)
     });
-    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Regular').once('value', function(RegularSnapshot) {
+    firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Regular').on('value', function(RegularSnapshot) {
       este.inventario['regulares'] = RegularSnapshot.numChildren();
+      console.log('r',este.inventario)
     });
   }
   total(){
@@ -125,7 +133,8 @@ export class InventarioSububicacionPage implements OnInit {
       SubUbicacionkey: this.SubUbicacion.key,
       ubicacionNombre: this.ubicacion.nombre,
       ubicacionkey: this.ubicacion.key,
-      sede: this.sede
+      sedeNombre: this.sede.nombre,
+      sedekey: this.sede.key
     }]);
   }
   onInput(ev:any){
@@ -144,15 +153,15 @@ export class InventarioSububicacionPage implements OnInit {
     }
   }
   open(articulo){
-    console.log(this.sede,this.ubicacion,this.SubUbicacion)
-    this.navCtrl.navigateForward(['ingreso',{ 
+    this.navCtrl.navigateForward(['view-articulo',{ 
       articuloNombre: articulo.nombre,
       articulokey: articulo.key,
       SubUbicacionNombre: this.SubUbicacion.nombre,
       SubUbicacionkey: this.SubUbicacion.key,
       ubicacionNombre: this.ubicacion.nombre,
       ubicacionkey: this.ubicacion.key,
-      sede: this.sede
+      sedeNombre: this.sede.nombre,
+      sedekey: this.sede.key
     }]);
   }
   async Editarticulo(articulo) {

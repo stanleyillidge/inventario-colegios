@@ -7,14 +7,17 @@
     <ion-title>{{titulo}}</ion-title>
   </ion-toolbar>
   <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
+  <ion-item>
+    <ion-label> Hay {{cantidad}} {{ubicacion.nombre}}</ion-label>
+  </ion-item>
 </ion-header>
 
 <ion-content>
-  <ion-list *ngFor="let ubicacion of subUbicaciones">
+  <ion-list *ngFor="let subUbicacion of subUbicaciones">
     <ion-item>
-      <ion-label (click)="open(ubicacion)">{{ubicacion.nombre}}</ion-label>
-      <ion-icon (click)="RemoveSububicacion(ubicacion)" name="trash" slot="end"></ion-icon>
-      <ion-icon (click)="EditSububicacion(ubicacion)" name="more" slot="end"></ion-icon>
+      <ion-label (click)="open(subUbicacion)">{{subUbicacion.nombre}} - {{subUbicacion.cantidad}} de articulos</ion-label>
+      <ion-icon (click)="RemoveSububicacion(subUbicacion)" name="trash" slot="end"></ion-icon>
+      <ion-icon (click)="EditSububicacion(subUbicacion)" name="more" slot="end"></ion-icon>
     </ion-item>
   </ion-list>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

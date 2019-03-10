@@ -13,9 +13,10 @@ export class SubUbicacionesPage implements OnInit {
   subUbicaciones:any=[]
   subUbicacionest:any
   subUbicacionesKeys:any=[]
-  sede;
   titulo;
   ubicacion:any={};
+  sede:any=[];
+  cantidad: number;
   constructor(
     public route: ActivatedRoute,
     public plataforma: Platform,
@@ -27,8 +28,9 @@ export class SubUbicacionesPage implements OnInit {
     let este = this
     this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
     this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
-    this.sede = this.route.snapshot.paramMap.get('sede')
-    this.titulo = this.sede +' / '+ this.ubicacion['nombre']
+    this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
+    this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
+    this.titulo = this.sede.nombre +' / '+ this.ubicacion.nombre
     console.log(this.ubicacion)
     console.log(this.sede)
     /* let ubic = [
@@ -60,14 +62,16 @@ export class SubUbicacionesPage implements OnInit {
     ]
     for(let i in ubic){
       firebase.database().ref('subUbicaciones/'+this.ubicacion.key).push({
-        nombre: ubic[i]
+        nombre: ubic[i],
+        cantidad: 0
       });
     } */
     firebase.database().ref('subUbicaciones/'+this.ubicacion.key).on('value', function(subUbicacionesnapshot) {
       este.subUbicaciones = []
       let ubi = {}
+      este.cantidad = subUbicacionesnapshot.numChildren();
       subUbicacionesnapshot.forEach(Sububicacion => {
-        // console.log(ubicacion.val())
+        // console.log(Sububicacion.val())
         ubi = Sububicacion.val();
         ubi['key'] = Sububicacion.key;
         este.subUbicaciones.push(ubi);
@@ -97,7 +101,8 @@ export class SubUbicacionesPage implements OnInit {
       SubUbicacionkey: SubUbicacion.key,
       ubicacionNombre: this.ubicacion.nombre,
       ubicacionkey: this.ubicacion.key,
-      sede: this.sede
+      sedeNombre: this.sede.nombre,
+      sedekey: this.sede.key
     }]);
   }
   async EditSububicacion(articulo) {
@@ -127,7 +132,7 @@ export class SubUbicacionesPage implements OnInit {
           handler: (d) => {
             // this.subUbicaciones.push(d.articulo)
             console.log(index)
-            firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/nombre').set(d.articulo)
+            firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key+'/nombre').set(d.articulo)
             // this.subUbicaciones[index]=d.articulo
             console.log('Edit Ok',this.subUbicaciones);
           }
@@ -185,7 +190,7 @@ export class SubUbicacionesPage implements OnInit {
         }, {
           text: 'eliminar',
           handler: () => {
-            firebase.database().ref('subUbicaciones/'+this.ubicacion.key).remove()
+            firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key).remove()
             // this.subUbicaciones.splice(index, 1);
             // this.subUbicacionest = this.subUbicaciones;
             console.log('Eliminar Okay');

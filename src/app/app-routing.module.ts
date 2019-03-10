@@ -21,7 +21,8 @@ const routes: Routes = [
   { path: 'sub-ubicaciones', loadChildren: './sub-ubicaciones/sub-ubicaciones.module#SubUbicacionesPageModule' },
   { path: 'ingreso', loadChildren: './ingreso/ingreso.module#IngresoPageModule' },
   { path: 'articulo-ingreso', loadChildren: './articulo-ingreso/articulo-ingreso.module#ArticuloIngresoPageModule' },
-  { path: 'inventario-sububicacion', loadChildren: './inventario-sububicacion/inventario-sububicacion.module#InventarioSububicacionPageModule' }
+  { path: 'inventario-sububicacion', loadChildren: './inventario-sububicacion/inventario-sububicacion.module#InventarioSububicacionPageModule' },
+  { path: 'view-articulo', loadChildren: './view-articulo/view-articulo.module#ViewArticuloPageModule' }
 ];
 
 @NgModule({

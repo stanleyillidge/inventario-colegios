@@ -10,7 +10,11 @@
 
 <ion-content>
   <form [formGroup]="newIngresoForm" padding-right>
-    <ion-img (click)="camara()" [src]="Path"></ion-img>
+    <ion-img *ngIf="plataforma.android" (click)="camara()" [src]="Path"></ion-img>
+    <label *ngIf="plataforma.desktop">
+      <input type="file" style="display: none;" class="button" (change)="onFile($event)">
+      <img class="user-image" src="{{Path}}">
+    </label>
     <ion-item>
       <ion-label>
         {{articulo.nombre}}
@@ -21,7 +25,7 @@
         Serie
       </ion-label>
       <ion-input formControlName="serie"></ion-input>
-      <ion-icon class="barcode-icon" name="barcode" slot="end"></ion-icon>
+      <ion-icon (click)="escaner()" class="barcode-icon" name="barcode" slot="end"></ion-icon>
     </ion-item>
     <ion-item>
       <ion-label>Estado</ion-label>
@@ -51,7 +55,7 @@
       <ion-input type="number" formControlName="valor"></ion-input>
     </ion-item>
   </form>
-  <ion-fab *ngIf="!newIngresoForm.valid" vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="Createarticulo()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

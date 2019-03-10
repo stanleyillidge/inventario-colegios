@@ -1,8 +1,11 @@
 ion-label{
-    white-space: pre-wrap;
+    white-space: pre-wrap !important;
 }
 ion-badge{
     margin: 7px;
     height: 2em;
     padding: 6.5px;
+}
+ion-fab{
+    margin: 1em;
 }

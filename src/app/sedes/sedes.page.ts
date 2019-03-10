@@ -12,7 +12,6 @@ import { Http } from '@angular/http';
 export class SedesPage implements OnInit {
   sedes:any=[]
   sedest:any
-  sedesKeys:any=[]
   constructor(
     public plataforma: Platform,
     public router: Router,
@@ -21,12 +20,25 @@ export class SedesPage implements OnInit {
     private http: Http
   ) {
     let este = this
+    /* let sedesf = [
+      {nombre:'Mega', cantidad: 0},
+      {nombre:'Dividivi', cantidad: 0},
+      {nombre:'Taguaira', cantidad: 0},
+      {nombre:'Brisas del mar', cantidad: 0},
+      {nombre:'Guayacanal', cantidad: 0},
+      {nombre:'PreEscolar - Mega', cantidad: 0}
+    ];
+    for(let i in sedesf){
+      firebase.database().ref('sedes').push(sedesf[i]);
+    } */
     firebase.database().ref('sedes').on('value', function(sedeSnapshot) {
       este.sedes = []
+      let sed = {}
       sedeSnapshot.forEach(sede => {
         // console.log(sede.val())
-        este.sedes.push(sede.val())
-        este.sedesKeys.push(sede.key)
+        sed = sede.val();
+        sed['key'] = sede.key;
+        este.sedes.push(sed)
       });
       este.sedest = este.sedes;
     });
@@ -52,7 +64,10 @@ export class SedesPage implements OnInit {
     }
   }
   open(sede){
-    this.navCtrl.navigateForward(['ubicaciones',{sede:sede}]);
+    this.navCtrl.navigateForward(['ubicaciones',{
+      sedeNombre:sede.nombre,
+      sedekey:sede.key
+    }]);
     // this.navCtrl.pop();
   }
   async Editsede(sede) {
@@ -60,12 +75,12 @@ export class SedesPage implements OnInit {
     const sedet = sede
     let index = this.sedes.indexOf(sedet)
     const alert = await this.alertController.create({
-      header: 'Ediar la sede '+sede+' !',
+      header: 'Ediar la sede '+sede.nombre+' !',
       inputs: [
         {
           name: 'sede',
           type: 'text',
-          value: sede,
+          value: sede.nombre,
           placeholder: 'Nombre de la sede'
         }
       ],
@@ -82,7 +97,7 @@ export class SedesPage implements OnInit {
           handler: (d) => {
             // this.sedes.push(d.sede)
             console.log(index)
-            firebase.database().ref('sedes/'+este.sedesKeys[index]).set(d.sede)
+            firebase.database().ref('sedes/'+sede.key+'/nombre').set(d.sede)
             // this.sedes[index]=d.sede
             console.log('Edit Ok',this.sedes);
           }
@@ -113,7 +128,10 @@ export class SedesPage implements OnInit {
         }, {
           text: 'Ok',
           handler: (d) => {
-            firebase.database().ref('sedes').push(d.sede)
+            firebase.database().ref('sedes').push({
+              nombre: d.sede,
+              cantidad: 0
+            })
             // this.sedes.push(d.sede);
             // this.sedest = this.sedes;
             console.log('Crear Ok',this.sedes);
@@ -141,7 +159,7 @@ export class SedesPage implements OnInit {
           text: 'eliminar',
           handler: () => {
             let index = this.sedes.indexOf(sede)
-            firebase.database().ref('sedes/'+este.sedesKeys[index]).remove()
+            firebase.database().ref('sedes/'+sede.key).remove()
             // this.sedes.splice(index, 1);
             // this.sedest = this.sedes;
             console.log('Eliminar Okay');
