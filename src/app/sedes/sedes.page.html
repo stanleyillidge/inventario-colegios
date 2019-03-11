@@ -10,11 +10,25 @@
 
 <ion-content>
   <ion-list *ngFor="let sede of sedes">
-    <ion-item>
-      <ion-label (click)="open(sede)">{{sede.nombre}}</ion-label>
+    <ion-item-sliding>
+      <ion-item (click)="open(sede)">
+        <ion-label>{{sede.nombre}}</ion-label>
+        <ion-note slot="end">{{sede.cantidad}} articulos</ion-note>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option color="success" (click)="Editsede(sede)">
+          <ion-icon name="more" slot="end"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="Removesede(sede)">
+          <ion-icon name="trash" slot="end"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+    <!-- <ion-item (click)="open(sede)">
+      <ion-label>{{sede.nombre}}</ion-label>
       <ion-icon (click)="RemoveSede(sede)" name="trash" slot="end"></ion-icon>
       <ion-icon (click)="Editsede(sede)" name="more" slot="end"></ion-icon>
-    </ion-item>
+    </ion-item> -->
   </ion-list>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="CreateSede()">

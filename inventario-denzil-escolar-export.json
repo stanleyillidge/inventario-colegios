@@ -1,0 +1,972 @@
+{
+  "articulos" : {
+    "-L_cXB0-U92noi5HzyKZ" : {
+      "cantidad" : 0,
+      "nombre" : "Abanico de pared",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0C0OXUlAIitA5t" : {
+      "cantidad" : 0,
+      "nombre" : "Abanico de techo",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Ds0zbOggPSol1" : {
+      "cantidad" : 0,
+      "nombre" : "Aire acondicionado split",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Ew_3nmC1QvT05" : {
+      "cantidad" : 0,
+      "nombre" : "Archivador tipo locker",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0FTbBdgTEY0QMR" : {
+      "cantidad" : 0,
+      "nombre" : "Atril",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0FTbBdgTEY0QMS" : {
+      "cantidad" : 0,
+      "nombre" : "Batería sanitaria",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0FTbBdgTEY0QMT" : {
+      "cantidad" : 0,
+      "nombre" : "Camara de seguridad",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0GmLgydH6BGdXP" : {
+      "cantidad" : 0,
+      "nombre" : "Computador de mesa",
+      "tipo" : "Equipos de comunicación y computación"
+    },
+    "-L_cXB0GmLgydH6BGdXQ" : {
+      "cantidad" : 0,
+      "nombre" : "Computador portátil de computadores para educar",
+      "tipo" : "Equipos de comunicación y computación"
+    },
+    "-L_cXB0GmLgydH6BGdXR" : {
+      "cantidad" : 0,
+      "nombre" : "Control remoto para aire acondicionado split",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0GmLgydH6BGdXS" : {
+      "cantidad" : 0,
+      "nombre" : "Dispensador de agua",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0HXtnHp6FlFVfq" : {
+      "cantidad" : 0,
+      "nombre" : "Equipo de Sonido",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0HXtnHp6FlFVfr" : {
+      "cantidad" : 0,
+      "nombre" : "Escaner",
+      "tipo" : "Equipos de comunicación y computación"
+    },
+    "-L_cXB0HXtnHp6FlFVfs" : {
+      "cantidad" : 0,
+      "nombre" : "Escritorio",
+      "tipo" : "Muebles enseres y equipo de oficina"
+    },
+    "-L_cXB0INrUnWvVydb3R" : {
+      "cantidad" : 0,
+      "nombre" : "Estufa a gas de DOS puestos tipo industrial",
+      "tipo" : "Equipo de comedor, cocina, despensa y hotelería"
+    },
+    "-L_cXB0INrUnWvVydb3S" : {
+      "cantidad" : 0,
+      "nombre" : "Estufa a gas de DOS puestos tipo industrial con gabinete",
+      "tipo" : "Equipo de comedor, cocina, despensa y hotelería"
+    },
+    "-L_cXB0JPlNJc1n6Jqy4" : {
+      "cantidad" : 0,
+      "nombre" : "Estufa a gas de TRES puestos tipo industrial",
+      "tipo" : "Equipo de comedor, cocina, despensa y hotelería"
+    },
+    "-L_cXB0JPlNJc1n6Jqy5" : {
+      "cantidad" : 0,
+      "nombre" : "Gabinete aereo modular",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0KPOrIyh2HyfiI" : {
+      "cantidad" : 0,
+      "nombre" : "Gabinete Metálico Aéreo ",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0KPOrIyh2HyfiJ" : {
+      "cantidad" : 0,
+      "nombre" : "Gabinete modular metalico de 2 mts",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0LPFhUbUlRRxDs" : {
+      "cantidad" : 0,
+      "nombre" : "Kit contra incendio",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0LPFhUbUlRRxDt" : {
+      "cantidad" : 0,
+      "nombre" : "Kit silla y mesa pequeña con superficie, espaldar PLASTICO con estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0LPFhUbUlRRxDu" : {
+      "cantidad" : 0,
+      "nombre" : "Kit silla y mesa pequeña con superficie, espaldar y brazo PLASTICO con estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0LPFhUbUlRRxDv" : {
+      "cantidad" : 0,
+      "nombre" : "Lámpara",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Mtj0I6uvTFas1" : {
+      "cantidad" : 0,
+      "nombre" : "Lámpara Circular",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Mtj0I6uvTFas2" : {
+      "cantidad" : 0,
+      "nombre" : "Lampara incandescente de alta potencia ",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Mtj0I6uvTFas3" : {
+      "cantidad" : 0,
+      "nombre" : "Lavamanos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0NiE3rXCkuWkQn" : {
+      "cantidad" : 0,
+      "nombre" : "Lavaplatos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0NiE3rXCkuWkQo" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de MADERA con BASE metálica",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0OFTaT4O4KMzTV" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de MADERA con BASE metálica PEQUEÑA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0OFTaT4O4KMzTW" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de MADERA de CUATRO puestos PEQUEÑA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0OFTaT4O4KMzTX" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de MADERA de ocho puestos con toma ELECTRICO y BASE METÁLICA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0P_YGY5nDJwulU" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa modular con punto eléctrico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0P_YGY5nDJwulV" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa modular doble de color blanco",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0P_YGY5nDJwulW" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa PEQUEÑA con superficie PLASTICA y estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0QWnMUo6HbIjiJ" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa PEQUEÑA en forma de ROMBO con superficie en MADERA y estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0QWnMUo6HbIjiK" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa plástica color blanco",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0QWnMUo6HbIjiL" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa plastica de cuatro (4) puestos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0QWnMUo6HbIjiM" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa plastica de seis (6) puestos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Rbmo8ku_5vMKY" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa PLASTICA PEQUEÑA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Rbmo8ku_5vMKZ" : {
+      "cantidad" : 0,
+      "nombre" : "Micrófono alambrico",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Rbmo8ku_5vMK_" : {
+      "cantidad" : 0,
+      "nombre" : "Micrófono inalambrico",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0SJm6tm5O7181c" : {
+      "cantidad" : 0,
+      "nombre" : "Parlante de 60W y 8 ohmios",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0SJm6tm5O7181d" : {
+      "cantidad" : 0,
+      "nombre" : "Probeta",
+      "tipo" : "Materiales para educación"
+    },
+    "-L_cXB0SJm6tm5O7181e" : {
+      "cantidad" : 0,
+      "nombre" : "Pupitre con espaldar y brazo en MADERA, con estructura en ANGULO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0SJm6tm5O7181f" : {
+      "cantidad" : 0,
+      "nombre" : "Pupitre con espaldar y brazo PLASTICO, con estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0T-9_FwcSaOblz" : {
+      "cantidad" : 0,
+      "nombre" : "Silla ACOLCHADA en CUERO con estructura de MADERA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0T-9_FwcSaObm-" : {
+      "cantidad" : 0,
+      "nombre" : "Silla ACOLCHADA en TELA con estructura de TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Vputmz_6h0BoR" : {
+      "cantidad" : 0,
+      "nombre" : "Silla con espaldar PLASTICO y con estructura de TUBO metálico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Vputmz_6h0BoS" : {
+      "cantidad" : 0,
+      "nombre" : "Silla con espaldar PLASTICO y con estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0WdtiWMNSZuTsb" : {
+      "cantidad" : 0,
+      "nombre" : "Silla en MADERA sin descansa brazos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0WdtiWMNSZuTsc" : {
+      "cantidad" : 0,
+      "nombre" : "Silla PEQUEÑA con espaldar y brazo PLASTICO y estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0WdtiWMNSZuTsd" : {
+      "cantidad" : 0,
+      "nombre" : "Silla PEQUEÑA sin brazo, con espaldar en MADERA y estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0X97LPN1VpwGoO" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plastica con descansa brazo",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0X97LPN1VpwGoP" : {
+      "cantidad" : 0,
+      "nombre" : "Silla PLASTICA PEQUEÑA sin descansa brazo",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0X97LPN1VpwGoQ" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plastica sin descansa brazo",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Yy_5b_KgybFRE" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plastica sin descansa brazo color AZUL",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Yy_5b_KgybFRF" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plastica sin descansa brazo color VERDE",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Yy_5b_KgybFRG" : {
+      "cantidad" : 0,
+      "nombre" : "Stand de madera",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Yy_5b_KgybFRH" : {
+      "cantidad" : 0,
+      "nombre" : "Stand metálico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0ZveBS6kaZFMvj" : {
+      "cantidad" : 0,
+      "nombre" : "Tablero",
+      "tipo" : "Materiales para educación"
+    },
+    "-L_cXB0ZveBS6kaZFMvk" : {
+      "cantidad" : 0,
+      "nombre" : "Tanque de 100 litros",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0ZveBS6kaZFMvl" : {
+      "cantidad" : 0,
+      "nombre" : "Tanque plástico de 50 litros",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0_BVjQzRyfPXat" : {
+      "cantidad" : 0,
+      "nombre" : "Tanque plástico de 75 litros",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0_BVjQzRyfPXau" : {
+      "cantidad" : 0,
+      "nombre" : "Teléfono fijo",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0_BVjQzRyfPXav" : {
+      "cantidad" : 0,
+      "nombre" : "TV",
+      "tipo" : "Materiales para educación"
+    }
+  },
+  "sedes" : {
+    "-L_YhRmBKT7RUMII5AuG" : {
+      "cantidad" : 0,
+      "nombre" : "Mega"
+    },
+    "-L_YhRmLCxqr8sT-80nS" : {
+      "cantidad" : 0,
+      "nombre" : "Dividivi"
+    },
+    "-L_YhRmNkVwwNEBkswCG" : {
+      "cantidad" : 0,
+      "nombre" : "Taguaira"
+    },
+    "-L_YhRmNkVwwNEBkswCH" : {
+      "cantidad" : 0,
+      "nombre" : "Brisas del mar"
+    },
+    "-L_YhRmOOPCffKqfwqqG" : {
+      "cantidad" : 0,
+      "nombre" : "Guayacanal"
+    },
+    "-L_YhRmOOPCffKqfwqqH" : {
+      "cantidad" : 0,
+      "nombre" : "PreEscolar - Mega"
+    }
+  },
+  "subUbicaciones" : {
+    "-L_Z0-IEDr1V6gsj-yw7" : {
+      "-L_Z3Uw_56THWtGrdcSW" : {
+        "cantidad" : 2,
+        "nombre" : "Aula - 001"
+      },
+      "-L_Z3Uwfw3gsPrJRaZi3" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 002"
+      },
+      "-L_Z3Uwh3NWgOyBAkxVo" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 003"
+      },
+      "-L_Z3UwiTTgWLF_vm_wg" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 004"
+      },
+      "-L_Z3Uwko3kW9wM40o1e" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 005"
+      },
+      "-L_Z3UwlG2vlqj2NWYNY" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 006"
+      },
+      "-L_Z3UwovdKhZaLHZN6V" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 007"
+      },
+      "-L_Z3UwrzyKicmmcvZlG" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 008"
+      },
+      "-L_Z3Uwue0FqL7IyZBxy" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 009"
+      },
+      "-L_Z3Uwz98RRWeqmMXz5" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 010"
+      },
+      "-L_Z3Ux-ED06gIE7hjZJ" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 011"
+      },
+      "-L_Z3Ux19ttdHMY-8EjU" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 012"
+      },
+      "-L_Z3Ux3TenKJQJHFuXV" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 013"
+      },
+      "-L_Z3Ux4KYv3O57QaZrL" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 014"
+      },
+      "-L_Z3Ux6brbDRYdKFNzl" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 015"
+      },
+      "-L_Z3Ux71rWp-GGHPp-l" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 016"
+      },
+      "-L_Z3Ux9YV6HLdVtzJA_" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 017"
+      },
+      "-L_Z3UxBxEhmAMQUGkCw" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 018"
+      },
+      "-L_Z3UxC5HKWA8UqgKR7" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 019"
+      },
+      "-L_Z3UxETWI-zUCaldCa" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 020"
+      },
+      "-L_Z3UxFsZ6Y0nKTgY7i" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 021"
+      },
+      "-L_Z3UxGihyZFo7I025k" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 022"
+      },
+      "-L_Z3UxHHhUCQRJfnrMs" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 023"
+      },
+      "-L_Z3UxJakfQfGJ99ICb" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 024"
+      },
+      "-L_Z3UxKVg_vhevzAVee" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 025"
+      }
+    },
+    "-L_Z0-IHLx3ZJr9HW9pZ" : {
+      "-L_cNvBv1FrYUFzUw7jl" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 001"
+      },
+      "-L_cNvC0ozCj9qPIqjcn" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 002"
+      }
+    },
+    "-L_Z0-IOrDTAw0K8KLxH" : {
+      "-L_cOFO0xA9M_PyPQD7J" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 001"
+      },
+      "-L_cOFO6NtgqeTzRbqaX" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 002"
+      },
+      "-L_cOFOGoIpHAZAQBg6M" : {
+        "cantidad" : 0,
+        "nombre" : "Cocina"
+      }
+    },
+    "-L_Z0-IP8bsMMtn7qnpw" : {
+      "-L_cOTAkQAscH96gc8JF" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 001"
+      }
+    },
+    "-L_Z0-IZc2yTYB1wij1h" : {
+      "-L_cOkG01jvCpJuzbJTW" : {
+        "cantidad" : 0,
+        "nombre" : "Sala de maestros"
+      }
+    },
+    "-L_Z13VyCTbP98PCIX-y" : {
+      "-L_d5q7kXXEsNlR_9HrO" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 001"
+      },
+      "-L_d5q7uThSAFV8imtRG" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 002"
+      },
+      "-L_d5q7wDUPBdpRoH6lc" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 003"
+      },
+      "-L_d5q7yoNKTubUok8fT" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 004"
+      },
+      "-L_d5q80vgreKYvgAha0" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 005"
+      },
+      "-L_d5q81OHW2DSeQ7y29" : {
+        "cantidad" : 0,
+        "nombre" : "Aula - 006"
+      }
+    }
+  },
+  "ubicaciones" : {
+    "-L_YhRmBKT7RUMII5AuG" : {
+      "-L_Z0-Hyvq9P7HCed8Jh" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de audiovisuales"
+      },
+      "-L_Z0-IEDr1V6gsj-yw7" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de clases"
+      },
+      "-L_Z0-IHLx3ZJr9HW9pZ" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de informática"
+      },
+      "-L_Z0-IM9lXnOZOKmvwz" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de música"
+      },
+      "-L_Z0-INe71liMO3LFhd" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de tecnología"
+      },
+      "-L_Z0-IOrDTAw0K8KLxH" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas múltiples"
+      },
+      "-L_Z0-IP8bsMMtn7qnpw" : {
+        "cantidad" : 0,
+        "nombre" : "Bibliotecas"
+      },
+      "-L_Z0-IQA69F_mboGBcB" : {
+        "cantidad" : 0,
+        "nombre" : "Centros de ayudas educativas"
+      },
+      "-L_Z0-IR8ZQRuP_KK9LI" : {
+        "cantidad" : 0,
+        "nombre" : "Corredores y los espacios de circulación"
+      },
+      "-L_Z0-ITaKpcHiVPwsS6" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Biología"
+      },
+      "-L_Z0-IUzOyfFu5Ajr5I" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Física"
+      },
+      "-L_Z0-IUzOyfFu5Ajr5J" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Química"
+      },
+      "-L_Z0-IVWu_u9_sZof1b" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios integrados"
+      },
+      "-L_Z0-IXRLEs0BsatzYK" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares en los cuales es posible practicar deportes en forma individual, o colectiva"
+      },
+      "-L_Z0-IYA7WKwV4bJLtN" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares que permiten desarrollar actividades informales de extensión"
+      },
+      "-L_Z0-IZc2yTYB1wij1h" : {
+        "cantidad" : 0,
+        "nombre" : "Oficinas"
+      },
+      "-L_Z0-Ia7DHdk8zGjstf" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de cerámica, escultura y modelado"
+      },
+      "-L_Z0-Ib7VaxRPvr_nsc" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de dibujo técnico y/o artístico"
+      }
+    },
+    "-L_YhRmLCxqr8sT-80nS" : {
+      "-L_Z109M9mgT3IazxHqQ" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de audiovisuales"
+      },
+      "-L_Z109SP1Gl0nyxFSJa" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de clases"
+      },
+      "-L_Z109TwIsv-Y8RP3m5" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de informática"
+      },
+      "-L_Z109VmY3DrXy9VqMK" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de música"
+      },
+      "-L_Z109WI_CzruIM3Y4n" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de tecnología"
+      },
+      "-L_Z109Z2TWD9cCdDsfB" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas múltiples"
+      },
+      "-L_Z109dCUgydYEadiaA" : {
+        "cantidad" : 0,
+        "nombre" : "Bibliotecas"
+      },
+      "-L_Z109eyzlj2X2qpxSG" : {
+        "cantidad" : 0,
+        "nombre" : "Centros de ayudas educativas"
+      },
+      "-L_Z109fTD9TgVBN7kyX" : {
+        "cantidad" : 0,
+        "nombre" : "Corredores y los espacios de circulación"
+      },
+      "-L_Z109gjlmuauX5reJ3" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Biología"
+      },
+      "-L_Z109hb1ZjqE8VmUie" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Física"
+      },
+      "-L_Z109hb1ZjqE8VmUif" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Química"
+      },
+      "-L_Z109iO990-VZOiRPM" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios integrados"
+      },
+      "-L_Z109jZWonksS0lTJI" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares en los cuales es posible practicar deportes en forma individual, o colectiva"
+      },
+      "-L_Z109jZWonksS0lTJJ" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares que permiten desarrollar actividades informales de extensión"
+      },
+      "-L_Z109k40OBVZP41URU" : {
+        "cantidad" : 0,
+        "nombre" : "Oficinas"
+      },
+      "-L_Z109mjx8SDDpTGsHx" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de cerámica, escultura y modelado"
+      },
+      "-L_Z109nXkVH0zopHcyj" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de dibujo técnico y/o artístico"
+      }
+    },
+    "-L_YhRmNkVwwNEBkswCG" : {
+      "-L_Z11PQNqt-kp3iqBUp" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de audiovisuales"
+      },
+      "-L_Z11PSOkj3FpzadMDK" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de clases"
+      },
+      "-L_Z11PUXtR4RmN-ZLuX" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de informática"
+      },
+      "-L_Z11PZmKMwXtZBl00f" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de música"
+      },
+      "-L_Z11PbUVu_rfpqT498" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de tecnología"
+      },
+      "-L_Z11PdTyle61RB3Ovz" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas múltiples"
+      },
+      "-L_Z11Pn8sxFph0d5Vxf" : {
+        "cantidad" : 0,
+        "nombre" : "Bibliotecas"
+      },
+      "-L_Z11Pp0HeLNIqjKg7T" : {
+        "cantidad" : 0,
+        "nombre" : "Centros de ayudas educativas"
+      },
+      "-L_Z11PrhzyHixuKVkFI" : {
+        "cantidad" : 0,
+        "nombre" : "Corredores y los espacios de circulación"
+      },
+      "-L_Z11Ps28iS6ovrbI6W" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Biología"
+      },
+      "-L_Z11Pu3di2Axyp38aN" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Física"
+      },
+      "-L_Z11Pu3di2Axyp38aO" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Química"
+      },
+      "-L_Z11Pvf9O9CApBjuuV" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios integrados"
+      },
+      "-L_Z11PwpOOznRtZFek0" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares en los cuales es posible practicar deportes en forma individual, o colectiva"
+      },
+      "-L_Z11Px4TMaNS0uuHmH" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares que permiten desarrollar actividades informales de extensión"
+      },
+      "-L_Z11PyjJMVCUaCtYFM" : {
+        "cantidad" : 0,
+        "nombre" : "Oficinas"
+      },
+      "-L_Z11Q-TrgmoKqjbAv8" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de cerámica, escultura y modelado"
+      },
+      "-L_Z11Q1wBZHXotNub2f" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de dibujo técnico y/o artístico"
+      }
+    },
+    "-L_YhRmNkVwwNEBkswCH" : {
+      "-L_Z129nUuTFnP5Z95Ai" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de audiovisuales"
+      },
+      "-L_Z129qB0HEerU_EidH" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de clases"
+      },
+      "-L_Z129tvHXkFb0c24jo" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de informática"
+      },
+      "-L_Z129ySTvVh7MBRxkf" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de música"
+      },
+      "-L_Z12A-iW5cMLH54Okx" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de tecnología"
+      },
+      "-L_Z12A1hntf1SAd5Ec-" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas múltiples"
+      },
+      "-L_Z12A5YKaVkoVr1iNl" : {
+        "cantidad" : 0,
+        "nombre" : "Bibliotecas"
+      },
+      "-L_Z12A7lqm1a1C0X7zR" : {
+        "cantidad" : 0,
+        "nombre" : "Centros de ayudas educativas"
+      },
+      "-L_Z12A9stYcXMYzRVg2" : {
+        "cantidad" : 0,
+        "nombre" : "Corredores y los espacios de circulación"
+      },
+      "-L_Z12ABKVW-N9R-hAv9" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Biología"
+      },
+      "-L_Z12ADwR20xJDrkIks" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Física"
+      },
+      "-L_Z12AERVHgLRnmqKbk" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Química"
+      },
+      "-L_Z12AGt7vP0cM94576" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios integrados"
+      },
+      "-L_Z12AIzMTe2ppJ1SB0" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares en los cuales es posible practicar deportes en forma individual, o colectiva"
+      },
+      "-L_Z12AKXFJlUfbYsTNF" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares que permiten desarrollar actividades informales de extensión"
+      },
+      "-L_Z12ALX7RiMTNzKW3d" : {
+        "cantidad" : 0,
+        "nombre" : "Oficinas"
+      },
+      "-L_Z12AMFcF-q0D5Kmb2" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de cerámica, escultura y modelado"
+      },
+      "-L_Z12AOWL8HRlgsoD9Y" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de dibujo técnico y/o artístico"
+      }
+    },
+    "-L_YhRmOOPCffKqfwqqG" : {
+      "-L_Z12v257I12gpRn6iM" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de audiovisuales"
+      },
+      "-L_Z12v4k7J7EkOGjKrk" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de clases"
+      },
+      "-L_Z12v5DMs2RmqLGtgo" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de informática"
+      },
+      "-L_Z12v63th2Bz-nQ07U" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de música"
+      },
+      "-L_Z12v9i51vjUpaPrNx" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de tecnología"
+      },
+      "-L_Z12vABKkmLj5oHNQT" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas múltiples"
+      },
+      "-L_Z12vC2XKooIEKAGNC" : {
+        "cantidad" : 0,
+        "nombre" : "Bibliotecas"
+      },
+      "-L_Z12vD1lEAIxRz6u-6" : {
+        "cantidad" : 0,
+        "nombre" : "Centros de ayudas educativas"
+      },
+      "-L_Z12vEPDGJPJobmAaO" : {
+        "cantidad" : 0,
+        "nombre" : "Corredores y los espacios de circulación"
+      },
+      "-L_Z12vFAcmub2LBiSFC" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Biología"
+      },
+      "-L_Z12vIv7E-6tx_Zqu-" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Física"
+      },
+      "-L_Z12vKf0fgIMn2LG7i" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Química"
+      },
+      "-L_Z12vNd4vPmNfdFRl3" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios integrados"
+      },
+      "-L_Z12vSW5JCBwyKYYvM" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares en los cuales es posible practicar deportes en forma individual, o colectiva"
+      },
+      "-L_Z12vTJpzbp0lCtLqP" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares que permiten desarrollar actividades informales de extensión"
+      },
+      "-L_Z12vTJpzbp0lCtLqQ" : {
+        "cantidad" : 0,
+        "nombre" : "Oficinas"
+      },
+      "-L_Z12vUnmuty3plfWu0" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de cerámica, escultura y modelado"
+      },
+      "-L_Z12vV5pvCBpiteTKW" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de dibujo técnico y/o artístico"
+      }
+    },
+    "-L_YhRmOOPCffKqfwqqH" : {
+      "-L_Z13VwFN2qrPqydqmh" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de audiovisuales"
+      },
+      "-L_Z13VyCTbP98PCIX-y" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de clases"
+      },
+      "-L_Z13Vz2b4FowfrcqVd" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de informática"
+      },
+      "-L_Z13W-l30nUH-bV42c" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de música"
+      },
+      "-L_Z13W17VtlvbOWi4jU" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas de tecnología"
+      },
+      "-L_Z13W44V5xv-wlGjSj" : {
+        "cantidad" : 0,
+        "nombre" : "Aulas múltiples"
+      },
+      "-L_Z13W7W1UFOqMqcrcQ" : {
+        "cantidad" : 0,
+        "nombre" : "Bibliotecas"
+      },
+      "-L_Z13W92IjoRr_vkdZp" : {
+        "cantidad" : 0,
+        "nombre" : "Centros de ayudas educativas"
+      },
+      "-L_Z13WBc6kSJ-vETB0Z" : {
+        "cantidad" : 0,
+        "nombre" : "Corredores y los espacios de circulación"
+      },
+      "-L_Z13WCzb2WiRYp6GQ2" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Biología"
+      },
+      "-L_Z13WEg3Qi32rHogR0" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Física"
+      },
+      "-L_Z13WFA7ZSMynzfG9o" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios de Química"
+      },
+      "-L_Z13WGbH8G9Hx4871K" : {
+        "cantidad" : 0,
+        "nombre" : "Laboratorios integrados"
+      },
+      "-L_Z13WICxDBqaB2uyLl" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares en los cuales es posible practicar deportes en forma individual, o colectiva"
+      },
+      "-L_Z13WJvkdtG5YM-N2C" : {
+        "cantidad" : 0,
+        "nombre" : "Lugares que permiten desarrollar actividades informales de extensión"
+      },
+      "-L_Z13WM9N5Xf52cztej" : {
+        "cantidad" : 0,
+        "nombre" : "Oficinas"
+      },
+      "-L_Z13WNvuOV6cZ6T8LN" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de cerámica, escultura y modelado"
+      },
+      "-L_Z13WOj_dtg4vBcauc" : {
+        "cantidad" : 0,
+        "nombre" : "Taller de dibujo técnico y/o artístico"
+      }
+    }
+  }
+}

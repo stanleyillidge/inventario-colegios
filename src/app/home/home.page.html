@@ -18,6 +18,16 @@
       <ion-icon slot="start" color="medium" name="build"></ion-icon>
       <ion-label>Camara</ion-label>
   </ion-button>
+  <!-- <ion-button (click)="uploadDB()" expand="block">
+    <ion-icon slot="start" name="build"></ion-icon>
+    <ion-label>Upload Data Base JSON</ion-label>
+  </ion-button> -->
+  <!-- <ion-button (click)="descargaDB()" expand="block">
+    <ion-icon slot="start" name="build"></ion-icon>
+    <ion-label>Descarga Data Base JSON</ion-label>
+  </ion-button> -->
+  <ion-button href='https://inventario-denzil-escolar.firebaseio.com/.json?download=dataBase.json' download="data.json" target="_blank" expand="block">Descarga Data Base JSON</ion-button>
+  
   <ion-item *ngIf=Path text-wrap>
     <ion-thumbnail slot="start">
       <ion-img [src]="Path"></ion-img>

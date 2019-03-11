@@ -7,6 +7,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { ImageResizer, ImageResizerOptions } from '@ionic-native/image-resizer/ngx';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -17,22 +18,177 @@ export class HomePage {
   scanData;
   Path;
   base64Image;
+  json:any = [];
+  inventario:any = [];
+  dataBase:any = [];
+  cantidad: number;
+  urls: any;
   constructor(
     private barcodeScanner: BarcodeScanner,
     private http: Http,
     // private socialSharing: SocialSharing,
     private camera: Camera,
     private imageResizer: ImageResizer,
-    private file: File
+    private file: File,
+    private loadingController: LoadingController
   ) { 
-    /* this.http.get('../../assets/data/data.json')
-      .subscribe(
-      data => {
-        // let json = this.csvJSON(data.text())
-        console.log(JSON.parse(data.text()))
-      },
-      err => console.log(err)
-      ); */
+    let este = this;
+    this.http.get('../../assets/data/data.json').subscribe(data => {
+      this.json = JSON.parse(data.text());
+    },err => console.log(err));
+
+    this.http.get('../../assets/data/inventario-denzil-escolar-export.json').subscribe(data => {
+      this.dataBase = JSON.parse(data.text());
+    },err => console.log(err));
+  }
+  async uploadDB(){
+    let este = this;
+    const loading = await this.loadingController.create({
+      message: 'Actualizado...'
+    });
+    await loading.present();
+    for(let i in this.json){
+      // --- Formatin data ---------
+        this.inventario[i] = {
+          imagen: this.json[i]['Imagen'],
+          tipo: this.json[i]['Tipo de elemento'],
+          etiqueta: this.json[i]['Etiqueta'],
+          ingreso: this.json[i]['Marca temporal'],
+          email: this.json[i]['Dirección de correo electrónico'],
+          nombre: this.json[i]['Nombre del articulo'],
+          cantidad: this.json[i]['Cantidad'],
+          disponibilidad: this.json[i]['Disponible para su uso'],
+          estado: this.json[i]['estado'],
+          descripcion: this.json[i]['Descripción'],
+          observaciones: this.json[i]['Observaciones'],
+          valor: this.json[i]['Valor unitario'],
+          serie: this.json[i]['Serie'],
+          sede: this.json[i]['Sede'],
+          ubicacion: this.json[i]['Ubicación'],
+          subUbicacion: this.json[i]['Sub-Ubicación']
+        }
+      // ---------------------------
+      let toSearch = this.json[i]['Sede'];
+      let datos = this.dataBase.sedes;
+      let sedekey = this.buscakey(datos,toSearch)
+      toSearch = this.json[i]['Ubicación'];
+      datos = this.dataBase.ubicaciones[sedekey];
+      let ubicacionkey = this.buscakey(datos,toSearch)
+      toSearch = this.json[i]['Sub-Ubicación'];
+      datos = this.dataBase.subUbicaciones[ubicacionkey];
+      let subUbicacionkey = this.buscakey(datos,toSearch)
+      if(sedekey == undefined || ubicacionkey == undefined || subUbicacionkey == undefined){
+        console.log(
+          'item',i,
+          'sede',sedekey,
+          'ubicacion',ubicacionkey,
+          'sub-ubicacion',subUbicacionkey
+        )
+      }
+      firebase.database().ref('inventario/'+subUbicacionkey).push(este.inventario[i])
+      /* firebase.database().ref('subUbicaciones').child(ubicacionkey).child(subUbicacionkey).once('value', function(subUbicacionSN) {
+        este.cantidad = 0;
+        este.cantidad = subUbicacionSN.val().cantidad;
+        firebase.database().ref('inventario/'+subUbicacionkey).push(este.inventario[i]).then(()=>{
+          este.cantidad += 1;
+          console.log(
+            'item',i,
+            'sede',este.dataBase.sedes[sedekey].nombre,
+            'ubicacion',este.dataBase.ubicaciones[sedekey][ubicacionkey].nombre,
+            'sub-ubicacion',este.dataBase.subUbicaciones[ubicacionkey][subUbicacionkey].nombre,
+            'cantidad: ',este.cantidad
+          )
+          firebase.database().ref('subUbicaciones').child(ubicacionkey).child(subUbicacionkey).child('cantidad').set( este.cantidad )
+        })
+      }) */
+    }
+    loading.dismiss();
+  }
+  descargaDB(){
+    let este = this;
+    // window.open("https://inventario-denzil-escolar.firebaseio.com/.json",'_blank');//, 'location=yes'
+    firebase.database().ref().once('value', function(Snapshot) {
+      let childData = Snapshot.val();
+      let obj = Snapshot.toJSON();
+      // https://inventario-denzil-escolar.firebaseio.com/.json
+      let exportData = 'data:text/json;charset=utf-8,';
+      exportData += escape(JSON.stringify(obj));
+      let encodedUri = encodeURI(exportData);
+      window.open(encodedUri);
+      console.log('entro root',obj)
+    });
+  }
+  // --- Buscar en Objeto ----
+    // ---- mi funcion -------
+      buscakey(datos,toSearch){
+        for(let key in datos){
+          let values = Object.values(datos[key])
+          if(values.indexOf(toSearch)>-1){
+            // console.log('key: ',i,'value: ',toSearch)
+            return key
+          }
+        }
+      }
+    // -----------------------
+      searchFor(objects,toSearch) {
+        let results = [];
+        toSearch = this.trimString(toSearch); // trim it
+        for(let i=0; i<objects.length; i++) {
+          for(let key in objects[i]) {
+            if(objects[i][key].indexOf(toSearch)!=-1) {
+              if(!this.itemExists(results, objects[i])) results.push(objects[i]);
+            }
+          }
+        }
+        return results;
+      }
+      trimString(s) {
+        let l=0, r=s.length -1;
+        while(l < s.length && s[l] == ' ') l++;
+        while(r > l && s[r] == ' ') r-=1;
+        return s.substring(l, r+1);
+      }
+      compareObjects(o1, o2) {
+        let k = '';
+        for(k in o1) if(o1[k] != o2[k]) return false;
+        for(k in o2) if(o1[k] != o2[k]) return false;
+        return true;
+      }
+      itemExists(haystack, needle) {
+        for(let i=0; i<haystack.length; i++) if(this.compareObjects(haystack[i], needle)) return true;
+        return false;
+      }
+  // -------------------------
+  async update(){
+    /* let este = this
+    const loading = await this.loadingController.create({
+      message: 'Actualizado...'
+    });
+    await loading.present();
+    firebase.database().ref('inventario/'+este.SubUbicacion.key+'/'+este.articulo.key).update({
+      nombre: este.articulo.nombre,
+      cantidad: 1,
+      disponibilidad: este.newIngresoForm.value.disponibilidad,
+      estado: este.newIngresoForm.value.estado,
+      descripcion: este.newIngresoForm.value.descripcion,
+      observaciones: este.newIngresoForm.value.observaciones,
+      valor: este.newIngresoForm.value.valor,
+      serie: este.newIngresoForm.value.serie,
+      sede: este.sede,
+      ubicacion: este.ubicacion,
+      subUbicacion: este.SubUbicacion,
+    }).then(()=>{
+      loading.dismiss()
+      este.navCtrl.navigateBack(['inventario-sububicacion',{ 
+        articuloNombre: este.articulo.nombre,
+        articulokey: este.articulo.key,
+        SubUbicacionNombre: este.SubUbicacion.nombre,
+        SubUbicacionkey: este.SubUbicacion.key,
+        ubicacionNombre: este.ubicacion.nombre,
+        ubicacionkey: este.ubicacion.key,
+        sede: este.sede
+      }]);
+    }) */
   }
   camara(){
     const options: CameraOptions = {

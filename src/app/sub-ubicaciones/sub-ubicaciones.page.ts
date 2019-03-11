@@ -34,8 +34,10 @@ export class SubUbicacionesPage implements OnInit {
     console.log(this.ubicacion)
     console.log(this.sede)
     /* let ubic = [
+      'Sala de maestros',
       'Aula - 001',
       'Aula - 002',
+      'Cocina',
       'Aula - 003',
       'Aula - 004',
       'Aula - 005',
@@ -178,7 +180,7 @@ export class SubUbicacionesPage implements OnInit {
     let este = this
     const alert = await this.alertController.create({
       header: 'Cuidado!',
-      message: 'Se <strong>eliminará</strong> la articulo '+articulo+' !!!',
+      message: 'Se <strong>eliminará</strong> la articulo '+articulo.nombre+' !!!',
       buttons: [
         {
           text: 'cancelar',

@@ -17,6 +17,11 @@ export class InventarioSububicacionPage implements OnInit {
   SubUbicacion:any={};
   titulo;
   inventario:any={};
+  listat:any = false;
+  resument:any = true;
+  listaR:any = false;
+  articulosR:any;
+  articulosRtemp:any;
   constructor(
     public plataforma: Platform,
     public route: ActivatedRoute,
@@ -32,6 +37,7 @@ export class InventarioSububicacionPage implements OnInit {
     this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
     this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
     this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
+    // this.titulo
     este.inventario['numArticulos'] = 0;
     este.inventario['buenos'] = 0;
     este.inventario['malos'] = 0;
@@ -40,27 +46,83 @@ export class InventarioSububicacionPage implements OnInit {
       este.articulos = []
       let art = {}
       este.inventario['numArticulos'] = articulosnapshot.numChildren();
+      firebase.database().ref('subUbicaciones/'+este.ubicacion.key).child(este.SubUbicacion.key+'/cantidad').set(articulosnapshot.numChildren())
       articulosnapshot.forEach(articulo => {
         // console.log(articulo.val())
         art = articulo.val();
         art['key'] = articulo.key;
         este.articulos.push(art)
       });
+      let artUnicos = este.articulos.map(item => item.nombre).filter((value, index, self) => self.indexOf(value) === index)
+      // console.log(artUnicos);
+      este.inventario['articulos unicos'] = [];
       este.inventario['articulos'] = este.articulos;
+      for(let art in artUnicos){
+        este.inventario['articulos unicos'][art] = {
+          nombre: artUnicos[art],
+          cantidad:0,
+          bueno:0,
+          malo:0,
+          regular:0
+        }
+        este.inventario['articulos unicos'][art].articulos = [];
+        for(let i in este.articulos){
+          if(este.articulos[i].nombre == artUnicos[art]){
+            este.inventario['articulos unicos'][art]['cantidad'] += 1;
+            este.inventario['articulos unicos'][art].articulos.push(este.articulos[i])
+            switch (este.articulos[i].estado) {
+              case 'Bueno':
+                este.inventario['articulos unicos'][art]['bueno'] += 1
+                break;
+              case 'Regular':
+                este.inventario['articulos unicos'][art]['regular'] += 1
+                break;
+              case 'Malo':
+                este.inventario['articulos unicos'][art]['malo'] += 1
+                break;
+              default:
+                break;
+            }
+          }
+        }
+      }
+      este.inventario['articulos unicos temp'] = este.inventario['articulos unicos']
+      console.log(este.inventario['articulos unicos'])
       este.articulost = este.articulos;
     });
     firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Bueno').on('value', function(BuenoSnapshot) {
       este.inventario['buenos'] = BuenoSnapshot.numChildren();
-      console.log('b',este.inventario)
+      // console.log('b',este.inventario)
     });
     firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Malo').on('value', function(MaloSnapshot) {
       este.inventario['malos'] = MaloSnapshot.numChildren();
-      console.log('m',este.inventario)
+      // console.log('m',este.inventario)
     });
     firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Regular').on('value', function(RegularSnapshot) {
       este.inventario['regulares'] = RegularSnapshot.numChildren();
-      console.log('r',este.inventario)
+      // console.log('r',este.inventario)
     });
+  }
+  descarga(){
+    // https://inventario-denzil-escolar.firebaseio.com/.json
+    window.open('https://inventario-denzil-escolar.firebaseio.com/inventario/'+this.SubUbicacion.key+'.json');
+  }
+  resumen(){
+    this.resument = true
+    this.listat = false
+    this.listaR = false
+  }
+  lista(){
+    this.resument = false
+    this.listat = true
+    this.listaR = false
+  }
+  openArt(articulo){
+    this.resument = false
+    this.listat = false
+    this.listaR = true
+    this.articulosR = articulo.articulos
+    this.articulosRtemp = articulo.articulos
   }
   total(){
     let este = this
@@ -141,15 +203,27 @@ export class InventarioSububicacionPage implements OnInit {
     // Reset items back to all of the items
     // this.initializeItems();
     this.articulos = this.articulost;
+    this.inventario['articulos unicos'] = this.inventario['articulos unicos temp'];
+    this.articulosR = this.articulosRtemp;
 
     // set val to the value of the searchbar
     const val = ev.target.value;
 
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
-      this.articulos = this.articulos.filter((ubicacion) => {
-        return (ubicacion.nombre.toLowerCase().indexOf(val.toLowerCase()) > -1);
-      })
+      if(this.listat){
+        this.articulos = this.articulos.filter((ubicacion) => {
+          return (ubicacion.nombre.toLowerCase().indexOf(val.toLowerCase()) > -1);
+        })
+      }else if(this.resument){
+        this.inventario['articulos unicos'] = this.inventario['articulos unicos'].filter((ubicacion) => {
+          return (ubicacion.nombre.toLowerCase().indexOf(val.toLowerCase()) > -1);
+        })
+      }else if(this.listaR){
+        this.articulosR = this.articulosR.filter((ubicacion) => {
+          return (ubicacion.nombre.toLowerCase().indexOf(val.toLowerCase()) > -1);
+        })
+      }
     }
   }
   open(articulo){

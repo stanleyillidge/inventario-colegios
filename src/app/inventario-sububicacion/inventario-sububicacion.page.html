@@ -2,21 +2,25 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
-      <ion-back-button></ion-back-button>
+      <!-- <ion-back-button></ion-back-button> -->
     </ion-buttons>
-    <ion-title>Inventario de {{SubUbicacion.nombre}}</ion-title>
+    <!-- <ion-title>Inventario de {{SubUbicacion.nombre}}</ion-title> -->
+    <ion-label>
+      {{sede.nombre}} / {{ubicacion.nombre}} / {{SubUbicacion.nombre}}
+    </ion-label>
   </ion-toolbar>
   <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
   <ion-item>
-    <ion-badge color="secondary" (click)="total()">Total {{inventario.numArticulos}}</ion-badge>
-    <ion-badge color="success" slot="end" (click)="Buenos()">Buenos {{inventario.buenos}}</ion-badge>
-    <ion-badge color="warning" slot="end" (click)="Regular()">Regular {{inventario.regulares}}</ion-badge>
-    <ion-badge color="danger" slot="end" (click)="Malos()">Malos {{inventario.malos}}</ion-badge>
+    <ion-button (click)="descarga()" color="light" slot="start">
+      <ion-icon name="cloud-download"></ion-icon>
+    </ion-button>
+    Total {{inventario.numArticulos}} articulos
+    <ion-icon (click)="resumen()" name="grid" slot="end"></ion-icon>
+    <ion-icon (click)="lista()" name="list" slot="end"></ion-icon>
   </ion-item>
 </ion-header>
 
-<ion-content>
-
+<ion-content *ngIf=listat>
   <ion-item *ngFor="let articulo of articulos" text-wrap>
     <ion-thumbnail slot="start">
       <ion-img [src]="articulo.imagen"></ion-img>
@@ -37,4 +41,37 @@
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+</ion-content>
+<ion-content *ngIf=resument>
+  <ion-item *ngFor="let articulo of inventario['articulos unicos']" text-wrap>
+    <ion-label (click)="openArt(articulo)">
+    <h2>{{ articulo.nombre }}</h2>
+    <!-- <p>Total {{articulo.cantidad}} - Buenos {{articulo.bueno}} - Regular {{articulo.regular}} - Malos {{articulo.malo}}</p> -->
+    <ion-badge color="secondary" (click)="total()">Total {{articulo.cantidad}}</ion-badge>
+    <ion-badge color="success" slot="end" (click)="Buenos()">Buenos {{articulo.bueno}}</ion-badge>
+    <ion-badge color="warning" slot="end" (click)="Regular()">Regular {{articulo.regular}}</ion-badge>
+    <ion-badge color="danger" slot="end" (click)="Malos()">Malos {{articulo.malo}}</ion-badge>
+    </ion-label>
+    <!-- <ion-label (click)="openArt(articulo)">
+      {{ articulo.nombre }}
+    </ion-label>
+    <ion-badge color="secondary" (click)="total()">Total {{articulo.cantidad}}</ion-badge>
+    <ion-badge color="success" slot="end" (click)="Buenos()">Buenos {{articulo.bueno}}</ion-badge>
+    <ion-badge color="warning" slot="end" (click)="Regular()">Regular {{articulo.regular}}</ion-badge>
+    <ion-badge color="danger" slot="end" (click)="Malos()">Malos {{articulo.malo}}</ion-badge> -->
+
+  </ion-item>
+</ion-content>
+<ion-content *ngIf=listaR>
+  <ion-item *ngFor="let articulo of articulosR" text-wrap>
+    <ion-thumbnail slot="start">
+      <ion-img [src]="articulo.imagen"></ion-img>
+    </ion-thumbnail>
+    <ion-label (click)="open(articulo)">
+      {{ articulo.nombre }}
+    </ion-label>
+    <ion-badge *ngIf='articulo.estado == "Bueno"' color="success" slot="end" (click)="Buenos()">Bueno</ion-badge>
+    <ion-badge *ngIf='articulo.estado == "Regular"' color="warning" slot="end" (click)="Regular()">Regular</ion-badge>
+    <ion-badge *ngIf='articulo.estado == "Malo"' color="danger" slot="end" (click)="Malos()">Malo</ion-badge>
+  </ion-item>
 </ion-content>

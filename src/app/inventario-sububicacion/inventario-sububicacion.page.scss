@@ -1,11 +1,18 @@
 ion-label{
     white-space: pre-wrap !important;
+    font-weight: bolder;
+    font-size: 1.12em;
+    margin: 1em 0 0 0.25em;
 }
 ion-badge{
-    margin: 7px;
-    height: 2em;
-    padding: 6.5px;
+    margin: 2px;
+    font-size: 1em;
+    // height: 2em;
+    // padding: 6.5px;
 }
 ion-fab{
     margin: 1em;
+}
+ion-button{
+    margin-inline-end: 1em !important;
 }
