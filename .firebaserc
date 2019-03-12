@@ -1,5 +1,6 @@
 {
   "projects": {
-    "inventario": "inventario-denzil-escolar"
+    "inventario": "inventario-denzil-escolar",
+    "default": "inventario-denzil-escolar"
   }
 }

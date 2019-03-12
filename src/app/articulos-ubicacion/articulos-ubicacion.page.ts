@@ -224,7 +224,7 @@ export class ArticulosUbicacionPage implements OnInit {
           handler: (d) => {
             // this.articulos.push(d.articulo)
             console.log(index)
-            firebase.database().ref('articulos'+articulo.key+'/nombre').set(d.articulo)
+            firebase.database().ref('articulos/'+articulo.key+'/nombre').set(d.articulo)
             // this.articulos[index]=d.articulo
             console.log('Edit Ok',this.articulos);
           }
