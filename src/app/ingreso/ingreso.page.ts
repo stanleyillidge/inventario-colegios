@@ -73,9 +73,7 @@ export class IngresoPage implements OnInit {
       cantidad:''
     };
     this.creaFormulario(data)
-    firebase.database().ref('subUbicaciones').child(this.ubicacion.key).child(this.SubUbicacion.key).once('value', function(subUbicacionSN) {
-      este.cantidad = subUbicacionSN.val().cantidad;
-    })
+    
     // ---------------------------
   }
   creaFormulario(data){
@@ -249,91 +247,95 @@ export class IngresoPage implements OnInit {
         message: 'Ingreso en '+this.SubUbicacion.nombre
       });
       await loading.present();
-      firebase.database().ref('inventario').once('value', function(articulos) {
-        articulos.forEach(articulo => {
-          // console.log(articulo.val())
-         este.numArt += articulo.numChildren() + 1;
-        });
-      });
-      let nombreImagen = this.articulo.nombre+' - '+este.numArt+'.jpeg';
-      let child = 'inventario/'+this.sede.nombre+'/'+this.ubicacion.nombre+'/'+this.SubUbicacion.nombre+'/'+nombreImagen
-      const imagenes = firebase.storage().ref(child);
-      let imagen
-      if(this.plataforma.android){
-        imagen = [este.Path,'data_url'];
-      }else{
-        let src = este.Path.substr("data:image/jpeg;base64,/".length - 1);
-        imagen = [src,'base64'];
-      }
-      imagenes.putString(imagen[0],imagen[1]).then(function(snapshot) {
-        console.log('Uploaded a data_url string!');
-        imagenes.getDownloadURL().then(function(url) {
-          // Insert url into an <img> tag to "download"
-          let data = {
-            imagen: url,
-            nombreImagen: nombreImagen,
-            nombre: este.articulo.nombre,
-            cantidad: 1,
-            disponibilidad: este.newIngresoForm.value.disponibilidad,
-            estado: este.newIngresoForm.value.estado,
-            descripcion: este.newIngresoForm.value.descripcion,
-            observaciones: este.newIngresoForm.value.observaciones,
-            valor: este.newIngresoForm.value.valor,
-            serie: este.newIngresoForm.value.serie,
-            sede: este.sede,
-            ubicacion: este.ubicacion,
-            subUbicacion: este.SubUbicacion
-          }
-          for(let index in data){
-            if(data[index] == "undefined"){
-              data[index] = ''
+      // firebase.database().ref('inventario').once('value', function(articulos) {
+      //   articulos.forEach(articulo => {
+      //     // console.log(articulo.val())
+      //    este.numArt += articulo.numChildren() + 1;
+      //   });
+      // });
+      firebase.database().ref('subUbicaciones').child(this.ubicacion.key).child(this.SubUbicacion.key).once('value', function(subUbicacionSN) {
+        este.cantidad = subUbicacionSN.val().cantidad;
+        este.numArt = subUbicacionSN.val().cantidad +1;
+        let nombreImagen = este.articulo.nombre+' - '+este.numArt+'.jpeg';
+        let child = 'inventario/'+este.sede.nombre+'/'+este.ubicacion.nombre+'/'+este.SubUbicacion.nombre+'/'+nombreImagen
+        const imagenes = firebase.storage().ref(child);
+        let imagen
+        if(este.plataforma.android){
+          imagen = [este.Path,'data_url'];
+        }else{
+          let src = este.Path.substr("data:image/jpeg;base64,/".length - 1);
+          imagen = [src,'base64'];
+        }
+        imagenes.putString(imagen[0],imagen[1]).then(function(snapshot) {
+          console.log('Uploaded a data_url string!');
+          imagenes.getDownloadURL().then(function(url) {
+            // Insert url into an <img> tag to "download"
+            let data = {
+              imagen: url,
+              nombreImagen: nombreImagen,
+              nombre: este.articulo.nombre,
+              cantidad: 1,
+              disponibilidad: este.newIngresoForm.value.disponibilidad,
+              estado: este.newIngresoForm.value.estado,
+              descripcion: este.newIngresoForm.value.descripcion,
+              observaciones: este.newIngresoForm.value.observaciones,
+              valor: este.newIngresoForm.value.valor,
+              serie: este.newIngresoForm.value.serie,
+              sede: este.sede,
+              ubicacion: este.ubicacion,
+              subUbicacion: este.SubUbicacion
             }
-          }
-          console.log('ojo entro!',data);
-          este.Path = url;
-          firebase.database().ref('inventario/'+este.SubUbicacion.key).push(data).then(()=>{
-            este.cantidad += 1;
-            firebase.database().ref('subUbicaciones').child(este.ubicacion.key).child(este.SubUbicacion.key).child('cantidad').set( este.cantidad )
-            loading.dismiss()
-            este.navCtrl.navigateBack(['inventario-sububicacion',{ 
-              articuloNombre: este.articulo.nombre,
-              articulokey: este.articulo.key,
-              SubUbicacionNombre: este.SubUbicacion.nombre,
-              SubUbicacionkey: este.SubUbicacion.key,
-              ubicacionNombre: este.ubicacion.nombre,
-              ubicacionkey: este.ubicacion.key,
-              sede: este.sede
-            }]);
-          })
-        }).catch(function(error) {
-    
-          // A full list of error codes is available at
-          // https://firebase.google.com/docs/storage/web/handle-errors
-          switch (error.code) {
-            case 'storage/object-not-found':
-              console.log('storage/object-not-found')
-              // File doesn't exist
-              break;
-    
-            case 'storage/unauthorized':
-              console.log('storage/unauthorized')
-              // User doesn't have permission to access the object
-              break;
-    
-            case 'storage/canceled':
-              console.log('storage/canceled')
-              // User canceled the upload
-              break;
-    
-            case 'storage/unknown':
-              console.log('storage/unknown')
-              // Unknown error occurred, inspect the server response
-              break;
-          }
+            for(let index in data){
+              if(data[index] == "undefined"){
+                data[index] = ''
+              }
+            }
+            console.log('ojo entro!',data);
+            este.Path = url;
+            firebase.database().ref('inventario/'+este.SubUbicacion.key).push(data).then(()=>{
+              este.cantidad += 1;
+              firebase.database().ref('subUbicaciones').child(este.ubicacion.key).child(este.SubUbicacion.key).child('cantidad').set( este.cantidad )
+              loading.dismiss()
+              este.navCtrl.navigateBack(['inventario-sububicacion',{ 
+                articuloNombre: este.articulo.nombre,
+                articulokey: este.articulo.key,
+                SubUbicacionNombre: este.SubUbicacion.nombre,
+                SubUbicacionkey: este.SubUbicacion.key,
+                ubicacionNombre: este.ubicacion.nombre,
+                ubicacionkey: este.ubicacion.key,
+                sede: este.sede
+              }]);
+            })
+          }).catch(function(error) {
+      
+            // A full list of error codes is available at
+            // https://firebase.google.com/docs/storage/web/handle-errors
+            switch (error.code) {
+              case 'storage/object-not-found':
+                console.log('storage/object-not-found')
+                // File doesn't exist
+                break;
+      
+              case 'storage/unauthorized':
+                console.log('storage/unauthorized')
+                // User doesn't have permission to access the object
+                break;
+      
+              case 'storage/canceled':
+                console.log('storage/canceled')
+                // User canceled the upload
+                break;
+      
+              case 'storage/unknown':
+                console.log('storage/unknown')
+                // Unknown error occurred, inspect the server response
+                break;
+            }
+          });
         });
-      });
+      })
     }else{
-      this.presentToastWithOptions('Debes cargar una imagen',3000,'top')
+      este.presentToastWithOptions('Debes cargar una imagen',3000,'top')
     }
   }
   async Removearticulo(articulo){
