@@ -6,6 +6,9 @@
     <ion-title>sedes</ion-title>
   </ion-toolbar>
   <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
+  <ion-item>
+    <ion-label> Hay {{cantidad | number}} sedes con {{contador.sede | number}} articulos</ion-label>
+  </ion-item>
 </ion-header>
 
 <ion-content>
@@ -13,7 +16,7 @@
     <ion-item-sliding>
       <ion-item (click)="open(sede)">
         <ion-label>{{sede.nombre}}</ion-label>
-        <ion-note slot="end">{{sede.cantidad}} articulos</ion-note>
+        <ion-note slot="end">{{sede.cantidad | number}} articulos</ion-note>
       </ion-item>
       <ion-item-options side="end">
         <ion-item-option color="success" (click)="Editsede(sede)">

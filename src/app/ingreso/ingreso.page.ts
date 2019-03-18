@@ -8,6 +8,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { ImageResizer, ImageResizerOptions } from '@ionic-native/image-resizer/ngx';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
+import "firebase/functions";
 import { FormGroup, FormControl, Validators, FormBuilder }  from '@angular/forms';
 import { LoadingController } from '@ionic/angular';
 
@@ -60,7 +61,7 @@ export class IngresoPage implements OnInit {
     this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
     this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
     this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
-    this.titulo = this.sede +' / '+ this.ubicacion['nombre'] +' / '+ this.SubUbicacion.nombre
+    this.titulo = this.sede.nombre +' / '+ this.ubicacion['nombre'] +' / '+ this.SubUbicacion.nombre
     // --- Creo el formulario ----
     let data ={
       valor:0,
@@ -270,6 +271,15 @@ export class IngresoPage implements OnInit {
           console.log('Uploaded a data_url string!');
           imagenes.getDownloadURL().then(function(url) {
             // Insert url into an <img> tag to "download"
+            este.articulo['nombre'] = este.route.snapshot.paramMap.get('articuloNombre')
+            este.articulo['key'] = este.route.snapshot.paramMap.get('articulokey')
+            este.SubUbicacion['nombre'] = este.route.snapshot.paramMap.get('SubUbicacionNombre')
+            este.SubUbicacion['key'] = este.route.snapshot.paramMap.get('SubUbicacionkey')
+            este.ubicacion['nombre'] = este.route.snapshot.paramMap.get('ubicacionNombre')
+            este.ubicacion['key'] = este.route.snapshot.paramMap.get('ubicacionkey')
+            este.sede['nombre'] = este.route.snapshot.paramMap.get('sedeNombre')
+            este.sede['key'] = este.route.snapshot.paramMap.get('sedekey')
+            este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
             let data = {
               imagen: url,
               nombreImagen: nombreImagen,
@@ -296,6 +306,15 @@ export class IngresoPage implements OnInit {
               este.cantidad += 1;
               firebase.database().ref('subUbicaciones').child(este.ubicacion.key).child(este.SubUbicacion.key).child('cantidad').set( este.cantidad )
               loading.dismiss()
+              este.articulo['nombre'] = este.route.snapshot.paramMap.get('articuloNombre')
+              este.articulo['key'] = este.route.snapshot.paramMap.get('articulokey')
+              este.SubUbicacion['nombre'] = este.route.snapshot.paramMap.get('SubUbicacionNombre')
+              este.SubUbicacion['key'] = este.route.snapshot.paramMap.get('SubUbicacionkey')
+              este.ubicacion['nombre'] = este.route.snapshot.paramMap.get('ubicacionNombre')
+              este.ubicacion['key'] = este.route.snapshot.paramMap.get('ubicacionkey')
+              este.sede['nombre'] = este.route.snapshot.paramMap.get('sedeNombre')
+              este.sede['key'] = este.route.snapshot.paramMap.get('sedekey')
+              este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
               este.navCtrl.navigateBack(['inventario-sububicacion',{ 
                 articuloNombre: este.articulo.nombre,
                 articulokey: este.articulo.key,

@@ -7,6 +7,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { ImageResizer, ImageResizerOptions } from '@ionic-native/image-resizer/ngx';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
+import "firebase/functions";
 import { LoadingController } from '@ionic/angular';
 
 @Component({
@@ -40,6 +41,38 @@ export class HomePage {
     this.http.get('../../assets/data/inventario-denzil-escolar-export.json').subscribe(data => {
       this.dataBase = JSON.parse(data.text());
     },err => console.log(err));
+  }
+  deleteFCloud(){
+    let deleteF = firebase.functions().httpsCallable("deleteF");
+    deleteF('1Eg11Qp3WdIJiy0aHfOeeXY97YquXm31G').then(function(reponse) {
+      // Read result of the Cloud Function.
+      console.log('Archivo eliminado: ',reponse);
+      // ...
+    }).catch(function(error) {
+      // Read result of the Cloud Function.
+      console.log('Archivo eliminado error: ',error);
+      // ...
+    })
+  }
+  async cloudf(){
+    let data = {}
+    data['sede'] = 'Mega2';
+    data['ubicacion'] = 'ubicacion0';
+    data['subUbicacion'] = 'subUbicacion1';
+    data['estado'] = 'Bueno'
+    data['fila'] = '1'
+    data['nombre'] = 'Mi articulo'
+    data['titulo'] = "Etiqueta de elemento "+data['fila']+" - "+data['nombre']
+    let etiquetas = firebase.functions().httpsCallable("createLabels");
+    await etiquetas(data).then(function(contrato) {
+      // Read result of the Cloud Function.
+      console.log('Etiqueta creado: ',contrato);
+      // ...
+    }).catch(function(error) {
+      // Read result of the Cloud Function.
+      console.log('Etiqueta error: ',error);
+      // ...
+    })
   }
   async uploadDB(){
     let este = this;

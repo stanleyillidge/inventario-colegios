@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>view-articulo</ion-title>
+    <ion-title>{{titulo}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,9 +14,28 @@
       <input type="file" style="display: none;" class="button" (change)="onFile($event)">
       <img class="user-image" src="{{Path}}">
     </label>
-    <ion-item>
-      <ion-label>{{articulo.nombre}}</ion-label>
-    </ion-item>
+    <ion-list>
+      <ion-item>
+        <ion-label>Sede</ion-label>
+        <ion-select formControlName="sedefrm" (ionChange)="onSedeChange($event)" okText="Okay" cancelText="Cancelar">
+          <ion-select-option *ngFor="let sede of sedes" [value]="sede.nombre">{{sede.nombre}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+  
+      <ion-item *ngIf="ubicaciones">
+        <ion-label>Ubicacion</ion-label>
+        <ion-select formControlName="ubicacionfrm" (ionChange)="onUbicacionChange($event)">
+          <ion-select-option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.nombre">{{ubicacion.nombre}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item *ngIf="SubUbicaciones">
+        <ion-label>Sub Ubicacion</ion-label>
+        <ion-select formControlName="subUbicacionfrm" (ionChange)="onSubUbicacionChange($event)">
+          <ion-select-option *ngFor="let SubUbicacion of SubUbicaciones" [value]="SubUbicacion.nombre">{{SubUbicacion.nombre}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
     <ion-item>
       <ion-label position="floating">Serie</ion-label>
       <ion-input formControlName="serie"></ion-input>
@@ -24,7 +43,7 @@
     </ion-item>
     <ion-item>
       <ion-label>Estado</ion-label>
-      <ion-select formControlName="estado" okText="Okay" cancelText="Dismiss">
+      <ion-select formControlName="estado">
         <ion-select-option value="Bueno">Bueno</ion-select-option>
         <ion-select-option value="Regular">Regular</ion-select-option>
         <ion-select-option value="Malo">Malo</ion-select-option>
@@ -32,7 +51,7 @@
     </ion-item>
     <ion-item>
       <ion-label>Disponible para su uso</ion-label>
-      <ion-select formControlName="disponibilidad" okText="Okay" cancelText="Dismiss">
+      <ion-select formControlName="disponibilidad">
         <ion-select-option value="Si">Si</ion-select-option>
         <ion-select-option value="No">No</ion-select-option>
       </ion-select>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavController, AlertController, Platform } from '@ionic/angular';
 import * as firebase from 'firebase/app';
+import "firebase/functions";
 import { Http } from '@angular/http';
 
 @Component({
@@ -13,6 +14,8 @@ export class UbicacionesPage implements OnInit {
   ubicaciones:any=[]
   ubicacionest:any
   sede:any=[];
+  cantidad:any;
+  contador:any={};
   constructor(
     public route: ActivatedRoute,
     public plataforma: Platform,
@@ -53,6 +56,7 @@ export class UbicacionesPage implements OnInit {
     firebase.database().ref('ubicaciones/'+this.sede.key).on('value', function(ubicacionesnapshot) {
       este.ubicaciones = []
       let ubi = {}
+      este.cantidad = ubicacionesnapshot.numChildren();
       ubicacionesnapshot.forEach(ubicacion => {
         // console.log(ubicacion.val())
         ubi = ubicacion.val();
@@ -60,6 +64,23 @@ export class UbicacionesPage implements OnInit {
         este.ubicaciones.push(ubi)
       });
       este.ubicacionest = este.ubicaciones;
+      este.contador['SubUbicacion'] = 0;
+      este.contador['ubicacion'] = 0;
+      este.contador['sede'] = 0;
+      // este.contador['SubUbicacion'] = articulosnapshot.numChildren();
+      // firebase.database().ref('subUbicaciones/'+este.ubicacion.key+'/'+este.SubUbicacion.key+'/cantidad').set(articulosnapshot.numChildren())
+      // firebase.database().ref('subUbicaciones/'+este.ubicacion.key).once('value', (SubUbicacioneSnapshot)=>{
+      //   SubUbicacioneSnapshot.forEach(SububicacionSnap =>{
+      //     este.contador['ubicacion'] += SububicacionSnap.val().cantidad
+      //   })
+      //   firebase.database().ref('ubicaciones/'+este.sede.key+'/'+este.ubicacion.key+'/cantidad').set(este.contador['ubicacion'])
+        firebase.database().ref('ubicaciones/'+este.sede.key).once('value', (UbicacioneSnapshot)=>{
+          UbicacioneSnapshot.forEach(ubicacionSnap =>{
+            este.contador['sede'] += ubicacionSnap.val().cantidad
+          })
+          firebase.database().ref('sedes/'+este.sede.key+'/cantidad').set(este.contador['sede'])
+        })
+      // })
     });
   }
   onInput(ev:any){
@@ -77,7 +98,7 @@ export class UbicacionesPage implements OnInit {
       })
     }
   }
-  open(ubicacion){
+  open(ubicacion:any){
     console.log(this.sede,ubicacion)
     this.navCtrl.navigateForward(['sub-ubicaciones',{ 
       ubicacionNombre:ubicacion.nombre,
@@ -86,7 +107,7 @@ export class UbicacionesPage implements OnInit {
       sedekey: this.sede.key
     }]);
   }
-  async Editubicacion(ubicacion) {
+  async Editubicacion(ubicacion:any) {
     let este = this
     const ubicaciont = ubicacion
     let index = this.ubicaciones.indexOf(ubicaciont)
@@ -110,18 +131,29 @@ export class UbicacionesPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: (d) => {
+          handler:async (d) => {
             // this.ubicaciones.push(d.ubicacion)
             console.log(index)
-            firebase.database().ref('ubicaciones/'+ubicacion.key+'/nombre').set(d.ubicacion)
-            // this.ubicaciones[index]=d.ubicacion
-            console.log('Edit Ok',this.ubicaciones);
+            // firebase.database().ref('ubicaciones/'+este.sede.key+'/'+ubicacion.key+'/nombre').set(d.ubicacion)
+            let Editubicaciones = firebase.functions().httpsCallable("Editubicaciones");
+            let data = {
+              sedekey: este.sede.key,
+              ubicacionkey: ubicacion.key,
+              ubicacion: d.ubicacion
+            }
+            await Editubicaciones(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado error: ',error);
+            })
           }
         }
       ]
     });
-
-    await alert.present();
+    alert.present();
+    return
   }
   async Createubicacion() {
     const alert = await this.alertController.create({
@@ -143,19 +175,30 @@ export class UbicacionesPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: (d) => {
-            firebase.database().ref('ubicaciones').push({
-              nombre: d.ubicacion
-            });
-            console.log('Crear Ok',this.ubicaciones);
+          handler:async (d) => {
+            // firebase.database().ref('ubicaciones/'+this.sede.key).push({
+            //   nombre: d.ubicacion
+            // });
+            let Createubicaciones = firebase.functions().httpsCallable("Createubicaciones");
+            let data = {
+              sedekey: this.sede.key,
+              ubicacion: d.ubicacion
+            }
+            await Createubicaciones(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado error: ',error);
+            })
           }
         }
       ]
     });
-
-    await alert.present();
+    alert.present();
+    return
   }
-  async Removeubicacion(ubicacion){
+  async Removeubicacion(ubicacion:any){
     let este = this
     const alert = await this.alertController.create({
       header: 'Cuidado!',
@@ -170,17 +213,26 @@ export class UbicacionesPage implements OnInit {
           }
         }, {
           text: 'eliminar',
-          handler: () => {
-            firebase.database().ref('ubicaciones/'+ubicacion.key).remove()
-            // this.ubicaciones.splice(index, 1);
-            // this.ubicacionest = this.ubicaciones;
-            console.log('Eliminar Okay');
+          handler:async () => {
+            // firebase.database().ref('ubicaciones/'+este.sede.key+'/'+ubicacion.key).remove()
+            let Removeubicaciones = firebase.functions().httpsCallable("Removeubicaciones");
+            let data = {
+              sedekey: este.sede.key,
+              ubicacionkey: ubicacion.key
+            }
+            await Removeubicaciones(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado error: ',error);
+            })
           }
         }
       ]
     });
-
-    await alert.present();
+    alert.present();
+    return
   }
   ngOnInit() {
   }

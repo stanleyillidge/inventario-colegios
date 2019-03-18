@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController, AlertController, Platform } from '@ionic/angular';
 import * as firebase from 'firebase/app';
+import "firebase/functions";
 import { Http } from '@angular/http';
 
 @Component({
@@ -12,6 +13,8 @@ import { Http } from '@angular/http';
 export class SedesPage implements OnInit {
   sedes:any=[]
   sedest:any
+  cantidad: number;
+  contador: any = {};
   constructor(
     public plataforma: Platform,
     public router: Router,
@@ -34,10 +37,13 @@ export class SedesPage implements OnInit {
     firebase.database().ref('sedes').on('value', function(sedeSnapshot) {
       este.sedes = []
       let sed = {}
+      este.cantidad = sedeSnapshot.numChildren();
+      este.contador['sede'] = 0;
       sedeSnapshot.forEach(sede => {
         // console.log(sede.val())
         sed = sede.val();
         sed['key'] = sede.key;
+        este.contador['sede'] += sede.val().cantidad
         este.sedes.push(sed)
       });
       este.sedest = este.sedes;
@@ -63,14 +69,14 @@ export class SedesPage implements OnInit {
       })
     }
   }
-  open(sede){
+  open(sede:any){
     this.navCtrl.navigateForward(['ubicaciones',{
       sedeNombre:sede.nombre,
       sedekey:sede.key
     }]);
     // this.navCtrl.pop();
   }
-  async Editsede(sede) {
+  async Editsede(sede:any) {
     let este = this
     const sedet = sede
     let index = this.sedes.indexOf(sedet)
@@ -94,18 +100,28 @@ export class SedesPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: (d) => {
+          handler:async (d) => {
             // this.sedes.push(d.sede)
             console.log(index)
-            firebase.database().ref('sedes/'+sede.key+'/nombre').set(d.sede)
-            // this.sedes[index]=d.sede
-            console.log('Edit Ok',this.sedes);
+            // firebase.database().ref('sedes/'+sede.key+'/nombre').set(d.sede)
+            let Editsedes = firebase.functions().httpsCallable("Editsedes");
+            let data = {
+              sede: d.sede,
+              key: sede.key
+            }
+            await Editsedes(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo eliminado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Archivo eliminado error: ',error);
+            })
           }
         }
       ]
     });
-
-    await alert.present();
+    alert.present();
+    return
   }
   async CreateSede() {
     const alert = await this.alertController.create({
@@ -127,26 +143,35 @@ export class SedesPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: (d) => {
-            firebase.database().ref('sedes').push({
-              nombre: d.sede,
-              cantidad: 0
+          handler:async (d) => {
+            // firebase.database().ref('sedes').push({
+            //   nombre: d.sede,
+            //   cantidad: 0
+            // })
+            let CreateSedes = firebase.functions().httpsCallable("CreateSedes");
+            let data = {
+              sede: d.sede,
+              key: 'sedes'
+            }
+            await CreateSedes(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo creado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Error en crear Archivo: ',error);
             })
-            // this.sedes.push(d.sede);
-            // this.sedest = this.sedes;
-            console.log('Crear Ok',this.sedes);
           }
         }
       ]
     });
-
-    await alert.present();
+    alert.present();
+    return
   }
-  async RemoveSede(sede){
+  async RemoveSede(sede:any){
     let este = this
     const alert = await this.alertController.create({
       header: 'Cuidado!',
-      message: 'Se <strong>eliminará</strong> la sede '+sede+' !!!',
+      message: 'Se <strong>eliminará</strong> la sede '+sede.nombre+' !!!',
       buttons: [
         {
           text: 'cancelar',
@@ -157,18 +182,27 @@ export class SedesPage implements OnInit {
           }
         }, {
           text: 'eliminar',
-          handler: () => {
-            let index = this.sedes.indexOf(sede)
-            firebase.database().ref('sedes/'+sede.key).remove()
-            // this.sedes.splice(index, 1);
-            // this.sedest = this.sedes;
-            console.log('Eliminar Okay');
+          handler:async () => {
+            // let index = this.sedes.indexOf(sede)
+            // firebase.database().ref('sedes/'+sede.key).remove()
+            let RemoveSedes = firebase.functions().httpsCallable("RemoveSedes");
+            let data = {
+              sede: sede.nombre,
+              key: sede.key
+            }
+            await RemoveSedes(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo eliminado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Archivo eliminado error: ',error);
+            })
           }
         }
       ]
     });
-
-    await alert.present();
+    alert.present();
+    return
   }
   ngOnInit() {
   }

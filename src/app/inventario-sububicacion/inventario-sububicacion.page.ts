@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavController, AlertController, Platform } from '@ionic/angular';
 import * as firebase from 'firebase/app';
+import "firebase/functions";
 import { Http } from '@angular/http';
 
 @Component({
@@ -46,7 +47,24 @@ export class InventarioSububicacionPage implements OnInit {
       este.articulos = []
       let art = {}
       este.inventario['numArticulos'] = articulosnapshot.numChildren();
-      firebase.database().ref('subUbicaciones/'+este.ubicacion.key).child(este.SubUbicacion.key+'/cantidad').set(articulosnapshot.numChildren())
+      let contador = {}
+      contador['SubUbicacion'] = 0;
+      contador['ubicacion'] = 0;
+      contador['sede'] = 0;
+      contador['SubUbicacion'] = articulosnapshot.numChildren();
+      firebase.database().ref('subUbicaciones/'+este.ubicacion.key+'/'+este.SubUbicacion.key+'/cantidad').set(articulosnapshot.numChildren())
+      firebase.database().ref('subUbicaciones/'+este.ubicacion.key).once('value', (SubUbicacioneSnapshot)=>{
+        SubUbicacioneSnapshot.forEach(SububicacionSnap =>{
+          contador['ubicacion'] += SububicacionSnap.val().cantidad
+        })
+        firebase.database().ref('ubicaciones/'+este.sede.key+'/'+este.ubicacion.key+'/cantidad').set(contador['ubicacion'])
+        firebase.database().ref('ubicaciones/'+este.sede.key).once('value', (UbicacioneSnapshot)=>{
+          UbicacioneSnapshot.forEach(ubicacionSnap =>{
+            contador['sede'] += ubicacionSnap.val().cantidad
+          })
+          firebase.database().ref('sedes/'+este.sede.key+'/cantidad').set(contador['sede'])
+        })
+      })
       articulosnapshot.forEach(articulo => {
         // console.log(articulo.val())
         art = articulo.val();

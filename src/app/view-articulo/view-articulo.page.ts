@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavController, AlertController, Platform, ToastController } from '@ionic/angular';
 import { Http } from '@angular/http';
@@ -21,9 +21,17 @@ export class ViewArticuloPage implements OnInit {
   articulos:any=[]
   articulost:any
   articulosKeys:any=[]
-  sede:any={};
+  sedeObj:any={};
   ubicacion:any={};
   SubUbicacion:any={};
+  //-------------------
+  esquemaDB:any={};
+  sedes:any=[];
+  ubicaciones:any;
+  SubUbicaciones:any;
+  NewChild:any;
+  OldChild:any;
+  //-------------------
   articulo:any={};
   titulo;
   scanData;
@@ -45,7 +53,8 @@ export class ViewArticuloPage implements OnInit {
     private file: File,
     public fb: FormBuilder,
     public loadingController: LoadingController,
-    public toastController: ToastController
+    public toastController: ToastController,
+    private _cdr: ChangeDetectorRef
   ) {
     let este = this
     this.plataforma.desktop = this.platform.is("desktop");
@@ -56,22 +65,176 @@ export class ViewArticuloPage implements OnInit {
     this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
     this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
     this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
-    this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
-    this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
+    this.sedeObj['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
+    this.sedeObj['key'] = this.route.snapshot.paramMap.get('sedekey')
+    este.titulo = este.sedeObj.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
+    //-----------------------------------------------------
+    firebase.database().ref('sedes').once('value',async (sedesSnap)=>{
+      este.esquemaDB['sedes'] = sedesSnap.val();
+      await sedesSnap.forEach(sede=>{
+        let a = {}
+        a = sede.val()
+        a['key'] = sede.key
+        este.esquemaDB['sedes'][sede.val().nombre]={}
+        este.esquemaDB['sedes'][sede.val().nombre]['key'] = sede.key
+        este.esquemaDB['sedes'][sede.val().nombre]['cantidad'] = sede.val().cantidad
+        este.sedes.push(a)
+      });
+      este.ubicaciones = [];
+      este.esquemaDB['sede'] = {}
+      este.esquemaDB['sede'] = este.esquemaDB['sedes'][este.sedeObj['nombre']]
+      await firebase.database().ref('ubicaciones').child(este.esquemaDB['sede'].key).once('value',async (sedesuSnap)=>{
+        // console.log(este.esquemaDB['sedes'][este.esquemaDB['sede'].key].nombre)
+        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = {};
+        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = sedesuSnap.val();
+        await sedesuSnap.forEach( sedeu =>{
+          let a = {}
+          a = sedeu.val()
+          a['key'] = sedeu.key
+          este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]={}
+          este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['key'] = sedeu.key
+          este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['cantidad'] = sedeu.val().cantidad
+          este.ubicaciones.push(a)
+        });
+        let sede = este.esquemaDB['sede'];
+        let ubicacion = este.esquemaDB['sedes'][sede.key]['ubicaciones'][este.ubicacion['nombre']];
+        este.esquemaDB['ubicacion'] = ubicacion;
+        firebase.database().ref('subUbicaciones').child(ubicacion.key).once('value',async (SubUbicacionesSnap)=>{
+          este.SubUbicaciones = [];
+          // console.log(este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key].nombre)
+          este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = {}
+          este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = SubUbicacionesSnap.val();
+          await SubUbicacionesSnap.forEach( SubUbicacion =>{
+            let a = {}
+            a = SubUbicacion.val()
+            a['key'] = SubUbicacion.key
+            este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]={}
+            este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['key'] = SubUbicacion.key
+            este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['cantidad'] = SubUbicacion.val().cantidad
+            este.SubUbicaciones.push(a)
+          })
+        })
+      })
+    });
+    console.log(este.esquemaDB)
+    // ----------------------------------------------------
     firebase.database().ref('inventario/'+this.SubUbicacion.key+'/'+this.articulo.key).once('value', function(articulo) {
       console.log(articulo.val())
       este.articulos = articulo.val();
       este.Path = articulo.val().imagen;
       este.articulost = este.articulos;
       // --- Creo el formulario ----
+      let val = este.articulos.sede.nombre
+      // (val === undefined || val == null || val.length <= 0)
+      if(este.articulos.sede.nombre){
+        console.log('entre')
+        let a = este.articulos.sede
+        este.articulos.sede = {}
+        este.articulos.sede['nombre'] = este.sedeObj.nombre
+        este.articulos.sede['key'] = este.sedeObj.key
+        este.articulos.sede['cantidad'] = 0
+
+        a = este.articulos.ubicacion
+        este.articulos.ubicacion = {}
+        este.articulos.ubicacion['nombre'] = este.ubicacion.nombre
+        este.articulos.ubicacion['key'] = este.ubicacion.key
+        este.articulos.ubicacion['cantidad'] = 0
+
+        a = este.articulos.subUbicacion
+        este.articulos.subUbicacion = {}
+        este.articulos.subUbicacion['nombre'] = este.SubUbicacion.nombre
+        este.articulos.subUbicacion['key'] = este.SubUbicacion.key
+        este.articulos.subUbicacion['cantidad'] = 0
+      }
       este.creaFormulario(este.articulos)
       // ---------------------------
     });
   }
+  async onSedeChange(s){
+    let este = this
+    console.log(s.target.value,this.esquemaDB)
+    este.esquemaDB['sede'] = {}
+    este.esquemaDB['sede'] = este.esquemaDB['sedes'][s.target.value]//this.newIngresoForm.get('sedefrm').value;
+    this.ubicaciones = null;
+    this.SubUbicaciones = null;
+    await firebase.database().ref('ubicaciones').child(este.esquemaDB['sede'].key).once('value',async (sedesuSnap)=>{
+      este.ubicaciones = [];
+      // console.log(este.esquemaDB['sedes'][este.esquemaDB['sede'].key].nombre)
+      este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = {};
+      este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = sedesuSnap.val();
+      await sedesuSnap.forEach( sedeu =>{
+        let a = {}
+        a = sedeu.val()
+        a['key'] = sedeu.key
+        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]={}
+        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['key'] = sedeu.key
+        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['cantidad'] = sedeu.val().cantidad
+        este.ubicaciones.push(a)
+      })
+    })
+    console.log(este.esquemaDB,this.ubicaciones)
+    this._cdr.detectChanges();
+  }
+  onUbicacionChange(u){
+    let este = this
+    this.SubUbicaciones = null;
+    este.esquemaDB['ubicacion'] = {}
+    let sede = este.esquemaDB['sede'];//this.newIngresoForm.get('sedefrm').value;
+    let ubicacion = este.esquemaDB['sedes'][sede.key]['ubicaciones'][u.target.value];//this.newIngresoForm.get('ubicacionfrm').value;
+    este.esquemaDB['ubicacion'] = ubicacion;
+    firebase.database().ref('subUbicaciones').child(ubicacion.key).once('value',async (SubUbicacionesSnap)=>{
+      this.SubUbicaciones = [];
+      // console.log(este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key].nombre)
+      este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = {}
+      este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = SubUbicacionesSnap.val();
+      await SubUbicacionesSnap.forEach( SubUbicacion =>{
+        let a = {}
+        a = SubUbicacion.val()
+        a['key'] = SubUbicacion.key
+        este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]={}
+        este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['key'] = SubUbicacion.key
+        este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['cantidad'] = SubUbicacion.val().cantidad
+        este.SubUbicaciones.push(a)
+      })
+    })
+    // console.log(sede,ubicacion,this.SubUbicaciones)
+    this._cdr.detectChanges();
+  }
+  onSubUbicacionChange(sub){
+    let este = this
+    let sede = este.esquemaDB['sede'];
+    let ubicacion = este.esquemaDB['ubicacion'];
+    let subUbicacion = este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][sub.target.value];
+    this.NewChild = 'inventario/'+subUbicacion.key+'/'+this.articulo.key;
+    this.OldChild = 'inventario/'+this.SubUbicacion.key+'/'+this.articulo.key;
+    console.log('OldChild',this.OldChild)
+    console.log('NewChild',this.NewChild)
+    // --- Remueve el child anterior ----
+    // firebase.database().ref(NewChild).push(este.articulos)
+    // .then(remov=>{
+    //   console.log('Fue movido')
+    //   firebase.database().ref(OldChild).remove().then(r=>{
+    //     console.log('Fue removido')
+    //   })
+    // })
+  }
   creaFormulario(data){
+    let este = this
     //-------------------
-    console.log('data:',data)
+      console.log('data:',data)
       this.newIngresoForm = this.fb.group({
+        sedefrm: new FormControl(data.sede.nombre, Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        ubicacionfrm: new FormControl(data.ubicacion.nombre, Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        subUbicacionfrm: new FormControl(data.subUbicacion.nombre, Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
         valor: new FormControl(data.valor, Validators.compose([
           // Validators.required,
           // Validators.maxLength(7),
@@ -109,6 +272,8 @@ export class ViewArticuloPage implements OnInit {
         ]))
       });
     //-------------------
+    console.log('sede: ',this.newIngresoForm.get('sedefrm').value)
+    console.log('sedes: ',this.sedes)
   }
   camara(){
     const options: CameraOptions = {
@@ -239,7 +404,7 @@ export class ViewArticuloPage implements OnInit {
       message: 'Actualizado...'
     });
     await loading.present();
-    let child = 'inventario/'+this.sede.nombre+'/'+this.ubicacion.nombre+'/'+this.SubUbicacion.nombre+'/'+this.articulos.nombreImagen
+    let child = 'inventario/'+this.sedeObj.nombre+'/'+this.ubicacion.nombre+'/'+this.SubUbicacion.nombre+'/'+this.articulos.nombreImagen
     const imagenes = firebase.storage().ref(child);
     let imagen
     if(this.plataforma.android){
@@ -264,7 +429,7 @@ export class ViewArticuloPage implements OnInit {
           observaciones: este.newIngresoForm.value.observaciones,
           valor: este.newIngresoForm.value.valor,
           serie: este.newIngresoForm.value.serie,
-          sede: este.sede,
+          sede: este.sedeObj,
           ubicacion: este.ubicacion,
           subUbicacion: este.SubUbicacion,
         }).then(()=>{
@@ -314,7 +479,7 @@ export class ViewArticuloPage implements OnInit {
       observaciones: este.newIngresoForm.value.observaciones,
       valor: este.newIngresoForm.value.valor,
       serie: este.newIngresoForm.value.serie,
-      sede: este.sede,
+      sede: este.sedeObj,
       ubicacion: este.ubicacion,
       subUbicacion: este.SubUbicacion,
     }).then(()=>{
@@ -326,7 +491,7 @@ export class ViewArticuloPage implements OnInit {
         SubUbicacionkey: este.SubUbicacion.key,
         ubicacionNombre: este.ubicacion.nombre,
         ubicacionkey: este.ubicacion.key,
-        sede: este.sede
+        sede: este.sedeObj
       }]);
     })
   }

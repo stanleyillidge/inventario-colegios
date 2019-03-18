@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavController, AlertController, Platform } from '@ionic/angular';
 import * as firebase from 'firebase/app';
+import "firebase/functions";
 import { Http } from '@angular/http';
 
 @Component({
@@ -17,6 +18,7 @@ export class SubUbicacionesPage implements OnInit {
   ubicacion:any={};
   sede:any=[];
   cantidad: number;
+  contador:any={};
   constructor(
     public route: ActivatedRoute,
     public plataforma: Platform,
@@ -79,6 +81,23 @@ export class SubUbicacionesPage implements OnInit {
         este.subUbicaciones.push(ubi);
       });
       este.subUbicacionest = este.subUbicaciones;
+      este.contador['SubUbicacion'] = 0;
+      este.contador['ubicacion'] = 0;
+      este.contador['sede'] = 0;
+      // este.contador['SubUbicacion'] = articulosnapshot.numChildren();
+      // firebase.database().ref('subUbicaciones/'+este.ubicacion.key+'/'+este.SubUbicacion.key+'/cantidad').set(articulosnapshot.numChildren())
+      firebase.database().ref('subUbicaciones/'+este.ubicacion.key).once('value', (SubUbicacioneSnapshot)=>{
+        SubUbicacioneSnapshot.forEach(SububicacionSnap =>{
+          este.contador['ubicacion'] += SububicacionSnap.val().cantidad
+        })
+        firebase.database().ref('ubicaciones/'+este.sede.key+'/'+este.ubicacion.key+'/cantidad').set(este.contador['ubicacion'])
+        firebase.database().ref('ubicaciones/'+este.sede.key).once('value', (UbicacioneSnapshot)=>{
+          UbicacioneSnapshot.forEach(ubicacionSnap =>{
+            este.contador['sede'] += ubicacionSnap.val().cantidad
+          })
+          firebase.database().ref('sedes/'+este.sede.key+'/cantidad').set(este.contador['sede'])
+        })
+      })
     });
   }
   onInput(ev:any){
@@ -131,18 +150,29 @@ export class SubUbicacionesPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: (d) => {
+          handler:async (d) => {
             // this.subUbicaciones.push(d.articulo)
             console.log(index)
-            firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key+'/nombre').set(d.articulo)
-            // this.subUbicaciones[index]=d.articulo
-            console.log('Edit Ok',this.subUbicaciones);
+            // firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key+'/nombre').set(d.articulo)
+            let EditSububicaciones = firebase.functions().httpsCallable("EditSububicaciones");
+            let data = {
+              key: articulo.key,
+              ubicacionkey: this.ubicacion.key,
+              articulo: d.articulo
+            }
+            await EditSububicaciones(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado error: ',error);
+            })
           }
         }
       ]
     });
-
-    await alert.present();
+    alert.present();
+    return
   }
   async CreateSububicacion() {
     const alert = await this.alertController.create({
@@ -164,17 +194,28 @@ export class SubUbicacionesPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: (d) => {
-            firebase.database().ref('subUbicaciones/'+this.ubicacion.key).push({
-              nombre: d.subUbicacion
-            });
-            console.log('Crear Ok',this.subUbicaciones);
+          handler:async (d) => {
+            // firebase.database().ref('subUbicaciones/'+this.ubicacion.key).push({
+            //   nombre: d.subUbicacion
+            // });
+            let CreateSububicaciones = firebase.functions().httpsCallable("CreateSububicaciones");
+            let data = {
+              ubicacionkey: this.ubicacion.key,
+              subUbicacion: d.subUbicacion
+            }
+            await CreateSububicaciones(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado error: ',error);
+            })
           }
         }
       ]
     });
-
-    await alert.present();
+    alert.present();
+    return
   }
   async RemoveSububicacion(articulo){
     let este = this
@@ -191,11 +232,21 @@ export class SubUbicacionesPage implements OnInit {
           }
         }, {
           text: 'eliminar',
-          handler: () => {
-            firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key).remove()
-            // this.subUbicaciones.splice(index, 1);
-            // this.subUbicacionest = this.subUbicaciones;
-            console.log('Eliminar Okay');
+          handler:async () => {
+            // firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key).remove()
+            let RemoveSububicaciones = firebase.functions().httpsCallable("RemoveSububicaciones");
+            let data = {
+              key: articulo.key,
+              ubicacionkey: this.ubicacion.key,
+              subUbicacion: articulo.nombre
+            }
+            await RemoveSububicaciones(data).then(function(reponse) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado: ',reponse);
+            }).catch(function(error) {
+              // Read result of the Cloud Function.
+              console.log('Archivo editado error: ',error);
+            })
           }
         }
       ]
