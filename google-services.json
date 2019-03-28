@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "734631097460",
+    "firebase_url": "https://inventario-denzil-escolar.firebaseio.com",
+    "project_id": "inventario-denzil-escolar",
+    "storage_bucket": "inventario-denzil-escolar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734631097460:android:7bd11277a89da5d8",
+        "android_client_info": {
+          "package_name": "io.ionic.inventariosApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "734631097460-fvr9lddfv03m980e8jgtcejebcfgbg93.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjpq_xvjsd1y_eWxEVdbPWoc7aEmbXMoU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -9,10 +9,12 @@
   <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
   <ion-item>
     <ion-label> Hay {{cantidad | number}} {{ubicacion.nombre}} con {{contador.ubicacion | number}} articulos</ion-label>
+    <ion-icon (click)="resumen()" name="grid" slot="end"></ion-icon>
+    <ion-icon (click)="lista()" name="list" slot="end"></ion-icon>
   </ion-item>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf=listat>
   <ion-list *ngFor="let subUbicacion of subUbicaciones">
     <ion-item-sliding>
       <ion-item (click)="open(subUbicacion)">
@@ -40,3 +42,49 @@
     </ion-fab-button>
   </ion-fab>
 </ion-content>
+<ion-content *ngIf=resument>
+  <ion-item *ngFor="let articulo of inventario['articulos unicos']" text-wrap>
+    <ion-label (click)="total(articulo)">
+    <h2>{{ articulo.nombre }}</h2>
+    <ion-badge color="secondary" (click)="total(articulo)">Total {{articulo.cantidad | number}}</ion-badge>
+    <ion-badge color="success" slot="end" (click)="Buenos(articulo)">Buenos {{articulo.bueno | number}}</ion-badge>
+    <ion-badge color="warning" slot="end" (click)="Regular(articulo)">Regular {{articulo.regular | number}}</ion-badge>
+    <ion-badge color="danger" slot="end" (click)="Malos(articulo)">Malos {{articulo.malo | number}}</ion-badge>
+    </ion-label>
+  </ion-item>
+</ion-content>
+<ion-content *ngIf=listaR>
+  <ion-item-sliding *ngFor="let articulo of articulosR">
+    <ion-item [ngClass]='articulo.disponibilidad'>
+      <ion-thumbnail slot="start">
+        <ion-img [src]="articulo.imagen"></ion-img>
+      </ion-thumbnail>
+      <ion-label *ngIf='articulo.disponibilidad == "Si"' (click)="open(articulo)">
+        <b>{{ articulo.nombre }}</b> en {{articulo.sede.nombre}} / {{articulo.ubicacion.nombre}} / {{articulo.subUbicacion.nombre}}
+      </ion-label>
+      <ion-label *ngIf='articulo.disponibilidad == "No"'>
+        <b>{{ articulo.nombre }}</b> en {{articulo.sede.nombre}} / {{articulo.ubicacion.nombre}} / {{articulo.subUbicacion.nombre}}
+      </ion-label>
+      <ion-badge *ngIf='articulo.estado == "Bueno"' color="success" slot="end">Bueno</ion-badge>
+      <ion-badge *ngIf='articulo.estado == "Regular"' color="warning" slot="end">Regular</ion-badge>
+      <ion-badge *ngIf='articulo.estado == "Malo"' color="danger" slot="end">Malo</ion-badge>
+      <ion-badge *ngIf='articulo.disponibilidad == "No"' color="danger" slot="end">Dado de baja</ion-badge>
+    </ion-item>
+    <ion-item-options side="end">
+      <ion-item-option *ngIf='!articulo.etiqueta && articulo.disponibilidad == "Si"' class="sliding-icon-card" (click)="creaEtiqueta(articulo)">
+        <ion-icon class="sliding-icon" src="assets/icons/tag-4.svg" slot="end"></ion-icon>
+      </ion-item-option>
+      <ion-item-option *ngIf='articulo.etiqueta && articulo.disponibilidad == "Si"' class="sliding-icon-card" (click)="Etiqueta(articulo)">
+        <ion-icon class="sliding-icon" src="assets/icons/tag-7.svg" slot="end"></ion-icon>
+      </ion-item-option>
+      <ion-item-option color="danger">
+        <ion-icon *ngIf='articulo.disponibilidad == "Si"' (click)="BajaArticulo(articulo)" class="sliding-icon" src="assets/icons/document-down-0.svg"></ion-icon>
+        <ion-icon *ngIf='articulo.disponibilidad == "No"' (click)="acta2(articulo)" class="sliding-icon" src="assets/icons/document-down-3.svg"></ion-icon>
+      </ion-item-option>
+      <ion-item-option (click)="RemoveArticulo(articulo)">
+        <ion-icon class="sliding-icon" name="trash" slot="end"></ion-icon>
+      </ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
+</ion-content>
+  

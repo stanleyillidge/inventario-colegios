@@ -6,30 +6,37 @@
     <ion-title>
       Home
     </ion-title>
+    <ion-note  slot="end">
+      Version 11
+    </ion-note>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-button (click)="escaner()" expand="block">
+  <!-- <ion-button (click)="escaner()" expand="block">
       <ion-icon slot="start" name="build"></ion-icon>
       <ion-label>Scan QR code App</ion-label>
-  </ion-button>
-  <ion-button (click)="camara()" expand="block">
+  </ion-button> -->
+  <!-- <ion-button (click)="camara()" expand="block">
       <ion-icon slot="start" color="medium" name="build"></ion-icon>
       <ion-label>Camara</ion-label>
-  </ion-button>
-  <ion-button (click)="cloudf()" expand="block">
+  </ion-button> -->
+  <!-- <ion-button (click)="cloudf()" expand="block">
     <ion-icon slot="start" name="build"></ion-icon>
     <ion-label>cloudf()</ion-label>
-  </ion-button>
-  <ion-button (click)="deleteFCloud()" expand="block">
+  </ion-button> -->
+  <!-- <ion-button (click)="deleteFCloud()" expand="block">
     <ion-icon slot="start" name="build"></ion-icon>
     <ion-label>deleteFCloud()</ion-label>
-  </ion-button>
-  <!-- <ion-button (click)="descargaDB()" expand="block">
-    <ion-icon slot="start" name="build"></ion-icon>
-    <ion-label>Descarga Data Base JSON</ion-label>
   </ion-button> -->
+  <ion-button (click)="corregir()" expand="block">
+    <ion-icon slot="start" name="build"></ion-icon>
+    <ion-label>corregir sede y ubicacion de cada ingreso</ion-label>
+  </ion-button>
+  <ion-button (click)="NewContador()" expand="block">
+    <ion-icon slot="start" name="build"></ion-icon>
+    <ion-label>New Data Base</ion-label>
+  </ion-button>
   <ion-button href='https://inventario-denzil-escolar.firebaseio.com/.json?download=dataBase.json' download="data.json" target="_blank" expand="block">Descarga Data Base JSON</ion-button>
   
   <ion-item *ngIf=Path text-wrap>

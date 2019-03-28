@@ -33,6 +33,7 @@ export class ArticuloIngresoPage implements OnInit {
     this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
     this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
     firebase.database().ref('articulos').on('value', function(articulosnapshot) {
+      console.log('Entro en articulo-ingreso a: firebase.database().ref("articulos")')
       este.articulos = []
       let art = {}
       articulosnapshot.forEach(articulo => {

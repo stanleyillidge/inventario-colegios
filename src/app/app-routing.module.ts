@@ -23,7 +23,8 @@ const routes: Routes = [
   { path: 'articulo-ingreso', loadChildren: './articulo-ingreso/articulo-ingreso.module#ArticuloIngresoPageModule' },
   { path: 'inventario-sububicacion', loadChildren: './inventario-sububicacion/inventario-sububicacion.module#InventarioSububicacionPageModule' },
   { path: 'view-articulo', loadChildren: './view-articulo/view-articulo.module#ViewArticuloPageModule' },
-  { path: 'edita-path', loadChildren: './edita-path/edita-path.module#EditaPathPageModule' }
+  { path: 'edita-path', loadChildren: './edita-path/edita-path.module#EditaPathPageModule' },
+  { path: 'login', loadChildren: './login/login.module#LoginPageModule' }
 ];
 
 @NgModule({

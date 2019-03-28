@@ -1,6 +1,10 @@
 {
   "projects": {
     "inventario": "inventario-denzil-escolar",
-    "default": "inventario-denzil-escolar"
+    "default": "inventario-denzil-escolar",
+    "denzil-develop": "inventario-denzil-develop",
+    "inventarios": "inventario-denzil-escolar",
+    "developer": "inventario-denzil-develop",
+    "inv": "inventario-denzil-escolar"
   }
 }

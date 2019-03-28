@@ -25,6 +25,7 @@ export class UbicacionPage implements OnInit {
     let este = this
     this.ubicacion = this.route.snapshot.paramMap.get('ubicacion')
     firebase.database().ref('articulos').on('value', function(articulosnapshot) {
+      console.log('Entro en sedes ubicacion')
       este.articulos = []
       articulosnapshot.forEach(ubicacion => {
         // console.log(ubicacion.val())

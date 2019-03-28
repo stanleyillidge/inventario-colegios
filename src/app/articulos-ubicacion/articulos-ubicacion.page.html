@@ -6,12 +6,16 @@
       <ion-title>Articulos del inventario</ion-title>
     </ion-toolbar>
     <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
+    <!-- <ion-item>
+      <ion-label>{{contadorTotal | number}} Articulos en total</ion-label>
+    </ion-item> -->
   </ion-header>
   
   <ion-content>
     <ion-list *ngFor="let articulo of articulos">
       <ion-item>
         <ion-label (click)="Editarticulo(articulo)">{{articulo.nombre}}</ion-label>
+        <ion-note  slot="end">{{articulo.cantidad | number}}</ion-note>
         <ion-icon (click)="Removearticulo(articulo)" name="trash" slot="end"></ion-icon>
         <ion-icon (click)="Editarticulo(articulo)" name="more" slot="end"></ion-icon>
       </ion-item>

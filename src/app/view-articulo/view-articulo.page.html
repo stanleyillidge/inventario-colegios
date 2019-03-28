@@ -7,13 +7,17 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="articulost">
   <form [formGroup]="newIngresoForm" padding-right>
     <ion-img *ngIf="plataforma.android" (click)="camara()" [src]="Path"></ion-img>
     <label *ngIf="plataforma.desktop">
       <input type="file" style="display: none;" class="button" (change)="onFile($event)">
       <img class="user-image" src="{{Path}}">
     </label>
+    <ion-item (click)="modificaNombre()">
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input formControlName="nombre"></ion-input>
+    </ion-item>
     <ion-list>
       <ion-item>
         <ion-label>Sede</ion-label>

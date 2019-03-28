@@ -20,7 +20,7 @@ const jwtAuthPromise = jwtClient.authorize().then(function(auto){
 })
 const sheets = google.sheets('v4');
 const slides = google.slides({version:'v1',auth: jwtClient});
-// const Gdocs = google.docs({version: 'v1',auth:  jwtClient});
+const Gdocs = google.docs({version: 'v1',auth:  jwtClient});
 const drive = google.drive({version:'v3',auth: jwtClient});
 
 type Inventario = { [key: string ]: any };
@@ -37,6 +37,8 @@ type Scores = { string: number }
         const scores = _.map<Scores, [string, number]>(data, (value, key) => [key, value])
         scores.sort((a,b) => { return b[1] - a[1] })
 
+        console.log(scores)
+
         await jwtAuthPromise
         await sheets.spreadsheets.values.update({
             auth: jwtClient,
@@ -47,7 +49,7 @@ type Scores = { string: number }
         }, {})
     });
 
-    export const createNewSS = functions.https.onRequest(async (req, res) => {
+    /* export const createNewSS = functions.https.onRequest(async (req, res) => {
         const request = {
             resource: {
             // TODO: Add desired properties to the request body.
@@ -80,9 +82,9 @@ type Scores = { string: number }
             // ----------------------------
             return
         })
-    });
+    }); */
 
-    export const CopyUpdateQuery = functions.https.onRequest(async (req, res) => {
+    /* export const CopyUpdateQuery = functions.https.onRequest(async (req, res) => {
         const TemplateId = "1QtTNUQBuPHz-iVntcGA2IAP1fYwa-kqzWZYApI8WeEo";
         const LabelsFolderId = "1S18NFap--79w8yVG_XxCuyVPupBpyDq-";
         const copyParameters = {
@@ -168,11 +170,278 @@ type Scores = { string: number }
                 });
             });
         })
+    }); */
+// ---- Baja de articulo -----------------------------------------------------------
+    export const BajaDeArticulo = functions.https.onCall(async (data, context) => {
+        const TemplateId = "1lPqOz0S-CUl67tWZHJn7JENiJ_fpcxFTgBZHSm-1lQQ";
+        const copyParameters = {
+            fileId: TemplateId,
+            resource: {
+                parents: ['1tr2FTpNPLoJzmNC0Y22msJIH5hUj1_Ig'],
+                name: "Acta de baja de "+ data.nombre +" "+ Date.now()
+            }
+        }
+        return await drive.files.copy(copyParameters).then(async function(docCopy){
+            const documentId  = docCopy.data.id
+            const dataReplace = {
+                documentId: documentId,
+                resource: {
+                    requests: [
+                        {
+                            replaceAllText: {
+                                containsText: {
+                                    text: '<<fecha>>'
+                                },
+                                replaceText: data['fecha']
+                            }
+                        },
+                        {
+                            replaceAllText: {
+                                containsText: {
+                                    text: '<<elemento>>'
+                                },
+                                replaceText: data['nombre']
+                            }
+                        }
+                    ]
+                }
+            };
+            return await Gdocs.documents.batchUpdate(dataReplace).then(resp=>{
+                const respuesta = {doc:docCopy.data, update:resp.data};
+                console.log(respuesta);
+                return respuesta
+            }).catch((error) => {
+                console.error("No se pudo actualizar");
+                throw new functions.https.HttpsError('internal', error.message);
+            })
+        }).catch((error) => {
+            console.error("No se copiar el documento");
+            throw new functions.https.HttpsError('internal', error.message);
+        });
     });
-// ---- Contadores de articulos ----------------------------------------------------
-    // export const contadorArticulos = functions.database.ref('/inventario/{pushId}').onCreate((data, context) => {
-        
-    // });
+// ---- Exporta datos de Firebase a GSheet -----------------------------------------
+    export const exportaFS = functions.https.onCall(async (data, context) => {
+        const TemplateId = "1N7InNh_qtrB9rKQFR7lGFwXaaQg9INoBJH-r2hsr_zI";
+        const copyParameters = {
+            fileId: TemplateId,
+            resource: {
+                parents: ['1jqmXygKJEcJoTRxs02irWDQoivYu5h3u'],
+                name: "Resumen de "+ data.titulo +" "+ Date.now()
+            }
+        }
+        return await drive.files.copy(copyParameters).then(async function(sheetCopy){
+            // await setTimeout(async function (){
+                
+            // }, 500, data)
+            const update = {
+                auth: jwtClient,
+                spreadsheetId: sheetCopy.data.id,
+                resource: {
+                  valueInputOption: 'RAW',
+                  data: [
+                    {
+                      range: data.range[0],
+                      values: data.values
+                    },
+                    {
+                        range: data.range[1],
+                        values: data.detallado
+                    },
+                  ]
+                }
+            }
+            return await sheets.spreadsheets.values.batchUpdate(update).then(resp=>{
+                const respuesta = {sheet:sheetCopy.data, update:resp.data};
+                console.log(respuesta);
+                return respuesta
+            }).catch((error) => {
+                console.error("No se pudo escribir en el rango: ",data.range," del documento de Id ",data.spreadsheetId);
+                throw new functions.https.HttpsError('internal', error.message);
+            })
+            // return sheetCopy.data
+        }).catch((error) => {
+            console.error("No se copiar el documento");
+            throw new functions.https.HttpsError('internal', error.message);
+        });
+        /* const request = {
+            resource: {
+                properties: {
+                    title: "Resumen de "+ data.titulo +" "+ Date.now()
+                }
+            },
+            auth: jwtClient,
+        };
+        await jwtAuthPromise
+        return sheets.spreadsheets.create(request).then(async function(ss){
+            data['spreadsheetId'] = ss.data.spreadsheetId
+            // --- Drive Api --------------
+            await setTimeout(async function (){
+                console.log('entro a update:',data)
+                const fileId = data.spreadsheetId;
+                const permisos = {
+                    fileId: fileId,
+                    fields: "id",
+                    resource: {
+                        role: "writer",
+                        type: "user",
+                        emailAddress: "inventarios@denzilescolar.edu.co"
+                    },
+                    auth: jwtClient,
+                }
+                // await jwtAuthPromise
+                await drive.permissions.create(permisos).then(async function(ssharet){
+                    // ---- actualizo el nombre de la primera hoja ---
+                    const actualiza = {
+                      spreadsheetId: data.spreadsheetId,
+                      resource: {
+                        requests: [{
+                            addSheet: {
+                              properties: {
+                                title: data.sheet[1]
+                              }
+                            }
+                            },{
+                            updateSheetProperties: {
+                                properties: {
+                                    title: data.sheet[0],
+                                    sheetId: 0
+                                },
+                                    fields: "title"
+                                }
+                            }
+                        ]
+                      },
+                      auth: jwtClient,
+                    }
+                    await sheets.spreadsheets.batchUpdate(actualiza).then(async function(newsheetName){
+                        const update = {
+                            auth: jwtClient,
+                            spreadsheetId: data.spreadsheetId,
+                            resource: {
+                              valueInputOption: 'RAW',
+                              data: [
+                                {
+                                  range: data.range[0],
+                                  values: data.values
+                                },
+                                {
+                                    range: data.range[1],
+                                    values: data.detallado
+                                },
+                              ]
+                            }
+                        }
+                        sheets.spreadsheets.values.batchUpdate(update).then(resp=>{
+                            const respuesta = {create:ssharet.data, batchUpdate:newsheetName.data, update:resp.data};
+                            console.log(respuesta);
+                            return {create:ss.data}
+                        }).catch((error) => {
+                            console.error("No se pudo escribir en el rango: ",data.range," del documento de Id ",data.spreadsheetId);
+                            throw new functions.https.HttpsError('internal', error.message);
+                        });
+                    }).catch((error) => {
+                        console.error("No se pudo renombrar la hoja en el documento de Id ",data.spreadsheetId);
+                        throw new functions.https.HttpsError('internal', error.message);
+                    });
+                }).catch((error) => {
+                    console.error("No se pudo establecer permisos accseso en el documento de Id ",data.spreadsheetId);
+                    throw new functions.https.HttpsError('internal', error.message);
+                }); 
+            }, 500, data)
+            return ss.data
+            // ----------------------------
+        }).catch((error) => {
+            console.error("No se crear el documento");
+            throw new functions.https.HttpsError('internal', error.message);
+        }); */
+    });
+
+    /* async function CreateSheet(data:any){
+        const request = {
+            resource: {
+                properties: {
+                    title: "Resumen de "+ data.titulo +" "+ Date.now()
+                }
+            },
+            auth: jwtClient,
+        };
+        await jwtAuthPromise
+        await sheets.spreadsheets.create(request).then(async function(ss){
+            // --- Drive Api --------------
+                const fileId = ss.data.spreadsheetId;
+                const permisos = {
+                    fileId: fileId,
+                    fields: "id",
+                    resource: {
+                        role: "writer",
+                        type: "user",
+                        emailAddress: "inventarios@denzilescolar.edu.co"
+                    }
+                }
+                await drive.permissions.create(permisos).then(async function(ssharet){
+                    const respuesta = [ssharet.data, ss.data]
+                    console.log(respuesta);
+                    return Promise.resolve(respuesta);
+                }) 
+            // ----------------------------
+            return
+        })
+    } */
+    /* async function UpdateSheet(data:any){
+        console.log('entro a update:',data)
+        const fileId = data.spreadsheetId;
+        const permisos = {
+            fileId: fileId,
+            fields: "id",
+            resource: {
+                role: "writer",
+                type: "user",
+                emailAddress: "inventarios@denzilescolar.edu.co"
+            },
+            auth: jwtClient,
+        }
+        await jwtAuthPromise
+        await drive.permissions.create(permisos).then(async function(ssharet){
+            // ---- actualizo el nombre de la primera hoja ---
+            const actualiza = {
+              spreadsheetId: data.spreadsheetId,
+              resource: {
+                requests: [{
+                    updateSheetProperties: {
+                        properties: {
+                            title: data.sheet,
+                            sheetId: 0
+                        },
+                            fields: "title"
+                        }
+                    }]
+                },
+                auth: jwtClient,
+            }
+            await sheets.spreadsheets.batchUpdate(actualiza).then(async function(newsheetName){
+                sheets.spreadsheets.values.update({
+                    auth: jwtClient,
+                    spreadsheetId: data.spreadsheetId,
+                    range: data.range,  // update this range of cells
+                    valueInputOption: 'RAW',
+                    requestBody: { values: data.values }
+                }).then(resp=>{
+                    const respuesta = {create:ssharet.data, batchUpdate:newsheetName.data, update:resp.data};
+                    console.log(respuesta);
+                    return respuesta
+                }).catch((error) => {
+                    console.error("No se pudo escribir en el rango: ",data.range," del documento de Id ",data.spreadsheetId);
+                    throw new functions.https.HttpsError('internal', error.message);
+                });
+            }).catch((error) => {
+                console.error("No se pudo renombrar la hoja en el documento de Id ",data.spreadsheetId);
+                throw new functions.https.HttpsError('internal', error.message);
+            });
+        }).catch((error) => {
+            console.error("No se pudo establecer permisos accseso en el documento de Id ",data.spreadsheetId);
+            throw new functions.https.HttpsError('internal', error.message);
+        }); 
+    } */
 // ---- Creo las etiquetas de cada articulo de la base de datos --------------------
     export const createLabels = functions.https.onCall(async (data, context) => {
         // const etiqueta = await createLabel(data)
@@ -185,27 +454,27 @@ type Scores = { string: number }
     async function createLabel(data:any){
         inventario['folders'] = [];
         const MainFolder = '1S18NFap--79w8yVG_XxCuyVPupBpyDq-';
-        await ref.child('folders').once('value')
+        return await ref.child('folders').once('value')
         .then(async folders => {
             if (folders.exists()){
                 inventario['folders'] = folders.val();
             }
             console.log('Objeto inventarios: ',inventario)
-            if(typeof inventario['folders'][data.sede] === 'undefined'){
-                await consultaFolder(data.sede,MainFolder,data.sede)
-                console.log('sede:', inventario['folders'][data.sede])
+            if(typeof inventario['folders'][data.sede.nombre] === 'undefined'){
+                await consultaFolder(data.sede.nombre,MainFolder,data.sede.nombre)
+                console.log('sede:', inventario['folders'][data.sede.nombre])
             }
-            let pathUbicacion = data.sede+' - '+data.ubicacion;
+            const pathUbicacion = data.sede.nombre+' - '+data.ubicacion.nombre;
             if(typeof inventario['folders'][pathUbicacion] === 'undefined'){
-                await consultaFolder(data.ubicacion,inventario['folders'][data.sede],pathUbicacion)
+                await consultaFolder(data.ubicacion.nombre,inventario['folders'][data.sede.nombre],pathUbicacion)
                 console.log('ubicacion:',pathUbicacion,inventario['folders'][pathUbicacion] )
             }
-            let pathSubUbicacion = data.sede+' - '+data.ubicacion+' - '+data.subUbicacion;
+            const pathSubUbicacion = data.sede.nombre+' - '+data.ubicacion.nombre+' - '+data.subUbicacion.nombre;
             if(typeof inventario['folders'][pathSubUbicacion] === 'undefined'){
-                await consultaFolder(data.subUbicacion,inventario['folders'][pathUbicacion],pathSubUbicacion)
+                await consultaFolder(data.subUbicacion.nombre,inventario['folders'][pathUbicacion],pathSubUbicacion)
                 console.log('subUbicacion:',pathSubUbicacion, inventario['folders'][pathSubUbicacion])
             }
-            return creaEtiqueta(data,inventario['folders'][pathSubUbicacion])
+            return await creaEtiqueta(data,inventario['folders'][pathSubUbicacion])
         }).catch(function (error) {
             console.log("Error foldersRef:", error);
             return error;
@@ -221,13 +490,13 @@ type Scores = { string: number }
                 mimeType: 'application/vnd.google-apps.folder'
             }
         }
-        await drive.files.create(createParameters)
+        return await drive.files.create(createParameters)
         .then(async function(FolderResponse) {
             await ref.child('folders').child(path).set(FolderResponse.data.id)
             .then(function(FolderSetResponse) {return})
             inventario['folders'][path] = FolderResponse.data.id
             console.log('Folder '+nombre+' Creado, su Id: ', FolderResponse.data.id, inventario['folders'][path]);
-            return
+            return FolderResponse.data
         })
         .catch(function(creaFolderError) {
             console.error('Crea Folder Error: ',creaFolderError)
@@ -236,7 +505,7 @@ type Scores = { string: number }
     }
     async function consultaFolder(nombre:string,parent:string,path:string){
         console.log('Consulta Folder: ',nombre)
-        await drive.files.list({
+        return await drive.files.list({
             orderBy: "name",
             q: "name = '"+nombre+"' and '"+parent+"' in parents and mimeType = 'application/vnd.google-apps.folder'"
         })
@@ -247,10 +516,9 @@ type Scores = { string: number }
                 .then(function(FolderSetResponse) {return})
                 inventario['folders'][path] = consultaFolderResponse.data.files[0].id;
                 console.log("Existe "+nombre+" Folder Id: ", consultaFolderResponse.data.files[0].id,inventario['folders'][path]);
-                return
+                return consultaFolderResponse.data
             }else{
-                await creaFolder(nombre,parent,path)
-                return
+                return await creaFolder(nombre,parent,path)
             }
         })
         .catch(function(consultaFolderError) {
@@ -278,15 +546,23 @@ type Scores = { string: number }
             fileId: TemplateId,
             resource: {
                 parents: [folder],
-                name: data['titulo']
+                name: data.nombre+' - '+data.sede.nombre+' - '+data.ubicacion.nombre+' - '+data.subUbicacion.nombre
             }
         }
-        await drive.files.copy(copyParameters).then(async function(slideCopy){
+        return await drive.files.copy(copyParameters).then(async function(slideCopy){
             const presentationId  = slideCopy.data.id
             const dataReplace = {
                 presentationId: presentationId,
                 resource: {
                     requests: [
+                        {
+                            createImage: {
+                              url: data['qrUrl'],
+                              elementProperties: {
+                                pageObjectId: "SLIDES_API337207410_0"
+                              }
+                            }
+                        },
                         {
                             replaceAllText: {
                                 containsText: {
@@ -298,9 +574,9 @@ type Scores = { string: number }
                         {
                             replaceAllText: {
                                 containsText: {
-                                    text: '<fila>'
+                                    text: '<fecha>'
                                 },
-                                replaceText: data['fila']
+                                replaceText: data['fecha']
                             }
                         },
                         {
@@ -308,7 +584,7 @@ type Scores = { string: number }
                                 containsText: {
                                     text: '<sede>'
                                 },
-                                replaceText: data['sede']
+                                replaceText: data['sede'].nombre
                             }
                         },
                         {
@@ -316,7 +592,7 @@ type Scores = { string: number }
                                 containsText: {
                                     text: '<ubicacion>'
                                 },
-                                replaceText: data['ubicacion']
+                                replaceText: data['ubicacion'].nombre
                             }
                         },
                         {
@@ -324,7 +600,7 @@ type Scores = { string: number }
                                 containsText: {
                                     text: '<sub-ubicacion>'
                                 },
-                                replaceText: data['subUbicacion']
+                                replaceText: data['subUbicacion'].nombre
                             }
                         },
                         {
@@ -338,12 +614,18 @@ type Scores = { string: number }
                     ]
                 }
             };
-            await slides.presentations.batchUpdate(dataReplace).then(async function(slideLabel){
-                const respuesta = [slideCopy.data,slideLabel.data];
+            return await slides.presentations.batchUpdate(dataReplace).then(async function(slideLabel){
+                const respuesta = {etiqueta:slideCopy.data,update:slideLabel.data}
                 console.log(respuesta)
                 return respuesta
+            }).catch(function (error) {
+                console.log("Error update slide:", error);
+                return error;
             });
-        })
+        }).catch(function (error) {
+            console.log("Error copy template:", error);
+            return error;
+        });
     }
 // ---- Sedes ----------------------------------------------------------------------
     export const Editsedes = functions.https.onCall(async (data, context) => {

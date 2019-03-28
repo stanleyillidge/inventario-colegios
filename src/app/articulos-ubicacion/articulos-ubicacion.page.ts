@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NavController, AlertController, Platform } from '@ionic/angular';
+import { NavController, AlertController, Platform, LoadingController } from '@ionic/angular';
 import * as firebase from 'firebase/app';
 import { Http } from '@angular/http';
 
@@ -17,12 +17,14 @@ export class ArticulosUbicacionPage implements OnInit {
   ubicacion:any={};
   SubUbicacion:any={};
   titulo;
+  contadorTotal:any;
   constructor(
     public plataforma: Platform,
     public route: ActivatedRoute,
     public router: Router,
     public navCtrl: NavController,
     public alertController: AlertController,
+    public loadingController: LoadingController,
     private http: Http
   ) {
     let este = this
@@ -169,11 +171,15 @@ export class ArticulosUbicacionPage implements OnInit {
         tipo: tipo[i]
       });
     } */
+
     firebase.database().ref('articulos').on('value', function(articulosnapshot) {
+      console.log('Entro en articulo-ubicacion a: firebase.database().ref(articulos)')
       este.articulos = []
       let art = {}
+      este.contadorTotal = 0;
       articulosnapshot.forEach(articulo => {
         // console.log(articulo.val())
+        este.contadorTotal += articulo.val().cantidad
         art = articulo.val();
         art['key'] = articulo.key;
         este.articulos.push(art)
@@ -217,7 +223,7 @@ export class ArticulosUbicacionPage implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Edit Cancel');
+            console.log('Edit Cancel',articulo.nombre,articulo.key);
           }
         }, {
           text: 'Ok',
@@ -226,6 +232,7 @@ export class ArticulosUbicacionPage implements OnInit {
             console.log(index)
             firebase.database().ref('articulos/'+articulo.key+'/nombre').set(d.articulo)
             // this.articulos[index]=d.articulo
+            this.actualizaInventario(d.articulo,articulo.nombre)
             console.log('Edit Ok',this.articulos);
           }
         }
@@ -288,13 +295,38 @@ export class ArticulosUbicacionPage implements OnInit {
             firebase.database().ref('articulos/'+articulo.key).remove()
             // this.articulos.splice(index, 1);
             // this.articulost = this.articulos;
-            console.log('Eliminar Okay');
+            console.log('Eliminar Okay',articulo.nombre,articulo.key);
           }
         }
       ]
     });
 
     await alert.present();
+  }
+  async actualizaInventario(newNombre:any,oldNombre:any){
+    const loading = await this.loadingController.create({
+      message: 'Actualizando inventario general'
+    });
+    await loading.present();
+    firebase.database().ref('inventario').once('value',async subUbicaciones=>{
+      await subUbicaciones.forEach(subUbicacion=>{
+        firebase.database().ref('inventario').child(subUbicacion.key).orderByChild("nombre").equalTo(oldNombre).once('value',lista=>{
+          lista.forEach(ingreso=>{
+            firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+            .child('nombre').set(newNombre)
+            firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+            .child('articulo/nombre').set(newNombre)
+          })
+          // lista.forEach(function wrapper(){async ingreso => {
+          //   await firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+          //   .child('nombre').set(newNombre)
+          //   await firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+          //   .child('articulo/nombre').set(newNombre)
+          // }})
+          loading.dismiss()
+        })
+      })
+    });
   }
   ngOnInit() {
   }

@@ -23,15 +23,30 @@ import { SocialSharing } from "@ionic-native/social-sharing/ngx"
 import { ImageResizer } from '@ionic-native/image-resizer/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
+
+// export const config = {
+//   production: true,
+//   firebase: {
+//     apiKey: "AIzaSyBRVj7CN2SNw0MpZ09nm9YikAVnIsa-_ZA",
+//     authDomain: "inventario-denzil-escolar.firebaseapp.com",
+//     databaseURL: "https://inventario-denzil-escolar.firebaseio.com",
+//     projectId: "inventario-denzil-escolar",
+//     storageBucket: "inventario-denzil-escolar.appspot.com",
+//     messagingSenderId: "734631097460"
+//   }
+// };
+// --- Base de Datos de pruebas -------------------------------------
 export const config = {
   production: true,
   firebase: {
-    apiKey: "AIzaSyBRVj7CN2SNw0MpZ09nm9YikAVnIsa-_ZA",
-    authDomain: "inventario-denzil-escolar.firebaseapp.com",
-    databaseURL: "https://inventario-denzil-escolar.firebaseio.com",
-    projectId: "inventario-denzil-escolar",
-    storageBucket: "inventario-denzil-escolar.appspot.com",
-    messagingSenderId: "734631097460"
+    apiKey: "AIzaSyDjGDQWprrwXXockp2pJRHTzf4JBBIaS-M",
+    authDomain: "inventario-denzil-develop.firebaseapp.com",
+    databaseURL: "https://inventario-denzil-develop.firebaseio.com",
+    projectId: "inventario-denzil-develop",
+    storageBucket: "inventario-denzil-develop.appspot.com",
+    messagingSenderId: "600023016657"
   }
 };
 firebase.initializeApp(config.firebase);
@@ -57,7 +72,9 @@ firebase.initializeApp(config.firebase);
     File,
     SocialSharing,
     ImageResizer,
-    Camera
+    Camera,
+    GooglePlus,
+    NativeStorage
   ],
   bootstrap: [AppComponent]
 })

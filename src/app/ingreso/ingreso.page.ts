@@ -282,8 +282,10 @@ export class IngresoPage implements OnInit {
             este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
             let data = {
               imagen: url,
+              fecha: new Date().toLocaleDateString(),
               nombreImagen: nombreImagen,
               nombre: este.articulo.nombre,
+              articulo: este.articulo,
               cantidad: 1,
               disponibilidad: este.newIngresoForm.value.disponibilidad,
               estado: este.newIngresoForm.value.estado,
@@ -303,27 +305,56 @@ export class IngresoPage implements OnInit {
             console.log('ojo entro!',data);
             este.Path = url;
             firebase.database().ref('inventario/'+este.SubUbicacion.key).push(data).then(()=>{
-              este.cantidad += 1;
-              firebase.database().ref('subUbicaciones').child(este.ubicacion.key).child(este.SubUbicacion.key).child('cantidad').set( este.cantidad )
-              loading.dismiss()
-              este.articulo['nombre'] = este.route.snapshot.paramMap.get('articuloNombre')
-              este.articulo['key'] = este.route.snapshot.paramMap.get('articulokey')
-              este.SubUbicacion['nombre'] = este.route.snapshot.paramMap.get('SubUbicacionNombre')
-              este.SubUbicacion['key'] = este.route.snapshot.paramMap.get('SubUbicacionkey')
-              este.ubicacion['nombre'] = este.route.snapshot.paramMap.get('ubicacionNombre')
-              este.ubicacion['key'] = este.route.snapshot.paramMap.get('ubicacionkey')
-              este.sede['nombre'] = este.route.snapshot.paramMap.get('sedeNombre')
-              este.sede['key'] = este.route.snapshot.paramMap.get('sedekey')
-              este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
-              este.navCtrl.navigateBack(['inventario-sububicacion',{ 
-                articuloNombre: este.articulo.nombre,
-                articulokey: este.articulo.key,
-                SubUbicacionNombre: este.SubUbicacion.nombre,
-                SubUbicacionkey: este.SubUbicacion.key,
-                ubicacionNombre: este.ubicacion.nombre,
-                ubicacionkey: este.ubicacion.key,
-                sede: este.sede
-              }]);
+              // este.cantidad += 1;
+              // firebase.database().ref('subUbicaciones').child(este.ubicacion.key).child(este.SubUbicacion.key).child('cantidad').set( este.cantidad )
+              firebase.database().ref('articulos').child(este.articulo.key).once('value',art=>{
+                let can = art.val().cantidad + 1
+                firebase.database().ref('articulos').child(este.articulo.key)
+                .child('cantidad').set(can)
+              }).then(are=>{
+                loading.dismiss()
+                este.articulo['nombre'] = este.route.snapshot.paramMap.get('articuloNombre')
+                este.articulo['key'] = este.route.snapshot.paramMap.get('articulokey')
+                este.SubUbicacion['nombre'] = este.route.snapshot.paramMap.get('SubUbicacionNombre')
+                este.SubUbicacion['key'] = este.route.snapshot.paramMap.get('SubUbicacionkey')
+                este.ubicacion['nombre'] = este.route.snapshot.paramMap.get('ubicacionNombre')
+                este.ubicacion['key'] = este.route.snapshot.paramMap.get('ubicacionkey')
+                este.sede['nombre'] = este.route.snapshot.paramMap.get('sedeNombre')
+                este.sede['key'] = este.route.snapshot.paramMap.get('sedekey')
+                este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
+                este.navCtrl.navigateBack(['inventario-sububicacion',{ 
+                  articuloNombre: este.articulo.nombre,
+                  articulokey: este.articulo.key,
+                  SubUbicacionNombre: este.SubUbicacion.nombre,
+                  SubUbicacionkey: este.SubUbicacion.key,
+                  ubicacionNombre: este.ubicacion.nombre,
+                  ubicacionkey: este.ubicacion.key,
+                  sedeNombre: este.sede.nombre,
+                  sedekey: este.sede.key
+                }]);
+                /* firebase.database().ref('subUbicaciones')
+                .child(este.ubicacion.key).child(este.SubUbicacion.key).once('value',a0=>{
+                  let b = a0.val().cantidad + 1;
+                  firebase.database().ref('subUbicaciones')
+                  .child(este.ubicacion.key).child(este.SubUbicacion.key).child('cantidad').set(b)
+                }).then(ar=>{
+                  firebase.database().ref('ubicaciones')
+                  .child(este.sede.key).child(este.ubicacion.key).once('value',a1=>{
+                    let b = a1.val().cantidad + 1;
+                    firebase.database().ref('ubicaciones')
+                    .child(este.sede.key).child(este.ubicacion.key).child('cantidad').set(b)
+                  }).then(a1r=>{
+                    firebase.database().ref('sedes')
+                    .child(este.sede.key).once('value',a2=>{
+                      let b = a2.val().cantidad + 1;
+                      firebase.database().ref('sedes')
+                      .child(este.sede.key).child('cantidad').set(b)
+                    }).then(a2r=>{
+                      
+                    })
+                  })
+                }) */
+              })
             })
           }).catch(function(error) {
       

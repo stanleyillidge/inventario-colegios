@@ -24,6 +24,10 @@ export class HomePage {
   dataBase:any = [];
   cantidad: number;
   urls: any;
+  ruta:any = {};
+  articulos: any;
+  newData: any;
+  actualizaCantidad:any;
   constructor(
     private barcodeScanner: BarcodeScanner,
     private http: Http,
@@ -34,13 +38,361 @@ export class HomePage {
     private loadingController: LoadingController
   ) { 
     let este = this;
-    this.http.get('../../assets/data/data.json').subscribe(data => {
-      this.json = JSON.parse(data.text());
-    },err => console.log(err));
+    // this.http.get('../../assets/data/inventario-denzil-develop-export.json').subscribe(data => {
+    //   this.newData = JSON.parse(data.text());
+    // },err => console.log(err));
 
-    this.http.get('../../assets/data/inventario-denzil-escolar-export.json').subscribe(data => {
-      this.dataBase = JSON.parse(data.text());
-    },err => console.log(err));
+    // this.http.get('../../assets/data/dataBase.json').subscribe(data => {
+    //   this.dataBase = JSON.parse(data.text());
+    // },err => console.log(err));
+
+    firebase.database().ref('sedes').once('value',async sedes=>{
+      este.ruta = sedes.val();
+    })
+    firebase.database().ref('ubicaciones').once('value',async ubicaciones=>{
+      este.ruta['ubicaciones']={}
+      este.ruta['subUbicaciones']={}
+      await ubicaciones.forEach(sede=>{
+        este.ruta[sede.key]['ubicaciones']=sede.val();
+        firebase.database().ref('subUbicaciones').once('value',async subUbicaciones=>{
+          await subUbicaciones.forEach(ubicacion=>{
+            este.ruta['ubicaciones'][ubicacion.key]={}
+            este.ruta['ubicaciones'][ubicacion.key] = ubicacion.val();
+            este.ruta['ubicaciones'][ubicacion.key]['sede'] ={
+              key:sede.key,
+              nombre:este.ruta[sede.key].nombre
+            }
+            if(este.ruta[sede.key]['ubicaciones'][ubicacion.key]){
+              este.ruta[sede.key]['ubicaciones'][ubicacion.key]['subUbicaciones']=ubicacion.val();
+            }
+            ubicacion.forEach(subUbicacion=>{
+              // console.log(este.ruta[sede.key].nombre)
+              if(este.ruta[sede.key]['ubicaciones'][ubicacion.key] && este.ruta[sede.key]){
+                este.ruta['subUbicaciones'][subUbicacion.key]={
+                  nombre:subUbicacion.val().nombre,
+                  sede:{
+                    key:sede.key,
+                    nombre:este.ruta[sede.key].nombre
+                  },
+                  ubicacion:{
+                    key:ubicacion.key,
+                    nombre:este.ruta[sede.key]['ubicaciones'][ubicacion.key].nombre
+                  }
+                }
+              }
+            })
+          })
+        })
+      })
+    })
+    firebase.database().ref('articulos').once('value',articulos=>{
+      este.ruta['articulos'] = {};
+      este.ruta['articulos'] = articulos.val();
+      articulos.forEach(articulo=>{
+        // let n = String(articulo.val().nombre).toUpperCase()
+        este.ruta['articulos'][String(articulo.val().nombre).toUpperCase()] = {
+          nombre: articulo.val().nombre,
+          key: articulo.key
+        };
+      })
+    })
+    console.log('Rutas',este.ruta)
+  }
+  NewContador(){
+    let este = this;
+    let conta = 0
+    let bueno = 0
+    let malo = 0
+    let regular = 0
+    firebase.database().ref('articulos').once('value', async articulos =>{
+      await articulos.forEach(articulo=>{
+        firebase.database().ref('inventario').orderByChild("articulo").equalTo(articulo.key).once('value', function(QueryArticulosSnapshot) {
+          // actualizo el contado del articulo
+          conta += QueryArticulosSnapshot.numChildren();
+          QueryArticulosSnapshot.forEach(qa=>{
+            switch (qa.val().estado) {
+              case 'Bueno':
+                  if(qa.child('buenos').exists()){
+                    bueno = qa.val().buenos + 1;
+                  }else{
+                    bueno = 1;
+                  }
+                  firebase.database().ref('articulos').child(qa.key).update({
+                    cantidad:QueryArticulosSnapshot.numChildren(),
+                    buenos: bueno,
+                  }).then(r=>{
+                    console.log(conta)
+                    console.log(qa.val())
+                  })
+                break;
+              case 'Malo':
+                  if(qa.child('malos').exists()){
+                    malo = qa.val().malos + 1;
+                  }else{
+                    malo = 1;
+                  }
+                  firebase.database().ref('articulos').child(qa.key).update({
+                    cantidad:QueryArticulosSnapshot.numChildren(),
+                    malos: malo,
+                  }).then(r=>{
+                    console.log(conta)
+                    console.log(qa.val())
+                  })
+              break;
+              case 'Regular':
+                  if(qa.child('regulares').exists()){
+                    regular = qa.val().regulares + 1;
+                  }else{
+                    regular = 1;
+                  }
+                  firebase.database().ref('articulos').child(qa.key).update({
+                    cantidad:QueryArticulosSnapshot.numChildren(),
+                    regulares: regular
+                  }).then(r=>{
+                    console.log(conta)
+                    console.log(qa.val())
+                  })
+              break;
+              default:
+                break;
+            }
+          })
+          // console.log('Actualizado',articulo.val().nombre,' cantidad: ',QueryArticulosSnapshot.numChildren())
+        });
+      })
+    })
+    /* firebase.database().ref('inventario').orderByChild("estado").equalTo('Bueno').on('value', function(BuenoSnapshot) {
+      este.inventario['buenos'] = BuenoSnapshot.numChildren();
+      // console.log('b',este.inventario)
+    });
+    firebase.database().ref('inventario').orderByChild("estado").equalTo('Malo').on('value', function(MaloSnapshot) {
+      este.inventario['malos'] = MaloSnapshot.numChildren();
+      // console.log('m',este.inventario)
+    });
+    firebase.database().ref('inventario').orderByChild("estado").equalTo('Regular').on('value', function(RegularSnapshot) {
+      este.inventario['regulares'] = RegularSnapshot.numChildren();
+      // console.log('r',este.inventario)
+    }); */
+  }
+  ReordenaDatabase(){
+    let este = this;
+    this.newData = {};
+    este.newData['ubicaciones'] = {};
+    este.newData['subUbicaciones'] = {};
+    este.newData['inventario'] = {};
+    for(let sedekey in this.dataBase['sedes']){
+      este.newData['ubicaciones'] = Object.assign(este.newData['ubicaciones'],this.dataBase['ubicaciones'][sedekey])
+      for(let ubicacionkey in this.dataBase['ubicaciones'][sedekey]){
+        este.newData['subUbicaciones'] = Object.assign(este.newData['subUbicaciones'],this.dataBase['subUbicaciones'][ubicacionkey])
+        este.newData['ubicaciones'][ubicacionkey]['sede'] = sedekey
+        for(let subUbicacionkey in this.dataBase['subUbicaciones'][ubicacionkey]){
+          este.newData['subUbicaciones'][subUbicacionkey]['sede'] = sedekey
+          este.newData['subUbicaciones'][subUbicacionkey]['ubicacion'] = ubicacionkey
+        }
+      }
+    }
+    for(let subkey in this.dataBase['inventario']){
+      este.newData['inventario'] = Object.assign(este.newData['inventario'],this.dataBase['inventario'][subkey])
+      for(let invkey in this.dataBase['inventario'][subkey]){
+        este.newData['inventario'][invkey]['sede'] = this.dataBase['inventario'][subkey][invkey]['sede'].key
+        este.newData['inventario'][invkey]['ubicacion'] = this.dataBase['inventario'][subkey][invkey]['ubicacion'].key
+        este.newData['inventario'][invkey]['subUbicacion'] = subkey
+        este.newData['inventario'][invkey]['articulo'] = this.dataBase['inventario'][subkey][invkey]['articulo'].key
+      }
+    }
+    firebase.database().ref().update(este.newData)
+    console.log('Rutas',este.newData)
+  }
+  cargaDataVistaFontral(){
+    let este = this;
+    let inventarioRef = firebase.database().ref('inventario')
+    este.inventario['articulos'] = {};
+    este.inventario['articulos']['total'] = {cantidad:0,articulosObj:{},articulosArray:[]};
+    este.inventario['articulos']['buenos'] = {cantidad:0,articulosObj:{},articulosArray:[]};
+    este.inventario['articulos']['malos'] = {cantidad:0,articulosObj:{},articulosArray:[]};
+    este.inventario['articulos']['regulares'] = {cantidad:0,articulosObj:{},articulosArray:[]};
+    let carga = async function(subUbicaciones:any) {
+      let ubi = {};
+      await subUbicaciones.forEach(subUbicacion => {
+        console.log('Entro en home a: firebase.database().ref(inventario)')
+        firebase.database().ref('inventario/'+subUbicacion.key).orderByChild("estado").equalTo('Bueno').on('value', function(BuenoSnapshot) {
+          console.log('Entro en home a: firebase.database().ref(inventario/+subUbicacion.key).orderByChild("estado").equalTo(Bueno)')
+          este.inventario['articulos']['buenos']['cantidad'] += BuenoSnapshot.numChildren();
+          este.inventario['articulos']['total']['cantidad'] += BuenoSnapshot.numChildren();
+          // este.inventario['articulos']['buenos']['articulosObj'] = Object.assign(este.inventario['articulos']['buenos']['articulosObj'], BuenoSnapshot.val());
+          // este.inventario['articulos']['total']['articulosObj'] = Object.assign(este.inventario['articulos']['total']['articulosObj'], BuenoSnapshot.val());
+          // BuenoSnapshot.forEach(data=>{
+          //   let artdata = {};
+          //   artdata = data.val();
+          //   artdata['key'] = data.key
+          //   este.inventario['articulos']['buenos']['articulosArray'].push(artdata)            
+          // })
+          // console.log('b',este.inventario)
+        });
+        firebase.database().ref('inventario/'+subUbicacion.key).orderByChild("estado").equalTo('Malo').on('value', function(MaloSnapshot) {
+          console.log('Entro en home a: firebase.database().ref(inventario/+subUbicacion.key).orderByChild("estado").equalTo(Malo)')
+          este.inventario['articulos']['malos']['cantidad'] += MaloSnapshot.numChildren();
+          este.inventario['articulos']['total']['cantidad'] += MaloSnapshot.numChildren();
+          este.inventario['articulos']['malos']['articulosObj'] = Object.assign(este.inventario['articulos']['malos']['articulosObj'], MaloSnapshot.val());
+          MaloSnapshot.forEach(data=>{
+            let artdata = {};
+            artdata = data.val();
+            artdata['key'] = data.key
+            este.inventario['articulos']['malos']['articulosArray'].push(artdata)            
+          })
+          // console.log('m',este.inventario)
+        });
+        firebase.database().ref('inventario/'+subUbicacion.key).orderByChild("estado").equalTo('Regular').on('value', function(RegularSnapshot) {
+          console.log('Entro en home a: firebase.database().ref(inventario/+subUbicacion.key).orderByChild("estado").equalTo(Regular)')
+          este.inventario['articulos']['regulares']['cantidad'] += RegularSnapshot.numChildren();
+          este.inventario['articulos']['total']['cantidad'] += RegularSnapshot.numChildren();
+          este.inventario['articulos']['regulares']['articulosObj'] = Object.assign(este.inventario['articulos']['regulares']['articulosObj'], RegularSnapshot.val());
+          RegularSnapshot.forEach(data=>{
+            let artdata = {};
+            artdata = data.val();
+            artdata['key'] = data.key
+            este.inventario['articulos']['regulares']['articulosArray'].push(artdata)            
+          })
+          // console.log('r',este.inventario)
+        });
+      })
+    }
+    inventarioRef.on('value', carga);
+    console.log('Inventario: ',este.inventario)
+  }
+  async resumenes(subUbicacionId){
+    let este = this;
+    let art = {}
+    await firebase.database().ref('inventario/'+subUbicacionId).once('value',articulos=>{
+      articulos.forEach(articulo => {
+        // console.log(articulo.val())
+        art = articulo.val();
+        art['key'] = articulo.key;
+        este.articulos.push(art)
+      });
+      let artUnicos = este.articulos.map(item => item.nombre).filter((value, index, self) => self.indexOf(value) === index)
+      // console.log(artUnicos);
+      este.inventario['articulos unicos'] = [];
+      este.inventario['articulos'] = este.articulos;
+      for(let art in artUnicos){
+        este.inventario['articulos unicos'][art] = {
+          nombre: artUnicos[art],
+          cantidad:0,
+          bueno:0,
+          malo:0,
+          regular:0
+        }
+        este.inventario['articulos unicos'][art].articulos = [];
+        for(let i in este.articulos){
+          if(este.articulos[i].nombre == artUnicos[art]){
+            este.inventario['articulos unicos'][art]['cantidad'] += 1;
+            este.inventario['articulos unicos'][art].articulos.push(este.articulos[i])
+            switch (este.articulos[i].estado) {
+              case 'Bueno':
+                este.inventario['articulos unicos'][art]['bueno'] += 1
+                break;
+              case 'Regular':
+                este.inventario['articulos unicos'][art]['regular'] += 1
+                break;
+              case 'Malo':
+                este.inventario['articulos unicos'][art]['malo'] += 1
+                break;
+              default:
+                break;
+            }
+          }
+        }
+      }
+      este.inventario['articulos unicos temp'] = este.inventario['articulos unicos']
+      firebase.database().ref('resumenes/'+subUbicacionId).set(este.inventario['articulos unicos'])
+      console.log(este.inventario['articulos unicos'])
+    })
+  }
+  corregir(){
+    let este = this;
+    let error = {}
+    error["TV"]={
+      corregir: "Televisor"
+    };
+    error["Pupitre con espaldar y brazo en MADERA, con estructura en ANGULO metalico"]={
+      corregir: "Pupitre con espaldar y brazo en MADERA, con estructura en ANGULO metalico"
+    };
+    error["Kit silla y mesa pequeña con superficie, espaldar plástico con estructura en tubo metalico"]={
+      corregir: "Kit silla y mesa pequeña con superficie, espaldar PLASTICO con estructura en TUBO metalico"
+    };
+    error["Gabinete Metálico Aéreo"]={
+      corregir: "Gabinete Metálico Aéreo"
+    };
+    error["Lampara incandescente de alta potencia"]={
+      corregir: "Lampara incandescente de alta potencia"
+    };
+    error["Silla plástica con descansa brazo"]={
+      corregir: "Silla plastica con descansa brazo"
+    };
+    error["Silla plastica con descansa brazo"]={
+      corregir: "Silla plastica con descansa brazo"
+    };
+    error["Gabinete"]={
+      corregir: "Gabinete"
+    };
+    error["Silla PLASTICA PEQUEÑA sin descansa brazo"]={
+      corregir: "Silla PLASTICA PEQUEÑA con descansa brazo"
+    };
+    error["Mesa metálica pequeña "] = {
+      corregir: "Mesa metálica pequeña"
+    }
+    error["Parlantes multimedia "] = {
+      corregir: "Parlantes multimedia"
+    }
+    error["Bombilla de 100 voltios "] = {
+      corregir: "Bombilla de 100 voltios"
+    }
+    error["Estufa a gas de dos fogones "] = {
+      corregir: "Estufa a gas de dos fogones"
+    }
+    error["Gabinete Metálico Aéreo "] = {
+      corregir: "Gabinete Metálico Aéreo"
+    }
+    error["Mesa de computador "] = {
+      corregir: "Mesa de computador"
+    }
+    console.log('error',error)
+    este.ruta['articulos con nombre errado'] = [];
+    firebase.database().ref('inventario').once('value',async subUbicaciones=>{
+      await subUbicaciones.forEach(subUbicacion=>{
+        subUbicacion.forEach(ingreso=>{
+          firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+          .child('sede').set(este.ruta['subUbicaciones'][subUbicacion.key].sede).then(async r=>{
+            await firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+            .child('ubicacion').set(este.ruta['subUbicaciones'][subUbicacion.key].ubicacion).then(async r=>{
+              await firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+              .child('subUbicacion').set({
+                nombre: este.ruta['subUbicaciones'][subUbicacion.key].nombre,
+                key: subUbicacion.key
+              }).then(r=>{
+                console.log(ingreso.val())
+              })
+            })
+          })
+
+          if(este.ruta['articulos'][String(ingreso.val().nombre).toUpperCase()]){
+            firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+            .child('articulo').set(este.ruta['articulos'][String(ingreso.val().nombre).toUpperCase()])
+          }else{
+            // ----- si el articulo no existe --------------
+            console.log('error: ',ingreso.val().nombre,este.ruta['articulos'][String(ingreso.val().nombre).toUpperCase()])
+            if(este.ruta['articulos'][String(error[ingreso.val().nombre].corregir).toUpperCase()]){
+              firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+              .child('articulo').set(este.ruta['articulos'][String(error[ingreso.val().nombre].corregir).toUpperCase()]) 
+            }else{
+              este.ruta['articulos con nombre errado'].push(ingreso.val());
+              console.log('articulos con nombre errado',este.ruta['subUbicaciones'][subUbicacion.key],ingreso.val())
+            }
+          }
+        })
+      })
+    })
+    console.log('Rutas Corregidas',este.ruta)
   }
   deleteFCloud(){
     let deleteF = firebase.functions().httpsCallable("deleteF");

@@ -1,0 +1,501 @@
+{
+  "articulos" : {
+    "-L_cXB0-U92noi5HzyKZ" : {
+      "cantidad" : 0,
+      "nombre" : "Abanico de pared",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0C0OXUlAIitA5t" : {
+      "cantidad" : 0,
+      "nombre" : "Abanico de techo",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Ds0zbOggPSol1" : {
+      "cantidad" : 0,
+      "nombre" : "Aire acondicionado split",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Ew_3nmC1QvT05" : {
+      "cantidad" : 0,
+      "nombre" : "Archivador tipo locker",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0FTbBdgTEY0QMR" : {
+      "cantidad" : 0,
+      "nombre" : "Atril",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0FTbBdgTEY0QMS" : {
+      "cantidad" : 0,
+      "nombre" : "Batería sanitaria",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0FTbBdgTEY0QMT" : {
+      "cantidad" : 0,
+      "nombre" : "Camara de seguridad",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0GmLgydH6BGdXP" : {
+      "cantidad" : 0,
+      "nombre" : "Computador de mesa",
+      "tipo" : "Equipos de comunicación y computación"
+    },
+    "-L_cXB0GmLgydH6BGdXQ" : {
+      "cantidad" : 0,
+      "nombre" : "Computador portátil de computadores para educar",
+      "tipo" : "Equipos de comunicación y computación"
+    },
+    "-L_cXB0GmLgydH6BGdXR" : {
+      "cantidad" : 0,
+      "nombre" : "Control remoto para aire acondicionado split",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0GmLgydH6BGdXS" : {
+      "cantidad" : 0,
+      "nombre" : "Dispensador de agua",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0HXtnHp6FlFVfq" : {
+      "cantidad" : 0,
+      "nombre" : "Equipo de Sonido",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0HXtnHp6FlFVfr" : {
+      "cantidad" : 0,
+      "nombre" : "Escaner",
+      "tipo" : "Equipos de comunicación y computación"
+    },
+    "-L_cXB0HXtnHp6FlFVfs" : {
+      "cantidad" : 0,
+      "nombre" : "Escritorio",
+      "tipo" : "Muebles enseres y equipo de oficina"
+    },
+    "-L_cXB0INrUnWvVydb3R" : {
+      "cantidad" : 0,
+      "nombre" : "Estufa a gas de DOS puestos tipo industrial",
+      "tipo" : "Equipo de comedor, cocina, despensa y hotelería"
+    },
+    "-L_cXB0INrUnWvVydb3S" : {
+      "cantidad" : 0,
+      "nombre" : "Estufa a gas de DOS puestos tipo industrial con gabinete",
+      "tipo" : "Equipo de comedor, cocina, despensa y hotelería"
+    },
+    "-L_cXB0JPlNJc1n6Jqy4" : {
+      "cantidad" : 0,
+      "nombre" : "Estufa a gas de TRES puestos tipo industrial",
+      "tipo" : "Equipo de comedor, cocina, despensa y hotelería"
+    },
+    "-L_cXB0JPlNJc1n6Jqy5" : {
+      "cantidad" : 0,
+      "nombre" : "Gabinete aereo modular",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0KPOrIyh2HyfiI" : {
+      "cantidad" : 0,
+      "nombre" : "Gabinete Metálico Aéreo",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0KPOrIyh2HyfiJ" : {
+      "cantidad" : 0,
+      "nombre" : "Gabinete modular metalico de 2 mts",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0LPFhUbUlRRxDs" : {
+      "cantidad" : 0,
+      "nombre" : "Kit contra incendio",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0LPFhUbUlRRxDt" : {
+      "cantidad" : 0,
+      "nombre" : "Kit silla y mesa pequeña con superficie, espaldar PLASTICO con estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0LPFhUbUlRRxDu" : {
+      "cantidad" : 0,
+      "nombre" : "Kit silla y mesa pequeña con superficie, espaldar y brazo PLASTICO con estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0LPFhUbUlRRxDv" : {
+      "cantidad" : 0,
+      "nombre" : "Lámpara",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Mtj0I6uvTFas1" : {
+      "cantidad" : 0,
+      "nombre" : "Lámpara Circular",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Mtj0I6uvTFas2" : {
+      "cantidad" : 0,
+      "nombre" : "Lampara incandescente de alta potencia",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Mtj0I6uvTFas3" : {
+      "cantidad" : 0,
+      "nombre" : "Lavamanos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0NiE3rXCkuWkQn" : {
+      "cantidad" : 0,
+      "nombre" : "Lavaplatos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0NiE3rXCkuWkQo" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de MADERA con BASE metálica",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0OFTaT4O4KMzTV" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de MADERA con BASE metálica PEQUEÑA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0OFTaT4O4KMzTW" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de MADERA de CUATRO puestos PEQUEÑA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0OFTaT4O4KMzTX" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de MADERA de ocho puestos con toma ELECTRICO y BASE METÁLICA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0P_YGY5nDJwulU" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa modular con punto eléctrico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0P_YGY5nDJwulV" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa modular doble de color blanco",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0P_YGY5nDJwulW" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa PEQUEÑA con superficie PLASTICA y estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0QWnMUo6HbIjiJ" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa PEQUEÑA en forma de ROMBO con superficie en MADERA y estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0QWnMUo6HbIjiK" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa plástica color blanco",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0QWnMUo6HbIjiL" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa plastica de cuatro (4) puestos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0QWnMUo6HbIjiM" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa plastica de seis (6) puestos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Rbmo8ku_5vMKY" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa PLASTICA PEQUEÑA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Rbmo8ku_5vMKZ" : {
+      "cantidad" : 0,
+      "nombre" : "Micrófono alambrico",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Rbmo8ku_5vMK_" : {
+      "cantidad" : 0,
+      "nombre" : "Micrófono inalambrico",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0SJm6tm5O7181c" : {
+      "cantidad" : 0,
+      "nombre" : "Parlante de 60W y 8 ohmios",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0SJm6tm5O7181d" : {
+      "cantidad" : 0,
+      "nombre" : "Probeta",
+      "tipo" : "Materiales para educación"
+    },
+    "-L_cXB0SJm6tm5O7181e" : {
+      "cantidad" : 0,
+      "nombre" : "Pupitre con espaldar y brazo en MADERA, con estructura en ANGULO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0SJm6tm5O7181f" : {
+      "cantidad" : 0,
+      "nombre" : "Pupitre con espaldar y brazo PLASTICO, con estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0T-9_FwcSaOblz" : {
+      "cantidad" : 0,
+      "nombre" : "Silla ACOLCHADA en CUERO con estructura de MADERA",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0T-9_FwcSaObm-" : {
+      "cantidad" : 0,
+      "nombre" : "Silla ACOLCHADA en TELA con estructura de TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Vputmz_6h0BoR" : {
+      "cantidad" : 0,
+      "nombre" : "Silla con espaldar PLASTICO y con estructura de TUBO metálico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Vputmz_6h0BoS" : {
+      "cantidad" : 0,
+      "nombre" : "Silla con espaldar PLASTICO y con estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0WdtiWMNSZuTsb" : {
+      "cantidad" : 0,
+      "nombre" : "Silla en MADERA sin descansa brazos",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0WdtiWMNSZuTsc" : {
+      "cantidad" : 0,
+      "nombre" : "Silla PEQUEÑA con espaldar y brazo PLASTICO y estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0WdtiWMNSZuTsd" : {
+      "cantidad" : 0,
+      "nombre" : "Silla PEQUEÑA sin brazo, con espaldar en MADERA y estructura en TUBO metalico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0X97LPN1VpwGoO" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plastica con descansa brazo",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0X97LPN1VpwGoP" : {
+      "cantidad" : 0,
+      "nombre" : "Silla PLASTICA PEQUEÑA con descansa brazo",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0X97LPN1VpwGoQ" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plastica sin descansa brazo",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Yy_5b_KgybFRE" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plastica sin descansa brazo color AZUL",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Yy_5b_KgybFRF" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plastica sin descansa brazo color VERDE",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0Yy_5b_KgybFRG" : {
+      "cantidad" : 0,
+      "nombre" : "Stand de madera",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0Yy_5b_KgybFRH" : {
+      "cantidad" : 0,
+      "nombre" : "Stand metálico",
+      "tipo" : "Materiales para prestación de servicios"
+    },
+    "-L_cXB0ZveBS6kaZFMvj" : {
+      "cantidad" : 0,
+      "nombre" : "Tablero",
+      "tipo" : "Materiales para educación"
+    },
+    "-L_cXB0ZveBS6kaZFMvk" : {
+      "cantidad" : 0,
+      "nombre" : "Tanque de 100 litros",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0ZveBS6kaZFMvl" : {
+      "cantidad" : 0,
+      "nombre" : "Tanque plástico de 50 litros",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0_BVjQzRyfPXat" : {
+      "cantidad" : 0,
+      "nombre" : "Tanque plástico de 75 litros",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0_BVjQzRyfPXau" : {
+      "cantidad" : 0,
+      "nombre" : "Teléfono fijo",
+      "tipo" : "Propiedad, planta y equipo"
+    },
+    "-L_cXB0_BVjQzRyfPXav" : {
+      "cantidad" : 0,
+      "nombre" : "Televisor",
+      "tipo" : "Materiales para educación"
+    },
+    "-L_m-wG6PuMGvm4RBjrI" : {
+      "cantidad" : 0,
+      "nombre" : "Tablets de Computadores para Educar"
+    },
+    "-L_ndwrBGbbpr-Xpjvc_" : {
+      "cantidad" : 0,
+      "nombre" : "Computador Táctil"
+    },
+    "-L_neJZCBmQEB6Gkhex_" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa metálica pequeña"
+    },
+    "-L_neNf0rpKGgFO6Yzdd" : {
+      "cantidad" : 0,
+      "nombre" : "Video Bean"
+    },
+    "-L_netAGZurnp9bI95tZ" : {
+      "cantidad" : 0,
+      "nombre" : "Parlantes multimedia"
+    },
+    "-L_nez3ZogvDyBCf5daW" : {
+      "cantidad" : 0,
+      "nombre" : "Retroproyector"
+    },
+    "-L_niLhz1VWYwSR9uNhB" : {
+      "cantidad" : 0,
+      "nombre" : "Silla ACOLCHADA en tela con estructura de TUBO metálico con BRAZO"
+    },
+    "-La0VbB9oSj8iOZmtvgH" : {
+      "cantidad" : 0,
+      "nombre" : "Bombilla de 100 voltios"
+    },
+    "-La19I6ItJ6hMIQuKlX9" : {
+      "cantidad" : 0,
+      "nombre" : "Filtro dispensador de agua"
+    },
+    "-La19LL2F0EQNYO2f0QG" : {
+      "cantidad" : 0,
+      "nombre" : "Estufa a gas de dos fogones"
+    },
+    "-La5mq21h8i1GbQOeUsp" : {
+      "cantidad" : 0,
+      "nombre" : "Silla en MADERA PEQUEÑA sin descansa brazo"
+    },
+    "-La5usaKMfTne9OUwCh5" : {
+      "cantidad" : 0,
+      "nombre" : "Timbre"
+    },
+    "-La6gmK5ZASe5Z_h1k0O" : {
+      "cantidad" : 0,
+      "nombre" : "Bombilla halógena"
+    },
+    "-La6t_GK3o8tHcZhD4aj" : {
+      "cantidad" : 0,
+      "nombre" : "Archivador metálico de 4 gavetas de 1.6mts"
+    },
+    "-La72npdR8ck7T0--wA-" : {
+      "cantidad" : 0,
+      "nombre" : "Multimueble para COMPUTADOR con base superior en mal estado"
+    },
+    "-LaGTkOsQNB6ZD1tf2Rm" : {
+      "cantidad" : 0,
+      "nombre" : "Silla plástica PEQUEÑA con descansa BRAZO"
+    },
+    "-LaGfKJc79qzJ2pBWX-7" : {
+      "cantidad" : 0,
+      "nombre" : "Grabadora Vcd-mp3"
+    },
+    "-LaGfOnJn45IX-D8M1t8" : {
+      "cantidad" : 0,
+      "nombre" : "Parlante portátil"
+    },
+    "-LaGfSpfWu7K07nt0tVC" : {
+      "cantidad" : 0,
+      "nombre" : "Amplificador"
+    },
+    "-LaGg0EgVYdrTkNCH0cx" : {
+      "cantidad" : 0,
+      "nombre" : "Parlante grande"
+    },
+    "-LaGg2pUlrLI4TAdwaCn" : {
+      "cantidad" : 0,
+      "nombre" : "Parlante mediano"
+    },
+    "-LaH_l97asYquvGF0Ymn" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa ALTA de CUATRO puestos para niños"
+    },
+    "-LaHdmLXVMfwsMqF0Pen" : {
+      "cantidad" : 0,
+      "nombre" : "Deco Direc tv"
+    },
+    "-LaHe6mbfmv91NCZfgqA" : {
+      "cantidad" : 0,
+      "nombre" : "Control de TV"
+    },
+    "-LaHe7ADRNaaQbyy0j-c" : {
+      "cantidad" : 0,
+      "nombre" : "Control de TV"
+    },
+    "-LaHfNcc1SwfbiGVdUt8" : {
+      "cantidad" : 0,
+      "nombre" : "Mesa de computador"
+    },
+    "-LaHhQM6Jf91MoAQbaO8" : {
+      "cantidad" : 0,
+      "nombre" : "Estufa a gas de dos fogones"
+    },
+    "-LaHmTq7e1QhM979Qwvr" : {
+      "cantidad" : 0,
+      "nombre" : "Maleta de computadores para educar"
+    },
+    "-LaHslY6Pv0fwjCbvGj-" : {
+      "cantidad" : 0,
+      "nombre" : "Botiquín"
+    },
+    "-LaHvcQD5FCEExxZ0fdb" : {
+      "cantidad" : 0,
+      "nombre" : "Lava manos"
+    },
+    "-LaHvj_zr5L4HaW2ZlzL" : {
+      "cantidad" : 0,
+      "nombre" : "Inodoro completo"
+    }
+  },
+  "sedes" : {
+    "-L_YhRmBKT7RUMII5AuG" : {
+      "cantidad" : 0,
+      "nombre" : "Mega"
+    },
+    "-L_YhRmLCxqr8sT-80nS" : {
+      "cantidad" : 0,
+      "nombre" : "Dividivi"
+    },
+    "-L_YhRmNkVwwNEBkswCG" : {
+      "cantidad" : 0,
+      "nombre" : "Taguaira"
+    },
+    "-L_YhRmNkVwwNEBkswCH" : {
+      "cantidad" : 0,
+      "nombre" : "Brisas del mar"
+    },
+    "-L_YhRmOOPCffKqfwqqG" : {
+      "cantidad" : 0,
+      "nombre" : "Guayacanal"
+    },
+    "-L_YhRmOOPCffKqfwqqH" : {
+      "cantidad" : 0,
+      "nombre" : "PreEscolar - Mega"
+    }
+  },
+  "folders" : {
+    "Mega2" : "1Eg11Qp3WdIJiy0aHfOeeXY97YquXm31G",
+    "Mega2 - ubicacion0" : "18m5FQ7_bsX0PodaGOnLdtHYDwKtndcU4",
+    "Mega2 - ubicacion0 - subUbicacion0" : "1ejFvqByBN4VBbfKlI4KBuH2641v_GBMz",
+    "Mega2 - ubicacion0 - subUbicacion1" : "1uZ24K5GwGgf3u82a3SBJ0TWT3_ebfyrn",
+    "Mega2 - ubicacion1" : "1cVZZ-tUNpHn6gg6Q2PMbXEsDu8VJ07yz",
+    "Mega2 - ubicacion1 - subUbicacion0" : "1VOOTqdop26sJdOioMFNtBAk_C7XrBLwX"
+  },
+  "scores" : {
+    "angela molina" : 19820,
+    "edgar alexander" : 1985,
+    "erick illidge" : 1986,
+    "jorge illidge" : 1992,
+    "maria valentina" : 2013,
+    "stanley marcos" : 1982,
+    "stanley nicolas" : 2017
+  }
+}
