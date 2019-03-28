@@ -106,6 +106,7 @@
       "info.protonet.imageresizer": {},
       "cordova-plugin-camera": {},
       "cordova-plugin-googleplus": {
+        "REVERSED_CLIENT_ID": "com.googleusercontent.apps.734631097460-fvr9lddfv03m980e8jgtcejebcfgbg93",
         "PLAY_SERVICES_VERSION": "11.8.0"
       },
       "cordova-plugin-nativestorage": {}

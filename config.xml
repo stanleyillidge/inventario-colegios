@@ -93,9 +93,10 @@
     <plugin name="cordova-plugin-filechooser" spec="1.2.0" />
     <plugin name="info.protonet.imageresizer" spec="0.1.1" />
     <plugin name="cordova-plugin-camera" spec="4.0.3" />
-    <plugin name="cordova-plugin-googleplus" spec="7.0.1">
-        <variable name="PLAY_SERVICES_VERSION" value="11.8.0" />
-    </plugin>
     <plugin name="cordova-plugin-nativestorage" spec="2.3.2" />
     <engine name="android" spec="7.1.4" />
+    <plugin name="cordova-plugin-googleplus" spec="7.0.1">
+        <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.734631097460-fvr9lddfv03m980e8jgtcejebcfgbg93" />
+        <variable name="PLAY_SERVICES_VERSION" value="11.8.0" />
+    </plugin>
 </widget>

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { LoadingController, AlertController, Platform } from '@ionic/angular';
+import { LoadingController, AlertController, Platform, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
@@ -14,6 +14,7 @@ export class LoginPage {
 
   constructor(
     private googlePlus: GooglePlus,
+    public navCtrl: NavController,
     private nativeStorage: NativeStorage,
     public loadingController: LoadingController,
     private router: Router,
@@ -30,27 +31,29 @@ export class LoginPage {
       'scopes': '', // optional - space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
       'webClientId': environment.googleWebClientId, // optional - clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
       'offline': true, // Optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
+    })
+    .then(user => {
+      //save user data on the native storage
+      this.nativeStorage.setItem('google_user', {
+        name: user.displayName,
+        email: user.email,
+        picture: user.imageUrl
       })
-      .then(user => {
-        //save user data on the native storage
-        this.nativeStorage.setItem('google_user', {
-          name: user.displayName,
-          email: user.email,
-          picture: user.imageUrl
-        })
-        .then(() => {
-           this.router.navigate(["/home"]);
-        }, (error) => {
-          console.log(error);
-        })
-        loading.dismiss();
-      }, err => {
-        console.log(err);
-        if(!this.platform.is('cordova')){
-          this.presentAlert();
-        }
-        loading.dismiss();
+      .then(() => {
+        //  this.router.navigate(["/home"]);
+        console.log('Fue autenticado')
+        this.navCtrl.navigateForward(['home'])
+      }, (error) => {
+        console.log('error 2:',error);
       })
+      loading.dismiss();
+    }, err => {
+      console.log('Error 1',err);
+      if(!this.platform.is('cordova')){
+        this.presentAlert();
+      }
+      loading.dismiss();
+    })
   }
 
   async presentAlert() {
