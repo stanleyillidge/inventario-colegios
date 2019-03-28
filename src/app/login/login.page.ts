@@ -22,6 +22,24 @@ export class LoginPage {
     public alertController: AlertController
   ) { }
 
+  async SignIn(email, password) {
+    const loading = await this.loadingController.create({
+        // duration: 1500,
+        spinner:"circles",//"lines",//"dots",//"bubbles",
+        // showBackdrop:false,
+        message: 'Autenticando...',
+        translucent: true
+      });
+      await loading.present();
+    return this.afAuth.auth.signInWithEmailAndPassword(email, password)
+    .then((result) => {
+        this.SetUserData(result.user);
+        loading.dismiss();
+        console.log(email,password)
+    }).catch((error) => {
+        window.alert(error.message)
+    })
+  }
   async doGoogleLogin(){
     const loading = await this.loadingController.create({
       message: 'Please wait...'

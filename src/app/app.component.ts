@@ -35,24 +35,23 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private nativeStorage: NativeStorage,
-    private router: Router
+    private router: Router,
+    public afAuth: AngularFireAuth,
   ) {
     this.initializeApp();
   }
 
   initializeApp() {
+    let este = this
     this.platform.ready().then(() => {
-      //Here we will check if the user is already logged in
-      //because we don't want to ask users to log in each time they open the app
-      this.nativeStorage.getItem('google_user')
-      .then( data => {
-        //user is previously logged and we have his data
-        //we will let him access the app
-        this.router.navigate(["/home"]);
-        this.splashScreen.hide();
-      }, err => {
-        this.router.navigate(["/login"]);
-        this.splashScreen.hide();
+      this.afAuth.authState.subscribe(user => {
+        if (user) {
+          este.router.navigate(["/home"]);
+          este.splashScreen.hide();
+        }else{
+          este.router.navigate(["/login"]);
+          este.splashScreen.hide();
+        }
       })
       this.statusBar.styleDefault();
     });
