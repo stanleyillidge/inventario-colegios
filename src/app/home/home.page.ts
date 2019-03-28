@@ -28,6 +28,10 @@ export class HomePage {
   articulos: any;
   newData: any;
   actualizaCantidad:any;
+  sedes: any[];
+  sede: any;
+  contador: any = {};
+  sedest: any[];
   constructor(
     private barcodeScanner: BarcodeScanner,
     private http: Http,
@@ -46,45 +50,60 @@ export class HomePage {
     //   this.dataBase = JSON.parse(data.text());
     // },err => console.log(err));
 
-    firebase.database().ref('sedes').once('value',async sedes=>{
-      este.ruta = sedes.val();
-    })
-    firebase.database().ref('ubicaciones').once('value',async ubicaciones=>{
-      este.ruta['ubicaciones']={}
-      este.ruta['subUbicaciones']={}
-      await ubicaciones.forEach(sede=>{
-        este.ruta[sede.key]['ubicaciones']=sede.val();
-        firebase.database().ref('subUbicaciones').once('value',async subUbicaciones=>{
-          await subUbicaciones.forEach(ubicacion=>{
-            este.ruta['ubicaciones'][ubicacion.key]={}
-            este.ruta['ubicaciones'][ubicacion.key] = ubicacion.val();
-            este.ruta['ubicaciones'][ubicacion.key]['sede'] ={
-              key:sede.key,
-              nombre:este.ruta[sede.key].nombre
-            }
-            if(este.ruta[sede.key]['ubicaciones'][ubicacion.key]){
-              este.ruta[sede.key]['ubicaciones'][ubicacion.key]['subUbicaciones']=ubicacion.val();
-            }
-            ubicacion.forEach(subUbicacion=>{
-              // console.log(este.ruta[sede.key].nombre)
-              if(este.ruta[sede.key]['ubicaciones'][ubicacion.key] && este.ruta[sede.key]){
-                este.ruta['subUbicaciones'][subUbicacion.key]={
-                  nombre:subUbicacion.val().nombre,
-                  sede:{
-                    key:sede.key,
-                    nombre:este.ruta[sede.key].nombre
-                  },
-                  ubicacion:{
-                    key:ubicacion.key,
-                    nombre:este.ruta[sede.key]['ubicaciones'][ubicacion.key].nombre
+    firebase.database().ref('sedes').on('value', function(sedeSnapshot) {
+      console.log('Entro en home')
+      este.ruta = sedeSnapshot.val();
+      este.contador = {}
+      este.sedes = []
+      let sed = {}
+      este.sede = sedeSnapshot.val();
+      este.cantidad = sedeSnapshot.numChildren();
+      este.contador['sede'] = 0;
+      sedeSnapshot.forEach(sede => {
+        // console.log(sede.val())
+        sed = sede.val();
+        sed['key'] = sede.key;
+        este.contador['sede'] += sede.val().cantidad
+        este.sedes.push(sed)
+      });
+      este.sedest = este.sedes;
+      firebase.database().ref('ubicaciones').once('value',async ubicaciones=>{
+        este.ruta['ubicaciones']={}
+        este.ruta['subUbicaciones']={}
+        await ubicaciones.forEach(sede=>{
+          este.ruta[sede.key]['ubicaciones']=sede.val();
+          firebase.database().ref('subUbicaciones').once('value',async subUbicaciones=>{
+            await subUbicaciones.forEach(ubicacion=>{
+              este.ruta['ubicaciones'][ubicacion.key]={}
+              este.ruta['ubicaciones'][ubicacion.key] = ubicacion.val();
+              este.ruta['ubicaciones'][ubicacion.key]['sede'] ={
+                key:sede.key,
+                nombre:este.ruta[sede.key].nombre
+              }
+              if(este.ruta[sede.key]['ubicaciones'][ubicacion.key]){
+                este.ruta[sede.key]['ubicaciones'][ubicacion.key]['subUbicaciones']=ubicacion.val();
+              }
+              ubicacion.forEach(subUbicacion=>{
+                // console.log(este.ruta[sede.key].nombre)
+                if(este.ruta[sede.key]['ubicaciones'][ubicacion.key] && este.ruta[sede.key]){
+                  este.ruta['subUbicaciones'][subUbicacion.key]={
+                    nombre:subUbicacion.val().nombre,
+                    sede:{
+                      key:sede.key,
+                      nombre:este.ruta[sede.key].nombre
+                    },
+                    ubicacion:{
+                      key:ubicacion.key,
+                      nombre:este.ruta[sede.key]['ubicaciones'][ubicacion.key].nombre
+                    }
                   }
                 }
-              }
+              })
             })
           })
         })
       })
-    })
+    });
     firebase.database().ref('articulos').once('value',articulos=>{
       este.ruta['articulos'] = {};
       este.ruta['articulos'] = articulos.val();

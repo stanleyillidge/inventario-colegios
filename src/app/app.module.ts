@@ -25,6 +25,7 @@ import { Camera } from '@ionic-native/camera/ngx';
 
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
+import { AuthGuardService } from './auth-guard-service.service';
 
 export const config = {
   production: true,
@@ -74,7 +75,8 @@ firebase.initializeApp(config.firebase);
     ImageResizer,
     Camera,
     GooglePlus,
-    NativeStorage
+    NativeStorage,
+    AuthGuardService
   ],
   bootstrap: [AppComponent]
 })

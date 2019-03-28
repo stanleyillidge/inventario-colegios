@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>sedes</ion-title>
     <ion-note  slot="end">
-      Version 11
+      Version 12
     </ion-note>
   </ion-toolbar>
   <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
@@ -19,7 +19,7 @@
 </ion-header>
 
 <ion-content *ngIf=listat>
-  <ion-list *ngFor="let sede of sedes">
+  <!-- <ion-list *ngFor="let sede of sedes">
     <ion-item-sliding>
       <ion-item (click)="open(sede)">
         <ion-label>{{sede.nombre}}</ion-label>
@@ -34,12 +34,28 @@
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
-  </ion-list>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  </ion-list> -->
+  <ion-grid class="grid">
+    <ion-card *ngFor="let sede of sedes" class="card" (click)="open(sede)">
+      <ion-img src="/assets/shapes.svg"></ion-img>
+      <ion-card-header>
+        <ion-card-subtitle>Sede</ion-card-subtitle>
+        
+        <ion-item class="item-card">
+          <ion-card-title>{{sede.nombre}} </ion-card-title>
+          <ion-badge class="badge-card" color="success" slot="end"><b>{{sede.cantidad | number}}</b></ion-badge>
+        </ion-item>
+      </ion-card-header>
+      <ion-card-content>
+        
+      </ion-card-content>
+    </ion-card>
+  </ion-grid>
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="CreateSede()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
 </ion-content>
 <ion-content *ngIf=resument>
   <ion-item *ngFor="let articulo of inventario['articulos unicos']" text-wrap>

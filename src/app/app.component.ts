@@ -6,6 +6,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { Router } from '@angular/router';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AuthGuardService } from './auth-guard-service.service';
 
 @Component({
   selector: 'app-root',
@@ -13,15 +15,15 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   public appPages = [
+    // {
+    //   title: 'Resumen',
+    //   url: '/home',
+    //   icon: 'home'
+    // },
     {
       title: 'Resumen',
-      url: '/home',
-      icon: 'home'
-    },
-    {
-      title: 'Ingresos',
       url: '/sedes',
-      icon: 'list'
+      icon: 'home'
     },
     {
       title: 'Articulos',
@@ -37,6 +39,7 @@ export class AppComponent {
     private nativeStorage: NativeStorage,
     private router: Router,
     public afAuth: AngularFireAuth,
+    public guard: AuthGuardService
   ) {
     this.initializeApp();
   }
@@ -45,8 +48,9 @@ export class AppComponent {
     let este = this
     this.platform.ready().then(() => {
       this.afAuth.authState.subscribe(user => {
+        este.guard.authState = user;
         if (user) {
-          este.router.navigate(["/home"]);
+          este.router.navigate(["/sedes"]);
           este.splashScreen.hide();
         }else{
           este.router.navigate(["/login"]);
@@ -56,4 +60,10 @@ export class AppComponent {
       this.statusBar.styleDefault();
     });
   }
+  SignOut() {
+    return this.afAuth.auth.signOut().then(() => {
+    localStorage.removeItem('user');
+        this.router.navigate(['']);
+    })
+}
 }

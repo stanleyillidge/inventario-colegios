@@ -1,16 +1,28 @@
 <ion-content class="login-content" padding>
   <ion-row>
     <ion-col>
-      <h1 class="logo">LOGO</h1>
-      <p class="description">This app helps you add Google Login to your Ionic 4 App.</p>
-      <!-- <p class="description">Courtesy of <a href="https://ionicthemes.com" target="_blank">IonicThemes</a> Team ;)</p> -->
+        <ion-img class="logo" src="/assets/images/icono.png"></ion-img>
+      <p class="description">Inventario Denzil Escolar.</p>
     </ion-col>
   </ion-row>
   <ion-row>
     <ion-col>
-      <ion-button class="log-in-button" color="danger" expand="block" (click)="doGoogleLogin()">
-        LOG IN WITH GOOGLE
-      </ion-button>
+      <form action="" method="post" class="form">
+      
+        <div class="form__field formGroup">
+          <input type="email" placeholder="usuario" #userName required>
+        </div>
+
+        <div class="form__field formGroup">
+          <input type="password" placeholder="••••••••" #userPassword required>
+        </div>
+
+        <!-- <div class="form__field">
+          <input type="submit" value="Entrar" (click)="SignIn(userName.value+'@denzilescolar.edu.co', userPassword.value)">
+        </div> -->
+        <ion-button class="login-btn" color="danger" expand="full" (click)="SignIn(userName.value+'@denzilescolar.edu.co', userPassword.value)">Entrar</ion-button>
+
+      </form>
     </ion-col>
   </ion-row>
 </ion-content>

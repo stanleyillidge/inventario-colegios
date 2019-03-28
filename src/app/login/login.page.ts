@@ -4,6 +4,7 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { LoadingController, AlertController, Platform, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,8 @@ export class LoginPage {
     public loadingController: LoadingController,
     private router: Router,
     private platform: Platform,
-    public alertController: AlertController
+    public alertController: AlertController,
+    public afAuth: AngularFireAuth
   ) { }
 
   async SignIn(email, password) {
@@ -33,9 +35,10 @@ export class LoginPage {
       await loading.present();
     return this.afAuth.auth.signInWithEmailAndPassword(email, password)
     .then((result) => {
-        this.SetUserData(result.user);
+        // this.SetUserData(result.user);
         loading.dismiss();
         console.log(email,password)
+        this.navCtrl.navigateForward(['sedes'])
     }).catch((error) => {
         window.alert(error.message)
     })

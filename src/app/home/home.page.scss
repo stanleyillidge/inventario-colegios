@@ -1,6 +1,70 @@
-.welcome-card ion-img {
-  max-height: 35vh;
-  overflow: hidden;
+@media screen and (min-width: 768px){
+  .grid__item:first-child{
+    grid-column: span 2;
+  }
+}
+ion-item {
+  &.item-card{
+    --border-style: none;
+    margin: 0 -1em 0 -1em;
+  }
+}
+ion-badge{
+  background: transparent;
+  color: black;
+  font-size: 2em;
+}
+.card {
+  background-color: white;
+  text-decoration: none;
+  color: #444;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition:transform .1s ease-in;
+  
+  display:flex;
+  flex-direction:column;
+  
+  &:hover,
+  &:focus {
+    box-shadow: 0 4px 10px 0 rgba(0,0,0,.16);
+    transform:scale(1.025);
+  }
+  
+  &__image {
+    img {
+      width:100%;
+      height:250px;
+      object-fit:cover;
+    }
+  }
+  
+  &__content {
+    padding:1rem;
+    display:flex;
+    flex-direction:column;
+    flex:1;
+  }
+  
+  &__title {
+    margin:0;
+  }
+  
+  &__body {
+    flex:1;
+  }
+  
+  &__footer {
+    text-transform:uppercase;
+    font-size:.75rem;
+    color:#666;
+    font-weight:600;
+  }
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 20px;
+  align-items: stretch;
 }
 ion-note{
   margin: 0 1em 0 0;

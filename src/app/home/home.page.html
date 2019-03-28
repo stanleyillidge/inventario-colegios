@@ -4,31 +4,34 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>
-      Home
+      Resumen
     </ion-title>
     <ion-note  slot="end">
-      Version 11
+      Version 12
     </ion-note>
   </ion-toolbar>
+  <ion-item>
+    <ion-label> Hay {{cantidad | number}} sedes con {{contador.sede | number}} articulos</ion-label>
+  </ion-item>
 </ion-header>
 
 <ion-content>
-  <!-- <ion-button (click)="escaner()" expand="block">
+  <ion-button (click)="escaner()" expand="block">
       <ion-icon slot="start" name="build"></ion-icon>
       <ion-label>Scan QR code App</ion-label>
-  </ion-button> -->
-  <!-- <ion-button (click)="camara()" expand="block">
+  </ion-button>
+  <ion-button (click)="camara()" expand="block">
       <ion-icon slot="start" color="medium" name="build"></ion-icon>
       <ion-label>Camara</ion-label>
-  </ion-button> -->
-  <!-- <ion-button (click)="cloudf()" expand="block">
+  </ion-button>
+  <ion-button (click)="cloudf()" expand="block">
     <ion-icon slot="start" name="build"></ion-icon>
     <ion-label>cloudf()</ion-label>
-  </ion-button> -->
-  <!-- <ion-button (click)="deleteFCloud()" expand="block">
+  </ion-button>
+  <ion-button (click)="deleteFCloud()" expand="block">
     <ion-icon slot="start" name="build"></ion-icon>
     <ion-label>deleteFCloud()</ion-label>
-  </ion-button> -->
+  </ion-button>
   <ion-button (click)="corregir()" expand="block">
     <ion-icon slot="start" name="build"></ion-icon>
     <ion-label>corregir sede y ubicacion de cada ingreso</ion-label>
@@ -44,7 +47,7 @@
       <ion-img [src]="Path"></ion-img>
     </ion-thumbnail>
     <ion-label>
-      <!-- {{ img.name }} -->
+      nombre
     </ion-label>
     <ion-button slot="end" fill="clear" (click)="startUpload(Path)">
       <ion-icon slot="icon-only" name="cloud-upload"></ion-icon>
@@ -53,9 +56,7 @@
       <ion-icon slot="icon-only" name="trash"></ion-icon>
     </ion-button>
   </ion-item>
-  <!-- <ion-item>
-    
-  </ion-item> -->
+
   <ion-card *ngIf=scanData class="welcome-card">
     <ion-img src="/assets/shapes.svg"></ion-img>
     <ion-card-header>
@@ -67,3 +68,21 @@
     </ion-card-content>
   </ion-card>
 </ion-content>
+<!-- <ion-content>
+  <ion-grid class="grid">
+    <ion-card *ngFor="let sede of sedes" class="card">
+      <ion-img src="/assets/shapes.svg"></ion-img>
+      <ion-card-header>
+        <ion-card-subtitle>Sede</ion-card-subtitle>
+        
+        <ion-item class="item-card">
+          <ion-card-title>{{sede.nombre}} </ion-card-title>
+          <ion-badge color="success" slot="end"><b>{{sede.cantidad | number}}</b></ion-badge>
+        </ion-item>
+      </ion-card-header>
+      <ion-card-content>
+        
+      </ion-card-content>
+    </ion-card>
+  </ion-grid>
+</ion-content> -->
