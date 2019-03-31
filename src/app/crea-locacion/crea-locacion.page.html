@@ -1,9 +1,31 @@
 <ion-header>
   <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
     <ion-title>crea-locacion</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-
+<ion-content *ngIf="sedes">
+  <form [formGroup]="newIngresoForm" padding-right>
+    <ion-img *ngIf="plataforma.android" (click)="camara()" [src]="Path"></ion-img>
+    <label *ngIf="plataforma.desktop">
+      <input type="file" style="display: none;" class="button" (change)="onFile($event)">
+      <img class="user-image" src="{{Path}}">
+    </label>
+    <ion-item >
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input formControlName="nombre"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea formControlName="descripcion"></ion-textarea>
+    </ion-item>
+  </form>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="update()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

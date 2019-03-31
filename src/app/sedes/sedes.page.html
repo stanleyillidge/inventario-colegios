@@ -36,15 +36,18 @@
     </ion-item-sliding>
   </ion-list> -->
   <ion-grid class="grid">
-    <ion-card *ngFor="let sede of sedes" class="card" (click)="open(sede)">
-      <ion-img src="/assets/shapes.svg"></ion-img>
+    <ion-card *ngFor="let sede of sedes" class="card">
+      <ion-img [src]=sede.imagen></ion-img>
       <ion-card-header>
-        <ion-card-subtitle>Sede</ion-card-subtitle>
-        
-        <ion-item class="item-card">
+        <ion-item (click)="Editsede(sede)">
+          <ion-card-subtitle>Sede</ion-card-subtitle>
+          <ion-icon name="create" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item class="item-card" (click)="open(sede)">
           <ion-card-title>{{sede.nombre}} </ion-card-title>
           <ion-badge class="badge-card" color="success" slot="end"><b>{{sede.cantidad | number}}</b></ion-badge>
         </ion-item>
+        {{sede.descripcion}}
       </ion-card-header>
       <ion-card-content>
         

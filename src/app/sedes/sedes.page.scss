@@ -6,12 +6,12 @@ ion-label{
 }
 ion-item{
     cursor: pointer;
+    --border-style: none;
+    margin: 0 -1em 0 -1em;
     &.No{
         --background: #ffb0b0 !important;
     }
     &.item-card{
-        --border-style: none;
-        margin: 0 -1em 0 -1em;
     }
 }
 ion-alert{

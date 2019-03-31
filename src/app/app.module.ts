@@ -27,29 +27,29 @@ import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { AuthGuardService } from './auth-guard-service.service';
 
-export const config = {
-  production: true,
-  firebase: {
-    apiKey: "AIzaSyBRVj7CN2SNw0MpZ09nm9YikAVnIsa-_ZA",
-    authDomain: "inventario-denzil-escolar.firebaseapp.com",
-    databaseURL: "https://inventario-denzil-escolar.firebaseio.com",
-    projectId: "inventario-denzil-escolar",
-    storageBucket: "inventario-denzil-escolar.appspot.com",
-    messagingSenderId: "734631097460"
-  }
-};
-// --- Base de Datos de pruebas -------------------------------------
 // export const config = {
 //   production: true,
 //   firebase: {
-//     apiKey: "AIzaSyDjGDQWprrwXXockp2pJRHTzf4JBBIaS-M",
-//     authDomain: "inventario-denzil-develop.firebaseapp.com",
-//     databaseURL: "https://inventario-denzil-develop.firebaseio.com",
-//     projectId: "inventario-denzil-develop",
-//     storageBucket: "inventario-denzil-develop.appspot.com",
-//     messagingSenderId: "600023016657"
+//     apiKey: "AIzaSyBRVj7CN2SNw0MpZ09nm9YikAVnIsa-_ZA",
+//     authDomain: "inventario-denzil-escolar.firebaseapp.com",
+//     databaseURL: "https://inventario-denzil-escolar.firebaseio.com",
+//     projectId: "inventario-denzil-escolar",
+//     storageBucket: "inventario-denzil-escolar.appspot.com",
+//     messagingSenderId: "734631097460"
 //   }
 // };
+// --- Base de Datos de pruebas -------------------------------------
+export const config = {
+  production: true,
+  firebase: {
+    apiKey: "AIzaSyDjGDQWprrwXXockp2pJRHTzf4JBBIaS-M",
+    authDomain: "inventario-denzil-develop.firebaseapp.com",
+    databaseURL: "https://inventario-denzil-develop.firebaseio.com",
+    projectId: "inventario-denzil-develop",
+    storageBucket: "inventario-denzil-develop.appspot.com",
+    messagingSenderId: "600023016657"
+  }
+};
 firebase.initializeApp(config.firebase);
 
 @NgModule({

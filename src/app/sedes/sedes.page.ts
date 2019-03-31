@@ -592,7 +592,11 @@ export class SedesPage implements OnInit {
   }
   async Editsede(sede:any) {
     let este = this
-    const sedet = sede
+    this.navCtrl.navigateForward(['crea-locacion',{
+      sedeNombre:sede.nombre,
+      sedekey:sede.key
+    }]);
+    /* const sedet = sede
     let index = this.sedes.indexOf(sedet)
     const alert = await this.alertController.create({
       header: 'Ediar la sede '+sede.nombre+' !',
@@ -634,11 +638,12 @@ export class SedesPage implements OnInit {
         }
       ]
     });
-    alert.present();
+    alert.present(); */
     return
   }
   async CreateSede() {
-    const alert = await this.alertController.create({
+    this.navCtrl.navigateForward(['crea-locacion']);
+    /* const alert = await this.alertController.create({
       header: 'sede!',
       inputs: [
         {
@@ -678,7 +683,7 @@ export class SedesPage implements OnInit {
         }
       ]
     });
-    alert.present();
+    alert.present(); */
     return
   }
   async RemoveSede(sede:any){
