@@ -11,10 +11,10 @@ import { Http } from '@angular/http';
   styleUrls: ['./sub-ubicaciones.page.scss'],
 })
 export class SubUbicacionesPage implements OnInit {
-  subUbicaciones:any=[]
-  subUbicacionest:any
-  subUbicacionesKeys:any=[]
-  titulo;
+  subUbicaciones:any=[];
+  subUbicacionest:any;
+  subUbicacionesKeys:any=[];
+  titulo:any;
   ubicacion:any={};
   sede:any=[];
   cantidad: number;
@@ -26,11 +26,11 @@ export class SubUbicacionesPage implements OnInit {
   listaR:any = false;
   articulos: any;
   articulost: any;
-  articulosR: any[];
-  articulosRtemp: any[];
+  articulosR: any = [];
+  articulosRtemp: any = [];
   actaBaja: any;
   tituloAlertas:string = 'Inventarios Denzil Escolar!';
-  etiqueta: any[];
+  etiqueta: any = [];
   constructor(
     public route: ActivatedRoute,
     public plataforma: Platform,
@@ -93,6 +93,10 @@ export class SubUbicacionesPage implements OnInit {
         // console.log(Sububicacion.val())
         ubi = Sububicacion.val();
         ubi['key'] = Sububicacion.key;
+        ubi['imagen'] = "/assets/shapes.svg";
+        if(Sububicacion.val().imagen){
+          ubi['imagen'] = Sububicacion.val().imagen; 
+        }
         este.subUbicaciones.push(ubi);
       });
       este.subUbicacionest = este.subUbicaciones;
@@ -393,11 +397,11 @@ export class SubUbicacionesPage implements OnInit {
     alert.present();
     return
   }
-  async RemoveSububicacion(articulo:any){
+  async RemoveSububicacion(subUbicacion:any){
     let este = this
     const alert = await this.alertController.create({
       header: 'Cuidado!',
-      message: 'Se <strong>eliminará</strong> la articulo '+articulo.nombre+' !!!',
+      message: 'Se <strong>eliminará</strong> la Sub Ubicacion '+subUbicacion.nombre+' !!!',
       buttons: [
         {
           text: 'cancelar',
@@ -409,20 +413,30 @@ export class SubUbicacionesPage implements OnInit {
         }, {
           text: 'eliminar',
           handler:async () => {
-            // firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key).remove()
-            let RemoveSububicaciones = firebase.functions().httpsCallable("RemoveSububicaciones");
-            let data = {
-              key: articulo.key,
-              ubicacionkey: this.ubicacion.key,
-              subUbicacion: articulo.nombre
+            // firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+subUbicacion.key).remove()
+            if(subUbicacion.cantidad<=0){
+              let RemoveSububicaciones = firebase.functions().httpsCallable("RemoveSububicaciones");
+              let data = {
+                key: subUbicacion.key,
+                ubicacionkey: this.ubicacion.key,
+                subUbicacion: subUbicacion.nombre
+              }
+              await RemoveSububicaciones(data).then(function(reponse) {
+                // Read result of the Cloud Function.
+                console.log('Archivo editado: ',reponse);
+              }).catch(function(error) {
+                // Read result of the Cloud Function.
+                console.log('Archivo editado error: ',error);
+              })
+            }else{
+              const alert = await this.alertController.create({
+                header: 'Error eliminando la ubicacion '+subUbicacion.nombre+' !!!',
+                // subHeader: 'Subtitle',
+                message: 'La Sub Ubicacion no puede eliminarse por que tiene articulos relacionados en su inventario, elimine todos los articulos antes de eliminar la Sub Ubicacion.',
+                buttons: ['OK']
+              });
+              await alert.present();
             }
-            await RemoveSububicaciones(data).then(function(reponse) {
-              // Read result of the Cloud Function.
-              console.log('Archivo editado: ',reponse);
-            }).catch(function(error) {
-              // Read result of the Cloud Function.
-              console.log('Archivo editado error: ',error);
-            })
           }
         }
       ]
@@ -601,6 +615,21 @@ export class SubUbicacionesPage implements OnInit {
       // closeButtonText: 'Done'
     });
     toast.present();
+  }
+  async Editlocacion(locacion:any) {
+    let este = this
+    this.navCtrl.navigateForward(['crea-locacion',{
+      locacionNombre: locacion.nombre,
+      locacionChild: 'subUbicaciones',
+      locacionkey: este.ubicacion.key+'/'+locacion.key,
+      SubUbicacionNombre: locacion.nombre,
+      SubUbicacionkey: locacion.key,
+      ubicacionNombre: este.ubicacion.nombre,
+      ubicacionkey: este.ubicacion.key,
+      sedeNombre: este.sede.nombre,
+      sedekey: este.sede.key
+    }]);
+    return
   }
   ngOnInit() {
   }

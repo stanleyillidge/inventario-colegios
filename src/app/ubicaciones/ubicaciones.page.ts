@@ -76,6 +76,10 @@ export class UbicacionesPage implements OnInit {
         // console.log(ubicacion.val())
         ubi = ubicacion.val();
         ubi['key'] = ubicacion.key;
+        ubi['imagen'] = "/assets/shapes.svg";
+        if(ubicacion.val().imagen){
+          ubi['imagen'] = ubicacion.val().imagen; 
+        }
         este.ubicaciones.push(ubi)
       });
       este.ubicacionest = este.ubicaciones;
@@ -375,18 +379,28 @@ export class UbicacionesPage implements OnInit {
           text: 'eliminar',
           handler:async () => {
             // firebase.database().ref('ubicaciones/'+este.sede.key+'/'+ubicacion.key).remove()
-            let Removeubicaciones = firebase.functions().httpsCallable("Removeubicaciones");
-            let data = {
-              sedekey: este.sede.key,
-              ubicacionkey: ubicacion.key
+            if(ubicacion.cantidad<=0){
+              let Removeubicaciones = firebase.functions().httpsCallable("Removeubicaciones");
+              let data = {
+                sedekey: este.sede.key,
+                ubicacionkey: ubicacion.key
+              }
+              await Removeubicaciones(data).then(function(reponse) {
+                // Read result of the Cloud Function.
+                console.log('Archivo editado: ',reponse);
+              }).catch(function(error) {
+                // Read result of the Cloud Function.
+                console.log('Archivo editado error: ',error);
+              })
+            }else{
+              const alert = await this.alertController.create({
+                header: 'Error eliminando la ubicacion '+ubicacion.nombre+' !!!',
+                // subHeader: 'Subtitle',
+                message: 'La ubicacion no puede eliminarse por que tiene articulos relacionados en su inventario, elimine todos los articulos antes de eliminar la ubicacion.',
+                buttons: ['OK']
+              });
+              await alert.present();
             }
-            await Removeubicaciones(data).then(function(reponse) {
-              // Read result of the Cloud Function.
-              console.log('Archivo editado: ',reponse);
-            }).catch(function(error) {
-              // Read result of the Cloud Function.
-              console.log('Archivo editado error: ',error);
-            })
           }
         }
       ]
@@ -565,6 +579,19 @@ export class UbicacionesPage implements OnInit {
       // closeButtonText: 'Done'
     });
     toast.present();
+  }
+  async Editlocacion(locacion:any) {
+    let este = this
+    this.navCtrl.navigateForward(['crea-locacion',{
+      locacionNombre: locacion.nombre,
+      locacionChild: 'ubicaciones',
+      locacionkey: este.sede.key+'/'+locacion.key,
+      ubicacionNombre: locacion.nombre,
+      ubicacionkey: locacion.key,
+      sedeNombre: este.sede.nombre,
+      sedekey: este.sede.key
+    }]);
+    return
   }
   ngOnInit() {
   }

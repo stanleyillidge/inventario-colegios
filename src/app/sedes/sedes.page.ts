@@ -65,6 +65,10 @@ export class SedesPage implements OnInit {
         // console.log(sede.val())
         sed = sede.val();
         sed['key'] = sede.key;
+        sed['imagen'] = "/assets/shapes.svg";
+        if(sede.val().imagen){
+          sed['imagen'] = sede.val().imagen; 
+        }
         este.contador['sede'] += sede.val().cantidad
         este.sedes.push(sed)
       });
@@ -590,59 +594,22 @@ export class SedesPage implements OnInit {
     }]);
     // this.navCtrl.pop();
   }
-  async Editsede(sede:any) {
+  async Editlocacion(locacion:any) {
     let este = this
     this.navCtrl.navigateForward(['crea-locacion',{
-      sedeNombre:sede.nombre,
-      sedekey:sede.key
+      accion:'editar',
+      locacionNombre: locacion.nombre,
+      locacionChild: 'sedes',
+      locacionkey: locacion.key,
+      sedeNombre: locacion.nombre,
+      sedekey: locacion.key
     }]);
-    /* const sedet = sede
-    let index = this.sedes.indexOf(sedet)
-    const alert = await this.alertController.create({
-      header: 'Ediar la sede '+sede.nombre+' !',
-      inputs: [
-        {
-          name: 'sede',
-          type: 'text',
-          value: sede.nombre,
-          placeholder: 'Nombre de la sede'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Edit Cancel');
-          }
-        }, {
-          text: 'Ok',
-          handler:async (d) => {
-            // this.sedes.push(d.sede)
-            console.log(index)
-            // firebase.database().ref('sedes/'+sede.key+'/nombre').set(d.sede)
-            let Editsedes = firebase.functions().httpsCallable("Editsedes");
-            let data = {
-              sede: d.sede,
-              key: sede.key
-            }
-            await Editsedes(data).then(function(reponse) {
-              // Read result of the Cloud Function.
-              console.log('Archivo eliminado: ',reponse);
-            }).catch(function(error) {
-              // Read result of the Cloud Function.
-              console.log('Archivo eliminado error: ',error);
-            })
-          }
-        }
-      ]
-    });
-    alert.present(); */
     return
   }
   async CreateSede() {
-    this.navCtrl.navigateForward(['crea-locacion']);
+    this.navCtrl.navigateForward(['crea-locacion',{
+      accion:'crear'
+    }]);
     /* const alert = await this.alertController.create({
       header: 'sede!',
       inputs: [
@@ -704,18 +671,28 @@ export class SedesPage implements OnInit {
           handler:async () => {
             // let index = this.sedes.indexOf(sede)
             // firebase.database().ref('sedes/'+sede.key).remove()
-            let RemoveSedes = firebase.functions().httpsCallable("RemoveSedes");
-            let data = {
-              sede: sede.nombre,
-              key: sede.key
+            if(sede.cantidad<=0){
+              let RemoveSedes = firebase.functions().httpsCallable("RemoveSedes");
+              let data = {
+                sede: sede.nombre,
+                key: sede.key
+              }
+              await RemoveSedes(data).then(function(reponse) {
+                // Read result of the Cloud Function.
+                console.log('Archivo eliminado: ',reponse);
+              }).catch(function(error) {
+                // Read result of the Cloud Function.
+                console.log('Archivo eliminado error: ',error);
+              })
+            }else{
+              const alert = await this.alertController.create({
+                header: 'Error eliminando la sede '+sede.nombre+' !!!',
+                // subHeader: 'Subtitle',
+                message: 'La sede no puede eliminarse por que tiene articulos relacionados en su inventario, elimine todos los articulos antes de eliminar la sede.',
+                buttons: ['OK']
+              });
+              await alert.present();
             }
-            await RemoveSedes(data).then(function(reponse) {
-              // Read result of the Cloud Function.
-              console.log('Archivo eliminado: ',reponse);
-            }).catch(function(error) {
-              // Read result of the Cloud Function.
-              console.log('Archivo eliminado error: ',error);
-            })
           }
         }
       ]

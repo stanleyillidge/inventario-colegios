@@ -15,7 +15,26 @@
 </ion-header>
 
 <ion-content *ngIf=listat>
-  <ion-list *ngFor="let subUbicacion of subUbicaciones">
+  <ion-grid class="grid">
+    <ion-card *ngFor="let subUbicacion of subUbicaciones" class="card">
+      <ion-img (click)="open(subUbicacion)" [src]=subUbicacion.imagen></ion-img>
+      <ion-card-header>
+        <ion-item class="item-card">
+          <ion-card-subtitle>Sub Ubicacion</ion-card-subtitle>
+          <ion-icon (click)="RemoveSububicacion(subUbicacion)" name="trash" slot="end"></ion-icon>
+          <ion-icon (click)="Editlocacion(subUbicacion)" name="create" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item class="item-card" (click)="open(subUbicacion)">
+          <ion-card-title>{{subUbicacion.nombre}} </ion-card-title>
+          <ion-badge class="badge-card" color="success" slot="end"><b>{{subUbicacion.cantidad | number}}</b></ion-badge>
+        </ion-item>
+        {{subUbicacion.descripcion}}
+      </ion-card-header>
+      <ion-card-content>
+      </ion-card-content>
+    </ion-card>
+  </ion-grid>
+  <!-- <ion-list *ngFor="let subUbicacion of subUbicaciones">
     <ion-item-sliding>
       <ion-item (click)="open(subUbicacion)">
         <ion-label>{{subUbicacion.nombre}}</ion-label>
@@ -30,17 +49,12 @@
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
-    <!-- <ion-item (click)="open(subUbicacion)">
-      <ion-label>{{subUbicacion.nombre}} - {{subUbicacion.cantidad}} de articulos</ion-label>
-      <ion-icon (click)="RemoveSububicacion(subUbicacion)" name="trash" slot="end"></ion-icon>
-      <ion-icon (click)="EditSububicacion(subUbicacion)" name="more" slot="end"></ion-icon>
-    </ion-item> -->
   </ion-list>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="CreateSububicacion()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
 </ion-content>
 <ion-content *ngIf=resument>
   <ion-item *ngFor="let articulo of inventario['articulos unicos']" text-wrap>

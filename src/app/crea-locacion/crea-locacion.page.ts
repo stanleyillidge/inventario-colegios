@@ -33,32 +33,37 @@ import { LoadingController } from '@ionic/angular';
   styleUrls: ['./crea-locacion.page.scss'],
 })
 export class CreaLocacionPage implements OnInit {
-  newIngresoForm: FormGroup;
-  articulos:any=[]
-  articulost:any
-  articulosKeys:any=[]
-  sede:any={};
-  ubicacion:any={};
-  SubUbicacion:any={};
-  //-------------------
-  esquemaDB:any={};
-  sedes:any=[];
-  ubicaciones:any;
-  SubUbicaciones:any;
-  parametros:any = {};
-  //-------------------
-  articulo:any={};
-  titulo;
-  scanData;
-  Path:any="/assets/shapes.svg";
-  base64Image;
-  numArt:any=0;
-  plataforma:any=[];
-  imagen: File = null;
-  NewArticulo: any = {};
-  ArticuloChild: string;
-  NewArticuloChild: string;
-  updatekey: string;
+  // ---------------------------
+    newIngresoForm: FormGroup;
+    articulos:any=[]
+    articulost:any
+    articulosKeys:any=[]
+    sede:any={};
+    ubicacion:any={};
+    SubUbicacion:any={};
+    //-------------------
+    esquemaDB:any={};
+    sedes:any=[];
+    ubicaciones:any;
+    SubUbicaciones:any;
+    parametros:any = {};
+    //-------------------
+    articulo:any={};
+    titulo;
+    scanData;
+    Path:any="/assets/shapes.svg";
+    base64Image;
+    numArt:any=0;
+    plataforma:any=[];
+    imagen: File = null;
+    NewArticulo: any = {};
+    ArticuloChild: string;
+    NewArticuloChild: string;
+    updatekey: string;
+    extension: any;
+    locacion: any = {};
+    locaciones: any = [];
+  // ---------------------------
   constructor(
     public platform: Platform,
     public route: ActivatedRoute,
@@ -75,141 +80,55 @@ export class CreaLocacionPage implements OnInit {
     public toastController: ToastController,
     private _cdr: ChangeDetectorRef
   ) {
-    let este = this
-    this.plataforma.desktop = this.platform.is("desktop");
-    this.plataforma.android = this.platform.is("android");
-    this.NewArticulo['nombre'] = this.route.snapshot.paramMap.get('NewArticuloNombre')
-    this.NewArticulo['key'] = this.route.snapshot.paramMap.get('NewArticulokey')
-    this.articulo['nombre'] = this.route.snapshot.paramMap.get('articuloNombre')
-    this.articulo['key'] = this.route.snapshot.paramMap.get('articulokey')
-    this.SubUbicacion['nombre'] = this.route.snapshot.paramMap.get('SubUbicacionNombre')
-    this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
-    this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
-    this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
-    this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
-    this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
-    this.ArticuloChild = 'inventario/'+this.SubUbicacion.key+'/'+this.articulo.key;
-    this.parametros['old'] = {
-      ArticuloChild: this.ArticuloChild,
-      NewArticuloNombre: this.NewArticulo['nombre'],
-      NewArticulokey: this.NewArticulo['key'],
-      articuloNombre: this.articulo['nombre'],
-      articulokey: this.articulo['key'],
-      SubUbicacionNombre: this.SubUbicacion['nombre'],
-      SubUbicacionkey: this.SubUbicacion['key'],
-      ubicacionNombre: this.ubicacion['nombre'],
-      ubicacionkey: this.ubicacion['key'],
-      sedeNombre: this.sede['nombre'],
-      sedekey: this.sede['key'],
-    }
-    console.log(este.parametros['old'])
-    este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
-    //-----------------------------------------------------
-    firebase.database().ref('sedes').child(this.sede.key).once('value',async (sedesSnap)=>{
-      let a = {}
-      a = sedesSnap.val()
-      a['key'] = sedesSnap.key
-      if(sedesSnap.val().imagen){
-        este.Path = sedesSnap.val().imagen;
-      }
-      este.sedes.push(a)
-    }).then(a=>{
-      este.creaFormulario(este.sedes[0])
-    })
     // ----------------------------------------------------
-  }
-  modificaNombre(){
-    console.log(this.sede,this.ubicacion,this.SubUbicacion)
-    this.navCtrl.navigateForward(['edita-path',{ 
-      articuloNombre: this.articulo.nombre,
-      articulokey: this.articulo.key,
-      SubUbicacionNombre: this.SubUbicacion.nombre,
-      SubUbicacionkey: this.SubUbicacion.key,
-      ubicacionNombre: this.ubicacion.nombre,
-      ubicacionkey: this.ubicacion.key,
-      sedeNombre: this.sede.nombre,
-      sedekey: this.sede.key
-    }]);
-  }
-  async onSedeChange(s){
-    let este = this
-    console.log(s.target.value,this.esquemaDB)
-    este.esquemaDB['sede'] = {}
-    este.esquemaDB['sede'] = este.esquemaDB['sedes'][s.target.value]//this.newIngresoForm.get('sedefrm').value;
-    this.sede = este.esquemaDB['sede'];
-    this.sede['nombre'] = s.target.value
-    this.ubicaciones = null;
-    this.newIngresoForm.get('ubicacionfrm').setValue(null);
-    this.SubUbicaciones = null;
-    this.newIngresoForm.get('subUbicacionfrm').setValue(null);
-    await firebase.database().ref('ubicaciones').child(este.esquemaDB['sede'].key).once('value',async (sedesuSnap)=>{
-      este.ubicaciones = [];
-      // console.log(este.esquemaDB['sedes'][este.esquemaDB['sede'].key].nombre)
-      este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = {};
-      este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = sedesuSnap.val();
-      await sedesuSnap.forEach( sedeu =>{
+      let este = this
+      this.plataforma.desktop = this.platform.is("desktop");
+      this.plataforma.android = this.platform.is("android");
+
+      this.locacion['accion'] = this.route.snapshot.paramMap.get('accion')
+      this.locacion['nombre'] = this.route.snapshot.paramMap.get('locacionNombre')
+      this.locacion['child'] = this.route.snapshot.paramMap.get('locacionChild')
+      this.locacion['key'] = this.route.snapshot.paramMap.get('locacionkey')
+
+      this.NewArticulo['nombre'] = this.route.snapshot.paramMap.get('NewArticuloNombre')
+      this.NewArticulo['key'] = this.route.snapshot.paramMap.get('NewArticulokey')
+      this.articulo['nombre'] = this.route.snapshot.paramMap.get('articuloNombre')
+      this.articulo['key'] = this.route.snapshot.paramMap.get('articulokey')
+      this.SubUbicacion['nombre'] = this.route.snapshot.paramMap.get('SubUbicacionNombre')
+      this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
+      this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
+      this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
+      this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
+      this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
+      this.ArticuloChild = 'inventario/'+this.SubUbicacion.key+'/'+this.articulo.key;
+      this.parametros['old'] = {
+        ArticuloChild: this.ArticuloChild,
+        NewArticuloNombre: this.NewArticulo['nombre'],
+        NewArticulokey: this.NewArticulo['key'],
+        articuloNombre: this.articulo['nombre'],
+        articulokey: this.articulo['key'],
+        SubUbicacionNombre: this.SubUbicacion['nombre'],
+        SubUbicacionkey: this.SubUbicacion['key'],
+        ubicacionNombre: this.ubicacion['nombre'],
+        ubicacionkey: this.ubicacion['key'],
+        sedeNombre: this.sede['nombre'],
+        sedekey: this.sede['key'],
+      }
+      console.log(este.parametros['old'])
+      este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
+    //-----------------------------------------------------
+      firebase.database().ref(this.locacion.child).child(this.locacion.key).once('value',async (sedesSnap)=>{
         let a = {}
-        a = sedeu.val()
-        a['key'] = sedeu.key
-        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]={}
-        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['key'] = sedeu.key
-        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['cantidad'] = sedeu.val().cantidad
-        este.ubicaciones.push(a)
+        a = sedesSnap.val()
+        a['key'] = sedesSnap.key
+        if(sedesSnap.val().imagen){
+          este.Path = sedesSnap.val().imagen;
+        }
+        este.locaciones.push(a)
+      }).then(a=>{
+        este.creaFormulario(este.locaciones[0])
       })
-    })
-    console.log(este.esquemaDB,this.ubicaciones)
-    this._cdr.detectChanges();
-  }
-  onUbicacionChange(u){
-    let este = this
-    this.SubUbicaciones = null;
-    este.esquemaDB['ubicacion'] = {}
-    let sede = este.esquemaDB['sede'];//this.newIngresoForm.get('sedefrm').value;
-    let ubicacion = este.esquemaDB['sedes'][sede.key]['ubicaciones'][u.target.value];//this.newIngresoForm.get('ubicacionfrm').value;
-    este.esquemaDB['ubicacion'] = ubicacion;
-    this.ubicacion = ubicacion;
-    this.ubicacion['nombre'] = u.target.value;
-    firebase.database().ref('subUbicaciones').child(ubicacion.key).once('value',async (SubUbicacionesSnap)=>{
-      this.SubUbicaciones = [];
-      // console.log(este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key].nombre)
-      este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = {}
-      este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = SubUbicacionesSnap.val();
-      await SubUbicacionesSnap.forEach( SubUbicacion =>{
-        let a = {}
-        a = SubUbicacion.val()
-        a['key'] = SubUbicacion.key
-        este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]={}
-        este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['key'] = SubUbicacion.key
-        este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['cantidad'] = SubUbicacion.val().cantidad
-        este.SubUbicaciones.push(a)
-      })
-    })
-    // console.log(sede,ubicacion,this.SubUbicaciones)
-    this._cdr.detectChanges();
-  }
-  onSubUbicacionChange(sub){
-    let este = this
-    let sede = este.esquemaDB['sede'];
-    let ubicacion = este.esquemaDB['ubicacion'];
-    let subUbicacion = este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][sub.target.value];
-    this.SubUbicacion = subUbicacion;
-    this.SubUbicacion['nombre'] = sub.target.value;
-    this.NewArticuloChild = 'inventario/'+subUbicacion.key+'/'+this.articulo.key;
-    this.parametros['new'] = {
-      ArticuloChild: this.NewArticuloChild,
-      NewArticuloNombre: this.NewArticulo['nombre'],
-      NewArticulokey: this.NewArticulo['key'],
-      articuloNombre: this.articulo['nombre'],
-      articulokey: this.articulo['key'],
-      SubUbicacionNombre: this.SubUbicacion['nombre'],
-      SubUbicacionkey: this.SubUbicacion['key'],
-      ubicacionNombre: this.ubicacion['nombre'],
-      ubicacionkey: this.ubicacion['key'],
-      sedeNombre: this.sede['nombre'],
-      sedekey: this.sede['key'],
-    }
-    console.log('OldChild',this.ArticuloChild)
-    console.log('NewChild',this.NewArticuloChild)
+    // ----------------------------------------------------
   }
   creaFormulario(data){
     let este = this
@@ -231,7 +150,7 @@ export class CreaLocacionPage implements OnInit {
         ]))
       });
     //-------------------
-    console.log('sedes:',this.sedes)
+    console.log('locaciones:',this.locaciones)
   }
   camara(){
     const options: CameraOptions = {
@@ -257,9 +176,9 @@ export class CreaLocacionPage implements OnInit {
          this.Path = filePath;
           this.file.resolveLocalFilesystemUrl(filePath).then((entry:any)=>{
               entry.file((file1)=>{
-              var reader = new FileReader();
+              let reader = new FileReader();
               reader.onload =  (encodedFile: any)=>{
-                var src = encodedFile.target.result;
+                let src = encodedFile.target.result;
                 this.Path = src;
                 this.updateIamgen()
               }
@@ -286,6 +205,26 @@ export class CreaLocacionPage implements OnInit {
     reader.onload = function(e) {
       let src = e.target["result"];
       este.Path = src;
+      //------------------------------
+      // Create Base64 Object
+      let Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){let t="";let n,r,i,s,o,u,a;let f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){let t="";let n,r,i;let s,o,u,a;let f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");let t="";for(let n=0;n<e.length;n++){let r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){let t="";let n=0;let r=0; let c1=0; let c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);let c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
+
+      // Define the string, also meaning that you need to know the file extension
+      let encoded = src;
+
+      // Decode the string
+      let decoded = Base64.decode(encoded);
+      // console.log(decoded);
+
+      // if the file extension is unknown
+      este.extension = undefined;
+      // do something like this
+      let lowerCase = decoded.toLowerCase();
+      if (lowerCase.indexOf("png") !== -1) este.extension = "png"
+      else if (lowerCase.indexOf("jpg") !== -1 || lowerCase.indexOf("jpeg") !== -1)
+          este.extension = "jpg"
+      else este.extension = "tiff";
+      //------------------------------
       // console.log(este.Path);
       este.updateIamgen();
       // console.log(este.myPhoto, src);
@@ -362,13 +301,19 @@ export class CreaLocacionPage implements OnInit {
       message: 'Actualizado...'
     });
     await loading.present();
-    let child = 'sedes/'+this.sede.nombre
+    let child = this.sede.nombre+'/'+this.locacion.key+'/'+this.locacion.nombre
     const imagenes = firebase.storage().ref(child);
     let imagen
     if(this.plataforma.android){
       imagen = [este.Path,'data_url'];
     }else{
-      let src = este.Path.substr("data:image/jpeg;base64,/".length - 1);
+      let ext = "data:image/"+este.extension+";base64,/";
+      console.log(este.extension,ext)
+      if(este.extension == 'jpg'){
+        console.log(este.extension)
+        ext = "data:image/jpeg;base64,/";
+      }
+      let src = este.Path.substr(ext.length-1);
       imagen = [src,'base64'];
     }
     imagenes.putString(imagen[0],imagen[1]).then(function(snapshot) {
@@ -378,32 +323,37 @@ export class CreaLocacionPage implements OnInit {
         este.Path = url;
         // hago copia de respaldo por modificación
         este.updatekey = firebase.database().ref('modificaciones').push().key
-        console.log('ojo entro!',este.sede.key,este.updatekey,url);
-        firebase.database().ref('modificaciones').child(este.sede.key).child(este.updatekey).set({
+        console.log('ojo entro!',este.locacion.key,este.updatekey,url);
+        firebase.database().ref('modificaciones').child(este.locacion.key).child(este.updatekey).set({
           imagen: url,
           modificacion: new Date().toLocaleString(),
-          nombre: este.sede.nombre,
-          cantidad: este.sedes[0].cantidad,
+          nombre: este.locacion.nombre,
+          cantidad: este.locaciones[0].cantidad,
           descripcion: este.newIngresoForm.value.descripcion
         }).then(()=>{
         }).catch(function(error) {
+          loading.dismiss()
+          este.presentToastWithOptions('Error al guardar modificación',2000,'top')
           console.error('Error al guardar modificación',error)
         })
         console.log('Entro a guardar...')
-        firebase.database().ref('sedes').child(este.sede.key).update({
+        firebase.database().ref(este.locacion.child).child(este.locacion.key).update({
           imagen: url,
           modificacion: este.updatekey,
-          nombre: este.sede.nombre,
-          cantidad: este.sedes[0].cantidad,
+          nombre: este.locacion.nombre,
+          cantidad: este.locaciones[0].cantidad,
           descripcion: este.newIngresoForm.value.descripcion
         }).then(()=>{
           loading.dismiss()
           este.presentToastWithOptions('Imagen actualizada',3000,'top')
         }).catch(function(error) {
-          console.error('Error al guardar sede',error)
+          loading.dismiss()
+          este.presentToastWithOptions('Error al guardar locacion',2000,'top')
+          console.error('Error al guardar locacion',error)
         })
       }).catch(function(error) {
-  
+        loading.dismiss()
+        este.presentToastWithOptions('Error al optener la url de la imagen',2000,'top')
         // A full list of error codes is available at
         // https://firebase.google.com/docs/storage/web/handle-errors
         switch (error.code) {
@@ -428,154 +378,43 @@ export class CreaLocacionPage implements OnInit {
             break;
         }
       });
-    });
+    }).catch(function(error) {
+      loading.dismiss()
+      este.presentToastWithOptions('Error al guardar imagen',2000,'top')
+      console.error('Error al guardar imagen',error)
+    })
   }
   async update(){
     let este = this
-    if(this.parametros.new){
-      console.log('Se modificó la ubicacion del articulo!')
-      this.Createarticulo()
-    }
     const loading = await this.loadingController.create({
       message: 'Actualizado...'
     });
     await loading.present();
     este.updatekey = firebase.database().ref('modificaciones').push().key
-    firebase.database().ref('modificaciones').child(este.sede.key).child(este.updatekey).set({
+    firebase.database().ref('modificaciones').child(este.locacion.key).child(este.updatekey).set({
       imagen: este.Path,
       modificacion: new Date().toLocaleString(),
       nombre: este.newIngresoForm.value.nombre,
-      cantidad: este.sedes[0].cantidad,
+      cantidad: este.locaciones[0].cantidad,
       descripcion: este.newIngresoForm.value.descripcion
     })
-    firebase.database().ref('sedes').child(este.sede.key).update({
+    firebase.database().ref(este.locacion.child).child(este.locacion.key).update({
       modificacion: este.updatekey,
-      nombre: este.sede.nombre,
-      cantidad: este.sedes[0].cantidad,
+      nombre: este.locacion.nombre,
+      cantidad: este.locaciones[0].cantidad,
       descripcion: este.newIngresoForm.value.descripcion
     }).then(()=>{
       loading.dismiss()
-      este.navCtrl.navigateBack(['sedes']);
+      este.navCtrl.navigateBack([este.locacion.child,{
+        SubUbicacionNombre: este.SubUbicacion.nombre,
+        SubUbicacionkey: este.SubUbicacion.key,
+        ubicacionNombre: este.ubicacion.nombre,
+        ubicacionkey: este.ubicacion.key,
+        sedeNombre: este.sede.nombre,
+        sedekey: este.sede.key
+      }]);
     })
   }
-  async Createarticulo(){
-    let este = this
-    const loading = await this.loadingController.create({
-      message: 'Actualizado a: '+this.SubUbicacion.nombre
-    });
-    await loading.present();
-    let data = {
-      imagen: este.Path,
-      nombreImagen: este.articulos.nombreImagen,
-      nombre: este.articulos.nombre,
-      articulo: este.articulo,
-      cantidad: 1,
-      disponibilidad: este.newIngresoForm.value.disponibilidad,
-      estado: este.newIngresoForm.value.estado,
-      descripcion: este.newIngresoForm.value.descripcion,
-      observaciones: este.newIngresoForm.value.observaciones,
-      valor: este.newIngresoForm.value.valor,
-      serie: este.newIngresoForm.value.serie,
-      sede: este.sede,
-      ubicacion: este.ubicacion,
-      subUbicacion: este.SubUbicacion
-    }
-    for(let index in data){
-      if(data[index] == "undefined"){
-        data[index] = ''
-      }
-    }
-    console.log('ojo entro!',data);
-    firebase.database().ref(este.parametros['new'].ArticuloChild).set(data).then(()=>{
-      firebase.database().ref(este.parametros['old'].ArticuloChild).remove().then(r=>{
-        loading.dismiss()
-        este.navCtrl.navigateBack(['inventario-sububicacion',este.parametros['old']]);
-      })
-    })
-  }
-  /* async Createarticulo2() {
-    let este = this
-    const loading = await this.loadingController.create({
-      message: 'Ingreso en '+this.SubUbicacion.nombre
-    });
-    await loading.present();
-    firebase.database().ref('subUbicaciones').child(this.ubicacion.key).child(this.SubUbicacion.key).once('value', function(subUbicacionSN) {
-      // este.cantidad = subUbicacionSN.val().cantidad;
-      // este.numArt = subUbicacionSN.val().cantidad +1;
-      let nombreImagen = este.articulo.nombreImagen;
-      let child = 'inventario/'+este.sede.nombre+'/'+este.ubicacion.nombre+'/'+este.SubUbicacion.nombre+'/'+nombreImagen
-      const imagenes = firebase.storage().ref(child);
-      let imagen
-      imagen = [este.Path,'data_url'];
-      // if(este.plataforma.android){
-      //   imagen = [este.Path,'data_url'];
-      // }else{
-      //   let src = este.Path.substr("data:image/jpeg;base64,/".length - 1);
-      //   imagen = [src,'base64'];
-      // }
-      imagenes.putString(imagen[0],imagen[1]).then(function(snapshot) {
-        console.log('Uploaded a data_url string!');
-        imagenes.getDownloadURL().then(function(url) {
-          // Insert url into an <img> tag to "download"
-          let data = {
-            imagen: url,
-            nombreImagen: nombreImagen,
-            nombre: este.articulo.nombre,
-            cantidad: 1,
-            disponibilidad: este.newIngresoForm.value.disponibilidad,
-            estado: este.newIngresoForm.value.estado,
-            descripcion: este.newIngresoForm.value.descripcion,
-            observaciones: este.newIngresoForm.value.observaciones,
-            valor: este.newIngresoForm.value.valor,
-            serie: este.newIngresoForm.value.serie,
-            sede: este.sede,
-            ubicacion: este.ubicacion,
-            subUbicacion: este.SubUbicacion
-          }
-          for(let index in data){
-            if(data[index] == "undefined"){
-              data[index] = ''
-            }
-          }
-          console.log('ojo entro!',data);
-          este.Path = url;
-          firebase.database().ref(este.parametros['new'].ArticuloChild).set(data).then(()=>{
-            // este.cantidad += 1;
-            // firebase.database().ref('subUbicaciones').child(este.ubicacion.key).child(este.SubUbicacion.key).child('cantidad').set( este.cantidad )
-            firebase.database().ref(este.parametros['old'].ArticuloChild).remove().then(r=>{
-              loading.dismiss()
-              este.navCtrl.navigateBack(['inventario-sububicacion',este.parametros['old']]);
-            })
-          })
-        }).catch(function(error) {
-    
-          // A full list of error codes is available at
-          // https://firebase.google.com/docs/storage/web/handle-errors
-          switch (error.code) {
-            case 'storage/object-not-found':
-              console.log('storage/object-not-found')
-              // File doesn't exist
-              break;
-    
-            case 'storage/unauthorized':
-              console.log('storage/unauthorized')
-              // User doesn't have permission to access the object
-              break;
-    
-            case 'storage/canceled':
-              console.log('storage/canceled')
-              // User canceled the upload
-              break;
-    
-            case 'storage/unknown':
-              console.log('storage/unknown')
-              // Unknown error occurred, inspect the server response
-              break;
-          }
-        });
-      });
-    })
-  } */
   async Removearticulo(articulo){
     let este = this
     const alert = await this.alertController.create({
