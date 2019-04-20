@@ -26,7 +26,9 @@ const routes: Routes = [
   { path: 'view-articulo', loadChildren: './view-articulo/view-articulo.module#ViewArticuloPageModule' },
   { path: 'edita-path', loadChildren: './edita-path/edita-path.module#EditaPathPageModule' },
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
-  { path: 'crea-locacion', loadChildren: './crea-locacion/crea-locacion.module#CreaLocacionPageModule' }
+  { path: 'crea-locacion', loadChildren: './crea-locacion/crea-locacion.module#CreaLocacionPageModule' },
+  { path: 'resumen-general', loadChildren: './resumen-general/resumen-general.module#ResumenGeneralPageModule' },
+  { path: 'resumen-articulo', loadChildren: './resumen-articulo/resumen-articulo.module#ResumenArticuloPageModule' }
 ];
 
 @NgModule({

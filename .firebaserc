@@ -5,6 +5,7 @@
     "denzil-develop": "inventario-denzil-develop",
     "inventarios": "inventario-denzil-escolar",
     "developer": "inventario-denzil-develop",
-    "inv": "inventario-denzil-escolar"
+    "inv": "inventario-denzil-escolar",
+    "develop": "inventario-denzil-develop"
   }
 }

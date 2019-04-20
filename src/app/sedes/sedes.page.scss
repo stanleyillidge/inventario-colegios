@@ -13,6 +13,14 @@ ion-item{
     }
     &.item-card{
       margin: 0 -1em 0 -1em;
+      // font-size: 1.5em;
+      // font-weight: 800;
+      // width: -webkit-fill-available;
+      // margin: 0em 0em 1em 0em;
+      // position: absolute;
+      // bottom: 0px;
+      // left: 0em;
+      // --background: transparent;
     }
 }
 ion-alert{
@@ -33,7 +41,7 @@ ion-badge{
     }
     margin: 2px;
     font-size: 1em;
-    z-index: 10;
+    // z-index: 10;
     // height: 2em;
     padding: 6.5px;
     cursor: pointer;
@@ -63,10 +71,96 @@ ion-icon {
     &.verde {
         color: #2a6e19;
         font-size: 1.25rem;
-        margin: 1px 0 0 0;
+        margin: 0 0 0 0.75em;
     }
 }
+ion-toolbar{
+  --background: transparent;
+}
+.toolbar-footer{
+  --background: #fff;
+  box-shadow: 0px 10px 6px 11px rgba(0, 0, 0, 0.51);
+  border-radius: 10px 10px 0 0;
+}
+ion-title{
+  text-align: center;
+  margin: 0 0 0 -3em;
+  color: white;
+}
+ion-menu-button{
+  color: white;
+}
+ion-content{
+  top: 2em;
+}
+.categoria{
+  margin: 1em 0 0 0;
+}
+//---------------------
+  .container-side-menu {
+    width: 10%;
+    top: -0.7em;
+    right: 2em;
+    position: absolute;
+    margin: auto;
+    background: transparent;
+  }
+  .container-side-menu .button {
+    font-size: 0.75em;
+    line-height: 0;
+    background: transparent;
+    margin: -1em 0 0 0;
+  }
+  .container-side-menu .button-icon .icon {
+    display: block;
+    font-size: 30px;
+    margin-bottom: 3px !important;
+  }
+//---------------------
+.text-on-bottom {
+  margin: -1em 0em 0em 0px;
+  position: absolute;
+  left: 50%;
+}
+.nav-label{
+  font-size: 0.8em;
+  font-weight: normal;
+  color: var(--ion-color-step-550,#737373);
+}
+.nav-label-numb{
+  font-weight: bold;
+  font-size: 1.65em;
+}
+.buenos{
+  color: #2a6e19
+}
+.regulares{
+  color: darkorange
+}
+.malos{
+  color: darkred
+}
+.sb{
+  right: 0.5em;
+  position: absolute;
+  font-size: 25px;
+  top: 0.5em;
+  color: white;
+}
+.toolbar2{
+  width: 90%;
+  --background: #f4f5f8;
+  top: 0em;
+  box-shadow: 0px 10px 10px -10px rgba(0, 0, 0, 0.25);
+  left: 5%;
+  border-radius: 5px;
+}
+.header{
+  height: 5em;
+  background: #3880ff;
+}
 .card {
+  border-radius: 10px;
   background-color: white;
   text-decoration: none;
   color: #444;
@@ -119,4 +213,7 @@ ion-icon {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   grid-gap: 20px;
   align-items: stretch;
+}
+.fab-scan{
+  margin: 0em 0em 0em -2em;
 }

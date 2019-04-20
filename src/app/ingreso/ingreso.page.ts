@@ -35,6 +35,7 @@ export class IngresoPage implements OnInit {
   cantidad: any;
   imagen: File;
   validarImagen:any=false;
+  ingresokey: string;
   constructor(
     public platform: Platform,
     public route: ActivatedRoute,
@@ -282,7 +283,7 @@ export class IngresoPage implements OnInit {
             este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
             let data = {
               imagen: url,
-              fecha: new Date().toLocaleDateString(),
+              creacion: new Date().toLocaleDateString(),
               nombreImagen: nombreImagen,
               nombre: este.articulo.nombre,
               articulo: este.articulo,
@@ -304,7 +305,8 @@ export class IngresoPage implements OnInit {
             }
             console.log('ojo entro!',data);
             este.Path = url;
-            firebase.database().ref('inventario/'+este.SubUbicacion.key).push(data).then(()=>{
+            este.ingresokey = firebase.database().ref('inventario/'+este.SubUbicacion.key).push().key
+            firebase.database().ref('inventario/'+este.SubUbicacion.key).child(este.ingresokey).set(data).then(()=>{
               // este.cantidad += 1;
               // firebase.database().ref('subUbicaciones').child(este.ubicacion.key).child(este.SubUbicacion.key).child('cantidad').set( este.cantidad )
               firebase.database().ref('articulos').child(este.articulo.key).once('value',art=>{
@@ -313,6 +315,20 @@ export class IngresoPage implements OnInit {
                 .child('cantidad').set(can)
               }).then(are=>{
                 loading.dismiss()
+                // ---- Guardo el serial ------------------------
+                  if(este.newIngresoForm.value.serie != ''){
+                    let seriales = {}
+                    let serie = este.newIngresoForm.value.serie;
+                    seriales = {
+                      subUbicacionkey: este.SubUbicacion.key,
+                      articulokey: este.ingresokey
+                    }
+                    console.log('Seriales',serie,seriales)
+                    firebase.database().ref('seriales').child(serie).update(seriales).then(()=>{
+                      console.log('Termino seriales')
+                    })
+                  }
+                // ----------------------------------------------
                 este.articulo['nombre'] = este.route.snapshot.paramMap.get('articuloNombre')
                 este.articulo['key'] = este.route.snapshot.paramMap.get('articulokey')
                 este.SubUbicacion['nombre'] = este.route.snapshot.paramMap.get('SubUbicacionNombre')

@@ -14,6 +14,17 @@
       <input type="file" style="display: none;" class="button" (change)="onFile($event)">
       <img class="user-image" src="{{Path}}">
     </label>
+    <ion-item>
+      <ion-chip color="success">
+        <ion-icon name="calendar"></ion-icon>
+        <ion-label color="dark">{{articulos.creacion}}</ion-label>
+      </ion-chip>
+      
+      <ion-chip color="warning" *ngIf="articulos.modificacion">
+        <ion-icon name="calendar"></ion-icon>
+        <ion-label color="dark">{{articulos.modificacion}}</ion-label>
+      </ion-chip>
+    </ion-item>
     <ion-item (click)="modificaNombre()">
       <ion-label position="floating">Nombre</ion-label>
       <ion-input formControlName="nombre"></ion-input>
@@ -76,6 +87,11 @@
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="update()">
       <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button  (click)="RemoveArticulo(articulos)">
+      <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

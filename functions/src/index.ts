@@ -260,7 +260,7 @@ type Scores = { string: number }
             })
             // return sheetCopy.data
         }).catch((error) => {
-            console.error("No se copiar el documento");
+            console.error("No se pudo copiar la spreadsheet");
             throw new functions.https.HttpsError('internal', error.message);
         });
         /* const request = {
@@ -355,7 +355,64 @@ type Scores = { string: number }
             throw new functions.https.HttpsError('internal', error.message);
         }); */
     });
-
+    export const exportaFD = functions.https.onCall(async (data, context) =>{
+        const TemplateId = "1V3xtQbvxQA2llAHJE54r3lSgpjh_Bpf4k0pT6VQ94rg";
+        const copyParameters = {
+            fileId: TemplateId,
+            resource: {
+                parents: ['17-hkb3TAis61HyIvxsZPf6MHSWBA7HoV'],
+                name: "Acta de Resumen de "+ data.titulo +" "+ Date.now()
+            }
+        }
+        return await drive.files.copy(copyParameters).then(async function(DocCopy){
+            let tabla = data.tabla;
+            let updateObject = {
+                documentId: DocCopy.data.id,
+                resource: {
+                    requests: [{
+                        replaceAllText: {
+                            containsText: {
+                              text: '<<RESPONSABLE>>',
+                              matchCase: true,
+                            },
+                            replaceText: 'Stanley illidge',
+                          },
+                        },
+                        {
+                            insertTable: {tabla}
+                        }
+                    ],
+                },
+            };
+            /* const requests = [
+                {
+                    replaceAllText: {
+                      containsText: {
+                        text: '<<RESPONSABLE>>',
+                        matchCase: true,
+                      },
+                      replaceText: 'Stanley illidge',
+                    },
+                  },
+                {
+                    insertTable: {
+                        object(InsertTableRequest)
+                    }
+                }
+            ] */
+            return await Gdocs.documents.batchUpdate(updateObject).then(resp=>{
+                const respuesta = {doc:DocCopy.data, update:resp.data};
+                console.log(respuesta);
+                return respuesta
+            }).catch((error) => {
+                console.error("No se pudo escribir en el documento: ",data.titulo," del documento de Id ",DocCopy.data.id);
+                throw new functions.https.HttpsError('internal', error.message);
+            })
+        }).catch((error) => {
+            console.error("No se pudo copiar el documento");
+            throw new functions.https.HttpsError('internal', error.message);
+        });
+    });
     /* async function CreateSheet(data:any){
         const request = {
             resource: {

@@ -11,7 +11,8 @@ import { AuthGuardService } from './auth-guard-service.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html'
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
   public appPages = [
@@ -21,7 +22,7 @@ export class AppComponent {
     //   icon: 'home'
     // },
     {
-      title: 'Resumen',
+      title: 'Inventario',
       url: '/sedes',
       icon: 'home'
     },
@@ -65,5 +66,5 @@ export class AppComponent {
     localStorage.removeItem('user');
         this.router.navigate(['']);
     })
-}
+  }
 }

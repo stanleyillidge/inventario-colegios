@@ -39,8 +39,15 @@ export class LoginPage {
         loading.dismiss();
         console.log(email,password)
         this.navCtrl.navigateForward(['sedes'])
-    }).catch((error) => {
-        window.alert(error.message)
+    }).catch(async (error) => {
+        // window.alert(error.message)
+        loading.dismiss();
+        const alert = await this.alertController.create({
+          message: error.message,
+          buttons: ['OK']
+        });
+   
+       await alert.present();
     })
   }
   async doGoogleLogin(){

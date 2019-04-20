@@ -74,22 +74,31 @@
     "sedes": {
         "sedeId":{
             "nombre":"string",
-            "cantidad":"number"
+            "cantidad":"number",
+            "descripcion":"string",
+            "imagen":"string",
+            "modificacion":"string"
         }
     },
     "ubicaciones": {
         "ubicacionId":{
             "nombre":"string",
             "cantidad":"number",
-            "sede":"sedeId"
+            "sede":"sedeId",
+            "descripcion":"string",
+            "imagen":"string",
+            "modificacion":"string"
         }
     },
     "SubUbicaciones": {
         "SubUbicacionId":{
+            "sede":"sedeId",
+            "ubicacion":"ubicacionId",
             "nombre":"string",
             "cantidad":"number",
-            "sede":"sedeId",
-            "ubicacion":"ubicacionId"
+            "descripcion":"string",
+            "imagen":"string",
+            "modificacion":"string"
         }
     },
     "inventarios":{
@@ -107,10 +116,20 @@
             "nombreImagen":"string",
             "observaciones":"string",
             "serie":"string",
-            "valor":"number"
+            "valor":"number",
+            "modificacion":"string"
         }
     },
     "resumen":{
+        "general":{
+            "articuloId":{
+                "nombre":"string",
+                "cantidad":"number",
+                "bueno":"number",
+                "malo":"number",
+                "regular":"number"
+            }
+        },
         "sedeId":{
             "articuloId":{
                 "nombre":"string",

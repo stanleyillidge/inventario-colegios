@@ -15,7 +15,7 @@ export class AuthGuardService implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
 
-      console.log(this.authState,route);
+      // console.log(this.authState,route);
 
       let authInfo = {
           authenticated: false

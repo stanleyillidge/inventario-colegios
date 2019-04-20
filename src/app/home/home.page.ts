@@ -32,6 +32,8 @@ export class HomePage {
   sede: any;
   contador: any = {};
   sedest: any[];
+  PUSH_CHARS:string = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
+  timestamp: any;
   constructor(
     private barcodeScanner: BarcodeScanner,
     private http: Http,
@@ -116,6 +118,15 @@ export class HomePage {
       })
     })
     console.log('Rutas',este.ruta)
+  }
+  decodeFbPushId(id) {
+    id = id.substring(0,8);
+    let timestamp = 0;
+    for (let i=0; i < id.length; i++) {
+      let c = id.charAt(i);
+      timestamp = timestamp * 64 + this.PUSH_CHARS.indexOf(c);
+    }
+    return timestamp;
   }
   NewContador(){
     let este = this;
@@ -413,9 +424,21 @@ export class HomePage {
     })
     console.log('Rutas Corregidas',este.ruta)
   }
+  corregirFechaCreacion(){
+    let este = this;
+    firebase.database().ref('inventario').once('value',async subUbicaciones=>{
+      await subUbicaciones.forEach(subUbicacion=>{
+        subUbicacion.forEach(ingreso=>{
+          este.timestamp = new Date(este.decodeFbPushId(ingreso.key)).toLocaleDateString();
+          firebase.database().ref('inventario').child(subUbicacion.key).child(ingreso.key)
+          .child('creacion').set(este.timestamp)
+        })
+      })
+    })
+  }
   deleteFCloud(){
     let deleteF = firebase.functions().httpsCallable("deleteF");
-    deleteF('1Eg11Qp3WdIJiy0aHfOeeXY97YquXm31G').then(function(reponse) {
+    deleteF('184kFAcimERukjy6zCKC6qoSvqUouGEP_').then(function(reponse) {
       // Read result of the Cloud Function.
       console.log('Archivo eliminado: ',reponse);
       // ...

@@ -1,17 +1,89 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
+    <ion-buttons *ngIf="!toggled" slot="start">
       <ion-menu-button></ion-menu-button>
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>{{titulo}}</ion-title>
+    <ion-row align-items-center>
+      <ion-title *ngIf="!toggled">{{titulo}}</ion-title>
+      <ion-col align-items-center *ngIf="toggled" no-padding size="12">
+        <ion-searchbar
+          #searchbar
+          (ionChange)="onInput($event)"
+          (ionBlur)="onBlur($event)"
+          show-cancel-button>
+        </ion-searchbar>
+      </ion-col>
+      <ion-icon class="sb" *ngIf="!toggled" (click)="toggle()" name="search"></ion-icon>
+    </ion-row>
   </ion-toolbar>
-  <ion-searchbar animated (ionChange)="onInput($event)"></ion-searchbar>
-  <ion-item>
-    <ion-label> Hay {{cantidad | number}} {{ubicacion.nombre}} con {{contador.ubicacion | number}} articulos</ion-label>
-    <ion-icon (click)="resumen()" name="grid" slot="end"></ion-icon>
-    <ion-icon (click)="lista()" name="list" slot="end"></ion-icon>
-  </ion-item>
+  <ion-toolbar class="toolbar2">
+    <ion-row align-items-center>
+      <ion-col *ngIf='!contador["buenos"]' class="sedes" size="4">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p class="nav-label-numb">{{cantidad | number}}</p><p class="nav-label">{{ubicacion.nombre}}</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col *ngIf='!contador["buenos"]' class="art" size="4">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p class="nav-label-numb">{{contador.sede | number}}</p><p class="nav-label">Articulos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col *ngIf='contador["buenos"]' class="sedes" size="1.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p class="nav-label-numb">{{cantidad | number}}</p><p class="nav-label">{{ubicacion.nombre}}</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col *ngIf='contador["buenos"]' class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p class="nav-label-numb">{{contador.sede | number}}</p><p class="nav-label">Articulos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col *ngIf='contador["buenos"]' class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p class="buenos nav-label-numb">{{contador["buenos"] | number}}</p><p class="nav-label">Buenos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col *ngIf='contador["regulares"]' class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p class="regulares nav-label-numb">{{contador["regulares"] | number}}</p><p class="nav-label">Regulares</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col *ngIf='contador["malos"]' class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p class="malos nav-label-numb">{{contador["malos"] | number}}</p><p class="nav-label">Malos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf=listat>
@@ -20,8 +92,8 @@
       <ion-img (click)="open(subUbicacion)" [src]=subUbicacion.imagen></ion-img>
       <ion-card-header>
         <ion-item class="item-card">
-          <ion-card-subtitle>Sub Ubicacion</ion-card-subtitle>
-          <ion-icon (click)="RemoveSububicacion(subUbicacion)" name="trash" slot="end"></ion-icon>
+          <ion-card-subtitle>subUbicacion</ion-card-subtitle>
+          <ion-icon (click)="RemoveSubUbicacion(subUbicacion)" name="trash" slot="end"></ion-icon>
           <ion-icon (click)="Editlocacion(subUbicacion)" name="create" slot="end"></ion-icon>
         </ion-item>
         <ion-item class="item-card" (click)="open(subUbicacion)">
@@ -30,42 +102,51 @@
         </ion-item>
         {{subUbicacion.descripcion}}
       </ion-card-header>
-      <ion-card-content>
-      </ion-card-content>
     </ion-card>
   </ion-grid>
-  <!-- <ion-list *ngFor="let subUbicacion of subUbicaciones">
-    <ion-item-sliding>
-      <ion-item (click)="open(subUbicacion)">
-        <ion-label>{{subUbicacion.nombre}}</ion-label>
-        <ion-note slot="end">{{subUbicacion.cantidad | number}} articulos</ion-note>
-      </ion-item>
-      <ion-item-options side="end">
-        <ion-item-option color="success" (click)="EditSububicacion(subUbicacion)">
-          <ion-icon name="more" slot="end"></ion-icon>
-        </ion-item-option>
-        <ion-item-option color="danger" (click)="RemoveSububicacion(subUbicacion)">
-          <ion-icon name="trash" slot="end"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="CreateSububicacion()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
 </ion-content>
 <ion-content *ngIf=resument>
-  <ion-item *ngFor="let articulo of inventario['articulos unicos']" text-wrap>
-    <ion-label (click)="total(articulo)">
-    <h2>{{ articulo.nombre }}</h2>
-    <ion-badge color="secondary" (click)="total(articulo)">Total {{articulo.cantidad | number}}</ion-badge>
-    <ion-badge color="success" slot="end" (click)="Buenos(articulo)">Buenos {{articulo.bueno | number}}</ion-badge>
-    <ion-badge color="warning" slot="end" (click)="Regular(articulo)">Regular {{articulo.regular | number}}</ion-badge>
-    <ion-badge color="danger" slot="end" (click)="Malos(articulo)">Malos {{articulo.malo | number}}</ion-badge>
-    </ion-label>
-  </ion-item>
+  <ion-grid class="grid">
+    <ion-card *ngFor="let articulo of inventario['articulos unicos']" class="card">
+      <ion-card-header>
+        <ion-item (click)="total(articulo)" class="item-card">
+          <ion-card-title>{{ articulo.nombre }}</ion-card-title>
+          <ion-badge class="badge-card" color="success" slot="end"><b>{{articulo.cantidad | number}}</b></ion-badge>
+        </ion-item>
+        <ion-card-content>
+          <ion-row align-items-center>
+            <ion-col (click)="Buenos(articulo)" class="categoria" size="4">
+              <div class="container-side-menu">
+                <div>
+                  <button class="button button-icon">
+                    <p class="buenos nav-label-numb">{{articulo.bueno | number}}</p><p class="nav-label">Buenos</p>
+                  </button>
+                </div>
+              </div>
+            </ion-col>
+            <ion-col (click)="Regular(articulo)" class="categoria" size="4">
+              <div class="container-side-menu">
+                <div>
+                  <button class="button button-icon">
+                    <p class="regulares nav-label-numb">{{articulo.regular | number}}</p><p class="nav-label">Regulares</p>
+                  </button>
+                </div>
+              </div>
+            </ion-col>
+            <ion-col (click)="Malos(articulo)" class="categoria" size="4">
+              <div class="container-side-menu">
+                <div>
+                  <button class="button button-icon">
+                    <p class="malos nav-label-numb">{{articulo.malo | number}}</p><p class="nav-label">Malos</p>
+                  </button>
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card-header>
+    </ion-card>
+  </ion-grid>
 </ion-content>
 <ion-content *ngIf=listaR>
   <ion-item-sliding *ngFor="let articulo of articulosR">
@@ -73,7 +154,7 @@
       <ion-thumbnail slot="start">
         <ion-img [src]="articulo.imagen"></ion-img>
       </ion-thumbnail>
-      <ion-label *ngIf='articulo.disponibilidad == "Si"' (click)="open(articulo)">
+      <ion-label *ngIf='articulo.disponibilidad == "Si"' (click)="open2(articulo)">
         <b>{{ articulo.nombre }}</b> en {{articulo.sede.nombre}} / {{articulo.ubicacion.nombre}} / {{articulo.subUbicacion.nombre}}
       </ion-label>
       <ion-label *ngIf='articulo.disponibilidad == "No"'>
@@ -101,4 +182,25 @@
     </ion-item-options>
   </ion-item-sliding>
 </ion-content>
-  
+<ion-footer>
+  <ion-toolbar class="toolbar-footer">
+    <ion-buttons slot="secondary">
+      <ion-button (click)="lista()">
+        <ion-icon slot="icon-only" name="list"></ion-icon>
+      </ion-button>
+      <ion-button (click)="CreateSede()">
+        <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-button (click)="resumen()">
+        <ion-icon slot="icon-only" name="stats"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
+<ion-fab *ngIf=!this.plataforma.desktop class="fab-scan" vertical="bottom" horizontal="center" slot="fixed">
+  <ion-fab-button (click)="escaner()">
+    <ion-icon name="barcode"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

@@ -117,17 +117,26 @@ export class CreaLocacionPage implements OnInit {
       console.log(este.parametros['old'])
       este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
     //-----------------------------------------------------
-      firebase.database().ref(this.locacion.child).child(this.locacion.key).once('value',async (sedesSnap)=>{
-        let a = {}
-        a = sedesSnap.val()
-        a['key'] = sedesSnap.key
-        if(sedesSnap.val().imagen){
-          este.Path = sedesSnap.val().imagen;
-        }
-        este.locaciones.push(a)
-      }).then(a=>{
-        este.creaFormulario(este.locaciones[0])
-      })
+      if(this.locacion.accion == 'crear'){
+        this.locacion.key = firebase.database().ref(this.locacion.child).push().key;
+        this.locacion.nombre = ''
+        este.creaFormulario({
+          nombre:'',
+          descripcion:''
+        })
+      }else{
+        firebase.database().ref(this.locacion.child).child(this.locacion.key).once('value',async (sedesSnap)=>{
+          let a = {}
+          a = sedesSnap.val()
+          a['key'] = sedesSnap.key
+          if(sedesSnap.val().imagen){
+            este.Path = sedesSnap.val().imagen;
+          }
+          este.locaciones.push(a)
+        }).then(a=>{
+          este.creaFormulario(este.locaciones[0])
+        })
+      }
     // ----------------------------------------------------
   }
   creaFormulario(data){
@@ -141,11 +150,6 @@ export class CreaLocacionPage implements OnInit {
         ])),
         descripcion: new FormControl(data.descripcion, Validators.compose([
           // Validators.required,
-          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
-        ])),
-        cantidad: new FormControl(data.cantidad, Validators.compose([
-          // Validators.required,
-          // Validators.minLength(1),
           // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
         ]))
       });
@@ -165,9 +169,9 @@ export class CreaLocacionPage implements OnInit {
      // If it's base64 (DATA_URL):
      let options = {
       uri: imageData,
-      quality: 50,
-      width: 350,
-      height: 150
+      quality: 100,
+      width: 650,
+      height: 445
      } as ImageResizerOptions;
      
      this.imageResizer
@@ -301,7 +305,7 @@ export class CreaLocacionPage implements OnInit {
       message: 'Actualizado...'
     });
     await loading.present();
-    let child = this.sede.nombre+'/'+this.locacion.key+'/'+this.locacion.nombre
+    let child = this.sede.nombre+'/'+this.locacion.nombre
     const imagenes = firebase.storage().ref(child);
     let imagen
     if(this.plataforma.android){
@@ -321,36 +325,40 @@ export class CreaLocacionPage implements OnInit {
       imagenes.getDownloadURL().then(function(url) {
         // Insert url into an <img> tag to "download"
         este.Path = url;
-        // hago copia de respaldo por modificación
-        este.updatekey = firebase.database().ref('modificaciones').push().key
-        console.log('ojo entro!',este.locacion.key,este.updatekey,url);
-        firebase.database().ref('modificaciones').child(este.locacion.key).child(este.updatekey).set({
-          imagen: url,
-          modificacion: new Date().toLocaleString(),
-          nombre: este.locacion.nombre,
-          cantidad: este.locaciones[0].cantidad,
-          descripcion: este.newIngresoForm.value.descripcion
-        }).then(()=>{
-        }).catch(function(error) {
+        if(este.locacion.nombre!=''){
+          // hago copia de respaldo por modificación
+          este.updatekey = firebase.database().ref('modificaciones').push().key
+          console.log('ojo entro!',este.locacion.key,este.updatekey,url);
+          firebase.database().ref('modificaciones').child(este.locacion.key).child(este.updatekey).set({
+            imagen: url,
+            modificacion: new Date().toLocaleString(),
+            nombre: este.locacion.nombre,
+            cantidad: este.locaciones[0].cantidad,
+            descripcion: este.newIngresoForm.value.descripcion
+          }).then(()=>{
+          }).catch(function(error) {
+            loading.dismiss()
+            este.presentToastWithOptions('Error al guardar modificación',2000,'top')
+            console.error('Error al guardar modificación',error)
+          })
+          console.log('Entro a guardar...')
+          firebase.database().ref(este.locacion.child).child(este.locacion.key).update({
+            imagen: url,
+            modificacion: este.updatekey,
+            nombre: este.locacion.nombre,
+            cantidad: este.locaciones[0].cantidad,
+            descripcion: este.newIngresoForm.value.descripcion
+          }).then(()=>{
+            loading.dismiss()
+            este.presentToastWithOptions('Imagen actualizada',3000,'top')
+          }).catch(function(error) {
+            loading.dismiss()
+            este.presentToastWithOptions('Error al guardar locacion',2000,'top')
+            console.error('Error al guardar locacion',error)
+          })
+        }else{
           loading.dismiss()
-          este.presentToastWithOptions('Error al guardar modificación',2000,'top')
-          console.error('Error al guardar modificación',error)
-        })
-        console.log('Entro a guardar...')
-        firebase.database().ref(este.locacion.child).child(este.locacion.key).update({
-          imagen: url,
-          modificacion: este.updatekey,
-          nombre: este.locacion.nombre,
-          cantidad: este.locaciones[0].cantidad,
-          descripcion: este.newIngresoForm.value.descripcion
-        }).then(()=>{
-          loading.dismiss()
-          este.presentToastWithOptions('Imagen actualizada',3000,'top')
-        }).catch(function(error) {
-          loading.dismiss()
-          este.presentToastWithOptions('Error al guardar locacion',2000,'top')
-          console.error('Error al guardar locacion',error)
-        })
+        }
       }).catch(function(error) {
         loading.dismiss()
         este.presentToastWithOptions('Error al optener la url de la imagen',2000,'top')
@@ -386,34 +394,49 @@ export class CreaLocacionPage implements OnInit {
   }
   async update(){
     let este = this
-    const loading = await this.loadingController.create({
-      message: 'Actualizado...'
-    });
-    await loading.present();
-    este.updatekey = firebase.database().ref('modificaciones').push().key
-    firebase.database().ref('modificaciones').child(este.locacion.key).child(este.updatekey).set({
-      imagen: este.Path,
-      modificacion: new Date().toLocaleString(),
-      nombre: este.newIngresoForm.value.nombre,
-      cantidad: este.locaciones[0].cantidad,
-      descripcion: este.newIngresoForm.value.descripcion
-    })
-    firebase.database().ref(este.locacion.child).child(este.locacion.key).update({
-      modificacion: este.updatekey,
-      nombre: este.locacion.nombre,
-      cantidad: este.locaciones[0].cantidad,
-      descripcion: este.newIngresoForm.value.descripcion
-    }).then(()=>{
-      loading.dismiss()
-      este.navCtrl.navigateBack([este.locacion.child,{
-        SubUbicacionNombre: este.SubUbicacion.nombre,
-        SubUbicacionkey: este.SubUbicacion.key,
-        ubicacionNombre: este.ubicacion.nombre,
-        ubicacionkey: este.ubicacion.key,
-        sedeNombre: este.sede.nombre,
-        sedekey: este.sede.key
-      }]);
-    })
+    if(este.newIngresoForm.value.nombre!=''){
+      const loading = await this.loadingController.create({
+        message: 'Actualizado...'
+      });
+      await loading.present();
+      let cantidad = 0;
+      if(this.locacion.accion != 'crear'){
+        cantidad = este.locaciones[0].cantidad;
+      }
+      este.updatekey = firebase.database().ref('modificaciones').push().key
+      firebase.database().ref('modificaciones').child(este.locacion.key).child(este.updatekey).set({
+        imagen: este.Path,
+        modificacion: new Date().toLocaleString(),
+        nombre: este.newIngresoForm.value.nombre,
+        cantidad: cantidad,
+        descripcion: este.newIngresoForm.value.descripcion
+      })
+      firebase.database().ref(este.locacion.child).child(este.locacion.key).update({
+        imagen: este.Path,
+        modificacion: este.updatekey,
+        nombre: este.newIngresoForm.value.nombre,
+        cantidad: cantidad,
+        descripcion: este.newIngresoForm.value.descripcion
+      }).then(()=>{
+        loading.dismiss()
+        este.navCtrl.navigateBack([este.locacion.child,{
+          SubUbicacionNombre: este.SubUbicacion.nombre,
+          SubUbicacionkey: este.SubUbicacion.key,
+          ubicacionNombre: este.ubicacion.nombre,
+          ubicacionkey: este.ubicacion.key,
+          sedeNombre: este.sede.nombre,
+          sedekey: este.sede.key
+        }]);
+      })
+    }else{
+      const alert = await this.alertController.create({
+        header: 'Error !',
+        // subHeader: 'Subtitle',
+        message: 'Debes digitar el nombre',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
   async Removearticulo(articulo){
     let este = this

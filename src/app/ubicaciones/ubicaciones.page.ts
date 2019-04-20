@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavController, AlertController, Platform, LoadingController, ToastController } from '@ionic/angular';
 import * as firebase from 'firebase/app';
@@ -11,6 +11,8 @@ import { Http } from '@angular/http';
   styleUrls: ['./ubicaciones.page.scss'],
 })
 export class UbicacionesPage implements OnInit {
+  @ViewChild('searchbar') inputElRef;
+  
   ubicaciones:any=[]
   ubicacionest:any
   sede:any=[];
@@ -28,6 +30,7 @@ export class UbicacionesPage implements OnInit {
   actaBaja: any;
   tituloAlertas:string = 'Inventarios Denzil Escolar!';
   etiqueta: any[];
+  toggled: boolean = false;
   constructor(
     public route: ActivatedRoute,
     public plataforma: Platform,
@@ -41,6 +44,8 @@ export class UbicacionesPage implements OnInit {
     let este = this
     this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
     this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
+    this.toggled = false;
+    this.contador['sede'] = 0;
     /* let ubic = [
       'Aulas de audiovisuales',
       'Aulas de clases',
@@ -102,6 +107,17 @@ export class UbicacionesPage implements OnInit {
       // })
     });
   }
+  public toggle(): void {
+    this.toggled = !this.toggled;
+    setTimeout(() => {
+      // // console.log(this.inputElRef)
+      this.inputElRef.setFocus()
+    }, 50);
+  }
+  public onBlur(ev:any): void {
+    // // console.log('estado:',ev)
+    this.toggled = !this.toggled;
+  }
   async resumen(){
     let este = this
     this.resument = true
@@ -117,8 +133,12 @@ export class UbicacionesPage implements OnInit {
         este.contador.sede = 0;
         este.inventario['articulos unicos'] = [];
         subSnap.forEach(articulosSnap=>{
+          este.contador.cantidad = 0
+          este.contador.buenos = 0
+          este.contador.regulares = 0
+          este.contador.malos = 0
           articulosSnap.forEach(articulo => {
-            if(articulo.val().sede.nombre == este.sede.nombre){
+            if(articulo.val().sede.key == este.sede.key){
               // console.log(articulo.val())
               este.contador.sede += 1;
               let art = articulo.val();
@@ -140,16 +160,20 @@ export class UbicacionesPage implements OnInit {
             for(let i in este.articulos){
               if(este.articulos[i].nombre == artUnicos[art]){
                 este.inventario['articulos unicos'][art]['cantidad'] += 1;
+                este.contador.cantidad += 1
                 este.inventario['articulos unicos'][art].articulos[este.articulos[i].key]=este.articulos[i]
                 switch (este.articulos[i].estado) {
                   case 'Bueno':
                     este.inventario['articulos unicos'][art]['bueno'] += 1
+                    este.contador.buenos += 1
                     break;
                   case 'Regular':
                     este.inventario['articulos unicos'][art]['regular'] += 1
+                    este.contador.regulares += 1
                     break;
                   case 'Malo':
                     este.inventario['articulos unicos'][art]['malo'] += 1
+                    este.contador.malos += 1
                     break;
                   default:
                     break;
@@ -226,7 +250,7 @@ export class UbicacionesPage implements OnInit {
   onInput(ev:any){
     // Reset items back to all of the items
     // this.initializeItems();
-    this.articulos = this.articulost;
+    this.ubicaciones = this.ubicacionest;
     this.inventario['articulos unicos'] = this.inventario['articulos unicos temp'];
     this.articulosR = this.articulosRtemp;
 
@@ -236,7 +260,7 @@ export class UbicacionesPage implements OnInit {
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
       if(this.listat){
-        this.articulos = this.articulos.filter((ubicacion) => {
+        this.ubicaciones = this.ubicaciones.filter((ubicacion) => {
           return (ubicacion.nombre.toLowerCase().indexOf(val.toLowerCase()) > -1);
         })
       }else if(this.resument){
@@ -592,6 +616,9 @@ export class UbicacionesPage implements OnInit {
       sedekey: este.sede.key
     }]);
     return
+  }
+  Etiqueta(articulo){
+    window.open(articulo.etiqueta,'_blank');
   }
   ngOnInit() {
   }

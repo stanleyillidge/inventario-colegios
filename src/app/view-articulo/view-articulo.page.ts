@@ -8,6 +8,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { ImageResizer, ImageResizerOptions } from '@ionic-native/image-resizer/ngx';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
+import "firebase/functions";
 import { FormGroup, FormControl, Validators, FormBuilder }  from '@angular/forms';
 import { LoadingController } from '@ionic/angular';
 
@@ -34,6 +35,7 @@ export class ViewArticuloPage implements OnInit {
   articulo:any={};
   titulo;
   scanData;
+  PUSH_CHARS:string = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
   Path:any="/assets/shapes.svg";
   base64Image;
   numArt:any=0;
@@ -43,6 +45,8 @@ export class ViewArticuloPage implements OnInit {
   ArticuloChild: string;
   NewArticuloChild: string;
   updatekey: string;
+  etiqueta: any[];
+  timestamp: string | number | Date;
   constructor(
     public platform: Platform,
     public route: ActivatedRoute,
@@ -87,92 +91,143 @@ export class ViewArticuloPage implements OnInit {
       sedekey: this.sede['key'],
     }
     console.log(este.parametros['old'])
-    este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
     //-----------------------------------------------------
-    firebase.database().ref('sedes').once('value',async (sedesSnap)=>{
-      este.esquemaDB['sedes'] = sedesSnap.val();
-      await sedesSnap.forEach(sede=>{
-        let a = {}
-        a = sede.val()
-        a['key'] = sede.key
-        este.esquemaDB['sedes'][sede.val().nombre]={}
-        este.esquemaDB['sedes'][sede.val().nombre]['key'] = sede.key
-        este.esquemaDB['sedes'][sede.val().nombre]['cantidad'] = sede.val().cantidad
-        este.sedes.push(a)
-      });
-      este.ubicaciones = [];
-      este.esquemaDB['sede'] = {}
-      este.esquemaDB['sede'] = este.esquemaDB['sedes'][este.sede['nombre']]
-      await firebase.database().ref('ubicaciones').child(este.esquemaDB['sede'].key).once('value',async (sedesuSnap)=>{
-        // console.log(este.esquemaDB['sedes'][este.esquemaDB['sede'].key].nombre)
-        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = {};
-        este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = sedesuSnap.val();
-        await sedesuSnap.forEach( sedeu =>{
-          let a = {}
-          a = sedeu.val()
-          a['key'] = sedeu.key
-          este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]={}
-          este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['key'] = sedeu.key
-          este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['cantidad'] = sedeu.val().cantidad
-          este.ubicaciones.push(a)
-        });
-        let sede = este.esquemaDB['sede'];
-        let ubicacion = este.esquemaDB['sedes'][sede.key]['ubicaciones'][este.ubicacion['nombre']];
-        este.esquemaDB['ubicacion'] = ubicacion;
-        firebase.database().ref('subUbicaciones').child(ubicacion.key).once('value',async (SubUbicacionesSnap)=>{
-          este.SubUbicaciones = [];
-          // console.log(este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key].nombre)
-          este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = {}
-          este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = SubUbicacionesSnap.val();
-          await SubUbicacionesSnap.forEach( SubUbicacion =>{
-            let a = {}
-            a = SubUbicacion.val()
-            a['key'] = SubUbicacion.key
-            este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]={}
-            este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['key'] = SubUbicacion.key
-            este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['cantidad'] = SubUbicacion.val().cantidad
-            este.SubUbicaciones.push(a)
-          })
-        })
-      })
-    });
-    console.log(este.esquemaDB)
-    // ----------------------------------------------------
     console.log(this.articulo)
-    firebase.database().ref('inventario/'+this.SubUbicacion.key+'/'+this.articulo.key).once('value', function(articulo) {
+    firebase.database().ref('inventario/'+this.SubUbicacion.key+'/'+this.articulo.key).once('value', async function(articulo) {
       console.log(articulo.val())
-      este.articulos = articulo.val();
-      este.Path = articulo.val().imagen;
-      // --- Creo el formulario ----
-      if(este.NewArticulo['nombre']){
-        console.log('entro cambia nombre', este.NewArticulo['nombre'])
-        este.articulos.nombre = este.NewArticulo['nombre'];
-        este.articulo.nombre = este.NewArticulo['nombre'];
-        // este.articulo.key = este.NewArticulo['key'];
+      if(articulo.val()){
+        este.articulos = articulo.val();
+        este.articulos['key'] = articulo.key;
+        este.parametros['old'].articulo = este.articulos;
+        este.Path = articulo.val().imagen;
+        // --- Creo el formulario ----
+        if(este.NewArticulo['nombre']){
+          console.log('entro cambia nombre', este.NewArticulo['nombre'])
+          este.articulos.nombre = este.NewArticulo['nombre'];
+          este.articulo.nombre = este.NewArticulo['nombre'];
+          // este.articulo.key = este.NewArticulo['key'];
+        }
+        este.esquemaDB['sede'] = articulo.val().sede
+
+        if(este.sede.nombre){
+          console.log('entro a cargar sede',este.sede)
+          este.sede = articulo.val().sede
+          este.ubicacion = articulo.val().ubicacion;
+          este.SubUbicacion = articulo.val().subUbicacion;
+          este.articulo['nombre'] = articulo.val().nombre;
+          este.articulo['key'] = articulo.key;
+          if(este.NewArticulo['nombre']){
+            console.log('entro cambia nombre', este.NewArticulo['nombre'])
+            este.articulos.nombre = este.NewArticulo['nombre'];
+            este.articulo.nombre = este.NewArticulo['nombre'];
+            // este.articulo.key = este.NewArticulo['key'];
+          }
+
+          este.ArticuloChild = 'inventario/'+este.SubUbicacion.key+'/'+este.articulo.key;
+          este.parametros['old'] = {
+            ArticuloChild: este.ArticuloChild,
+            NewArticuloNombre: este.NewArticulo['nombre'],
+            NewArticulokey: este.NewArticulo['key'],
+            articuloNombre: articulo.val().nombre,
+            articulokey: articulo.key,
+            SubUbicacionNombre: este.SubUbicacion['nombre'],
+            SubUbicacionkey: este.SubUbicacion['key'],
+            ubicacionNombre: este.ubicacion['nombre'],
+            ubicacionkey: este.ubicacion['key'],
+            sedeNombre: este.sede['nombre'],
+            sedekey: este.sede['key'],
+          }
+          este.parametros['old'].articulo = este.articulos;
+        }
+
+        este.titulo = este.articulos.sede.nombre +' / '+ este.articulos.ubicacion.nombre +' / '+ este.articulos.subUbicacion.nombre
+        /* if(este.articulos.sede.nombre){
+          console.log('entro cambia sede', este.articulos.sede.nombre)
+          let a = este.articulos.sede
+          este.articulos.sede = {}
+          este.articulos.sede['nombre'] = este.sede.nombre
+          este.articulos.sede['key'] = este.sede.key
+          este.articulos.sede['cantidad'] = 0
+
+          a = este.articulos.ubicacion
+          este.articulos.ubicacion = {}
+          este.articulos.ubicacion['nombre'] = este.ubicacion.nombre
+          este.articulos.ubicacion['key'] = este.ubicacion.key
+          este.articulos.ubicacion['cantidad'] = 0
+
+          a = este.articulos.subUbicacion
+          este.articulos.subUbicacion = {}
+          este.articulos.subUbicacion['nombre'] = este.SubUbicacion.nombre
+          este.articulos.subUbicacion['key'] = este.SubUbicacion.key
+          este.articulos.subUbicacion['cantidad'] = 0
+        } */
+        este.creaFormulario(este.articulos)
+        //-----------------------------------------------------
+          firebase.database().ref('sedes').once('value',async (sedesSnap)=>{
+            este.esquemaDB['sedes'] = sedesSnap.val();
+            await sedesSnap.forEach(sede=>{
+              let a = {}
+              a = sede.val()
+              a['key'] = sede.key
+              este.esquemaDB['sedes'][sede.val().nombre]={}
+              este.esquemaDB['sedes'][sede.val().nombre]['key'] = sede.key
+              este.esquemaDB['sedes'][sede.val().nombre]['cantidad'] = sede.val().cantidad
+              este.sedes.push(a)
+            });
+            este.ubicaciones = [];
+            await firebase.database().ref('ubicaciones').child(este.esquemaDB['sede'].key).once('value',async (sedesuSnap)=>{
+              // console.log(este.esquemaDB['sedes'][este.esquemaDB['sede'].key].nombre)
+              este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = {};
+              este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'] = sedesuSnap.val();
+              await sedesuSnap.forEach( sedeu =>{
+                let a = {}
+                a = sedeu.val()
+                a['key'] = sedeu.key
+                este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]={}
+                este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['key'] = sedeu.key
+                este.esquemaDB['sedes'][este.esquemaDB['sede'].key]['ubicaciones'][sedeu.val().nombre]['cantidad'] = sedeu.val().cantidad
+                este.ubicaciones.push(a)
+              });
+              let sede = este.esquemaDB['sede'];
+              let ubicacion = articulo.val().ubicacion;//este.esquemaDB['sedes'][sede.key]['ubicaciones'][este.ubicacion['nombre']];
+              este.esquemaDB['ubicacion'] = articulo.val().ubicacion;
+              firebase.database().ref('subUbicaciones').child(articulo.val().ubicacion.key).once('value',async (SubUbicacionesSnap)=>{
+                este.SubUbicaciones = [];
+                // console.log(este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key].nombre)
+                este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = {}
+                este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'] = SubUbicacionesSnap.val();
+                await SubUbicacionesSnap.forEach( SubUbicacion =>{
+                  let a = {}
+                  a = SubUbicacion.val()
+                  a['key'] = SubUbicacion.key
+                  este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]={}
+                  este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['key'] = SubUbicacion.key
+                  este.esquemaDB['sedes'][sede.key]['ubicaciones'][ubicacion.key]['SubUbicaciones'][SubUbicacion.val().nombre]['cantidad'] = SubUbicacion.val().cantidad
+                  este.SubUbicaciones.push(a)
+                })
+              }).then(()=>{
+                let sedek = este.articulos.sede.key
+                let ubicacionk = este.articulos.ubicacion.key
+                let SubUbicacionesk = este.articulos.subUbicacion.key
+                este.articulos.sede.nombre = este.esquemaDB['sedes'][sedek].nombre
+                este.articulos.ubicacion.nombre = este.esquemaDB['sedes'][sedek]['ubicaciones'][ubicacionk].nombre
+                este.articulos.subUbicacion.nombre = este.esquemaDB['sedes'][sedek]['ubicaciones'][ubicacionk]['SubUbicaciones'][SubUbicacionesk].nombre
+              })
+            })
+          });
+          console.log('esquemaDB:',este.esquemaDB)
+        // ----------------------------------------------------
+      }else{
+        const alert = await este.alertController.create({
+          header: 'El articulo no existe',
+          // subHeader: 'Confirmación de Eliminación',
+          message: 'El articulo fue eliminado previamente',
+          buttons: ['OK']
+        });
+        await alert.present();
+        este.navCtrl.navigateForward(['sedes']);
       }
-      /* if(este.articulos.sede.nombre){
-        console.log('entro cambia sede', este.articulos.sede.nombre)
-        let a = este.articulos.sede
-        este.articulos.sede = {}
-        este.articulos.sede['nombre'] = este.sede.nombre
-        este.articulos.sede['key'] = este.sede.key
-        este.articulos.sede['cantidad'] = 0
-
-        a = este.articulos.ubicacion
-        este.articulos.ubicacion = {}
-        este.articulos.ubicacion['nombre'] = este.ubicacion.nombre
-        este.articulos.ubicacion['key'] = este.ubicacion.key
-        este.articulos.ubicacion['cantidad'] = 0
-
-        a = este.articulos.subUbicacion
-        este.articulos.subUbicacion = {}
-        este.articulos.subUbicacion['nombre'] = este.SubUbicacion.nombre
-        este.articulos.subUbicacion['key'] = este.SubUbicacion.key
-        este.articulos.subUbicacion['cantidad'] = 0
-      } */
-      este.creaFormulario(este.articulos)
-      // ---------------------------
-    });
+    })//.then(()=>{})    
   }
   modificaNombre(){
     console.log(this.sede,this.ubicacion,this.SubUbicacion)
@@ -339,9 +394,9 @@ export class ViewArticuloPage implements OnInit {
      // If it's base64 (DATA_URL):
      let options = {
       uri: imageData,
-      quality: 50,
-      width: 350,
-      height: 150
+      quality: 100,
+      width: 700,
+      height: 300
      } as ImageResizerOptions;
      
      this.imageResizer
@@ -488,25 +543,47 @@ export class ViewArticuloPage implements OnInit {
           ubicacion: este.ubicacion,
           subUbicacion: este.SubUbicacion,
         })
-        firebase.database().ref(este.parametros['old'].ArticuloChild).update({
-          imagen: url,
-          modificacion: este.updatekey,
-          nombre: este.articulo.nombre,
-          articulo: este.articulo,
-          cantidad: 1,
-          disponibilidad: este.newIngresoForm.value.disponibilidad,
-          estado: este.newIngresoForm.value.estado,
-          descripcion: este.newIngresoForm.value.descripcion,
-          observaciones: este.newIngresoForm.value.observaciones,
-          valor: este.newIngresoForm.value.valor,
-          serie: este.newIngresoForm.value.serie,
-          sede: este.sede,
-          ubicacion: este.ubicacion,
-          subUbicacion: este.SubUbicacion,
-        }).then(()=>{
-          loading.dismiss()
-          este.presentToastWithOptions('Imagen actualizada',3000,'top')
-        })
+        if(este.parametros['new']){
+          firebase.database().ref(este.parametros['new'].ArticuloChild).update({
+            imagen: url,
+            modificacion: este.updatekey,
+            nombre: este.articulo.nombre,
+            articulo: este.articulo,
+            cantidad: 1,
+            disponibilidad: este.newIngresoForm.value.disponibilidad,
+            estado: este.newIngresoForm.value.estado,
+            descripcion: este.newIngresoForm.value.descripcion,
+            observaciones: este.newIngresoForm.value.observaciones,
+            valor: este.newIngresoForm.value.valor,
+            serie: este.newIngresoForm.value.serie,
+            sede: este.sede,
+            ubicacion: este.ubicacion,
+            subUbicacion: este.SubUbicacion,
+          }).then(()=>{
+            loading.dismiss()
+            este.presentToastWithOptions('Imagen actualizada en nueva ubicación',3000,'top')
+          })
+        }else{
+          firebase.database().ref(este.parametros['old'].ArticuloChild).update({
+            imagen: url,
+            modificacion: este.updatekey,
+            nombre: este.articulo.nombre,
+            articulo: este.articulo,
+            cantidad: 1,
+            disponibilidad: este.newIngresoForm.value.disponibilidad,
+            estado: este.newIngresoForm.value.estado,
+            descripcion: este.newIngresoForm.value.descripcion,
+            observaciones: este.newIngresoForm.value.observaciones,
+            valor: este.newIngresoForm.value.valor,
+            serie: este.newIngresoForm.value.serie,
+            sede: este.sede,
+            ubicacion: este.ubicacion,
+            subUbicacion: este.SubUbicacion,
+          }).then(()=>{
+            loading.dismiss()
+            este.presentToastWithOptions('Imagen actualizada',3000,'top')
+          })
+        }
       }).catch(function(error) {
   
         // A full list of error codes is available at
@@ -540,6 +617,7 @@ export class ViewArticuloPage implements OnInit {
     if(this.parametros.new){
       console.log('Se modificó la ubicacion del articulo!')
       this.Createarticulo()
+      return
     }
     const loading = await this.loadingController.create({
       message: 'Actualizado...'
@@ -548,7 +626,9 @@ export class ViewArticuloPage implements OnInit {
     este.updatekey = firebase.database().ref('modificaciones').push().key
     firebase.database().ref('modificaciones').child(este.articulo.key).child(este.updatekey).set({
       imagen: este.Path,
+      modificacionkey: este.updatekey,
       modificacion: new Date().toLocaleDateString(),
+      creacion: este.articulos.creacion,
       nombre: este.articulo.nombre,
       articulo: este.articulo,
       cantidad: 1,
@@ -563,8 +643,10 @@ export class ViewArticuloPage implements OnInit {
       subUbicacion: este.SubUbicacion,
     })
     firebase.database().ref(este.parametros['old'].ArticuloChild).update({
+      modificacionkey: este.updatekey,
+      modificacion: new Date().toLocaleDateString(),
+      creacion: este.articulos.creacion,
       nombre: este.articulo.nombre,
-      modificacion: este.updatekey,
       articulo: este.articulo,
       cantidad: 1,
       disponibilidad: este.newIngresoForm.value.disponibilidad,
@@ -577,15 +659,18 @@ export class ViewArticuloPage implements OnInit {
       ubicacion: este.ubicacion,
       subUbicacion: este.SubUbicacion,
     }).then(()=>{
-      // if(child == este.NewArticuloChild){
-      //   console.log('Fue movido')
-      //   firebase.database().ref(este.ArticuloChild).remove().then(r=>{
-      //     console.log('Fue removido')
-      //   })
-      // }
       loading.dismiss()
       este.navCtrl.navigateBack(['inventario-sububicacion',este.parametros['old']]);
     })
+  }
+  decodeFbPushId(id) {
+    id = id.substring(0,8);
+    let timestamp = 0;
+    for (let i=0; i < id.length; i++) {
+      let c = id.charAt(i);
+      timestamp = timestamp * 64 + this.PUSH_CHARS.indexOf(c);
+    }
+    return timestamp;
   }
   async Createarticulo(){
     let este = this
@@ -593,10 +678,32 @@ export class ViewArticuloPage implements OnInit {
       message: 'Actualizado a: '+this.SubUbicacion.nombre
     });
     await loading.present();
+    este.updatekey = firebase.database().ref('modificaciones').push().key
+    firebase.database().ref('modificaciones').child(este.articulo.key).child(este.updatekey).set({
+      imagen: este.Path,
+      modificacionkey: este.updatekey,
+      modificacion: new Date().toLocaleDateString(),
+      creacion: new Date(este.timestamp).toLocaleDateString(),
+      nombre: este.articulo.nombre,
+      articulo: este.articulo,
+      cantidad: 1,
+      disponibilidad: este.newIngresoForm.value.disponibilidad,
+      estado: este.newIngresoForm.value.estado,
+      descripcion: este.newIngresoForm.value.descripcion,
+      observaciones: este.newIngresoForm.value.observaciones,
+      valor: este.newIngresoForm.value.valor,
+      serie: este.newIngresoForm.value.serie,
+      sede: este.sede,
+      ubicacion: este.ubicacion,
+      subUbicacion: este.SubUbicacion,
+    })
     let data = {
       imagen: este.Path,
+      modificacionkey: este.updatekey,
+      modificacion: new Date().toLocaleDateString(),
+      creacion: new Date(este.timestamp).toLocaleDateString(),
       nombreImagen: este.articulos.nombreImagen,
-      nombre: este.articulos.nombre,
+      nombre: este.articulo.nombre,
       articulo: este.articulo,
       cantidad: 1,
       disponibilidad: este.newIngresoForm.value.disponibilidad,
@@ -610,16 +717,51 @@ export class ViewArticuloPage implements OnInit {
       subUbicacion: este.SubUbicacion
     }
     for(let index in data){
-      if(data[index] == "undefined"){
+      if(typeof data[index] === "undefined"){
         data[index] = ''
       }
     }
     console.log('ojo entro!',data);
     firebase.database().ref(este.parametros['new'].ArticuloChild).set(data).then(()=>{
-      firebase.database().ref(este.parametros['old'].ArticuloChild).remove().then(r=>{
-        loading.dismiss()
-        este.navCtrl.navigateBack(['inventario-sububicacion',este.parametros['old']]);
+      este.remueveArticulo(este.parametros['old'].articulo).then(()=>{
+        let data = {
+          imagen: este.Path,
+          nombreImagen: este.articulos.nombreImagen,
+          nombre: este.articulo.nombre,
+          articulo: este.articulo,
+          cantidad: 1,
+          disponibilidad: este.newIngresoForm.value.disponibilidad,
+          estado: este.newIngresoForm.value.estado,
+          descripcion: este.newIngresoForm.value.descripcion,
+          observaciones: este.newIngresoForm.value.observaciones,
+          valor: este.newIngresoForm.value.valor,
+          serie: este.newIngresoForm.value.serie,
+          sede: este.sede,
+          key: este.articulos.key,
+          ubicacion: este.ubicacion,
+          subUbicacion: este.SubUbicacion
+        }
+        console.log('Data',data)
+        for(let index in data){
+          if(typeof data[index] === "undefined"){
+            data[index] = ''
+          }
+        }
+        este.crearEtiqueta(data).then(async ()=>{
+          const alert = await este.alertController.create({
+            header: 'Articulo actualizado',
+            subHeader: 'Confirmación de cambio de locacion',
+            message: 'El articulo fue cambiado de locación correctamente y su nueva etiqueta fue creada',
+            buttons: ['OK']
+          });
+          loading.dismiss();
+          await alert.present();
+        })
       })
+      // firebase.database().ref(este.parametros['old'].ArticuloChild).remove().then(r=>{
+      //   loading.dismiss()
+      //   este.navCtrl.navigateBack(['inventario-sububicacion',este.parametros['old']]);
+      // })
     })
   }
   /* async Createarticulo2() {
@@ -705,11 +847,11 @@ export class ViewArticuloPage implements OnInit {
       });
     })
   } */
-  async Removearticulo(articulo){
+  async RemoveArticulo(articulo){
     let este = this
     const alert = await this.alertController.create({
       header: 'Cuidado!',
-      message: 'Se <strong>eliminará</strong> la articulo '+articulo+' !!!',
+      message: 'Se <strong>eliminará</strong> la articulo '+articulo.nombre+' !!!',
       buttons: [
         {
           text: 'cancelar',
@@ -721,17 +863,99 @@ export class ViewArticuloPage implements OnInit {
         }, {
           text: 'eliminar',
           handler: () => {
-            let index = this.articulos.indexOf(articulo)
-            firebase.database().ref('articulos/'+this.ubicacion+'/'+este.articulosKeys[index]).remove()
-            // this.articulos.splice(index, 1);
-            // this.articulost = this.articulos;
-            console.log('Eliminar Okay');
+            this.remueveArticulo(articulo).then(()=>{
+              este.navCtrl.navigateForward(['sedes']);
+            })
           }
         }
       ]
     });
 
     await alert.present();
+  }
+  async remueveArticulo(articulo){
+    let este = this
+    console.log('Entro en remueveArticulo',articulo)
+    return firebase.database().ref('subUbicaciones')
+    .child(articulo.ubicacion.key).child(articulo.subUbicacion.key).once('value',a0=>{
+      let b = a0.val().cantidad - 1;
+      firebase.database().ref('subUbicaciones')
+      .child(articulo.ubicacion.key).child(articulo.subUbicacion.key).child('cantidad').set(b)
+    }).then(ar=>{
+      firebase.database().ref('ubicaciones')
+      .child(articulo.sede.key).child(articulo.ubicacion.key).once('value',a1=>{
+        let b = a1.val().cantidad - 1;
+        firebase.database().ref('ubicaciones')
+        .child(articulo.sede.key).child(articulo.ubicacion.key).child('cantidad').set(b)
+      }).then(a1r=>{
+        firebase.database().ref('sedes')
+        .child(articulo.sede.key).once('value',a2=>{
+          let b = a2.val().cantidad - 1;
+          firebase.database().ref('sedes')
+          .child(articulo.sede.key).child('cantidad').set(b)
+        }).then(a2r=>{
+          console.log('articulo a eliminar',articulo)
+          firebase.database().ref('inventario')
+          .child(articulo.subUbicacion.key).child(articulo.key).remove().then(async a3r=>{
+              // Borro la etiqueta del articulo
+              este.deleteFCloud(articulo.etiquetaId).then(async ()=>{
+                console.log('Articulo y Etiqueta de articulo eliminados')
+              })
+          })
+        })
+      })
+    })
+  }
+  async crearEtiqueta(articulo){
+    let este = this
+    console.log('Entro a crear etiqueta',articulo)
+    let createLabels = firebase.functions().httpsCallable("createLabels");
+    articulo['fecha'] = new Date().toLocaleDateString();
+    let qrData = {
+      "subUbicacion": articulo.subUbicacion.key,
+      "ingreso": articulo.key
+    }
+    let query = "";
+    for (let key in qrData) {
+        query += encodeURIComponent(key)+"="+encodeURIComponent(qrData[key])+"&";
+    }
+    let uri = 'https://chart.googleapis.com/chart?chs=400x400&cht=qr&chl='+encodeURIComponent(query)//escape(JSON.stringify(qrData))
+    articulo['qrUrl'] = encodeURI(uri)
+    // console.log('data para crear el acta:',data)
+    await createLabels(articulo).then(async function(response) {
+      // Read result of the Cloud Function.
+      este.etiqueta=[]
+      // console.log(conta,i,data,'Funcion Etiqueta respondio ok: ',response);
+      este.etiqueta['url'] = 'https://docs.google.com/presentation/d/'+response.data.etiqueta.id+'/edit'//'/export/pdf'//'https://docs.google.com/document/d/'+response.data.doc.id+'/edit'
+      await firebase.database().ref('inventario')
+      .child(articulo.subUbicacion.key).child(articulo.key)
+      .update({
+        etiqueta: este.etiqueta['url'],
+        etiquetaId: response.data.etiqueta.id,
+        fechaEtiqueta: new Date().toLocaleDateString()
+      }).then(re=>{
+        let message = 'La etiqueta fue creada'
+        console.log(message,articulo)
+        // este.presentToastWithOptions(message,3000,'top')
+      })
+    }).catch(function(error) {
+      // Read result of the Cloud Function.
+      console.log('Error en crear Etiqueta: ',error);
+      // let message = 'Error en crear Etiqueta: '+error
+      // este.presentToastWithOptions(message,3000,'top')
+    })
+  }
+  async deleteFCloud(key){
+    let deleteF = firebase.functions().httpsCallable("deleteF");
+    return await deleteF(key).then(function(reponse) {
+      // Read result of the Cloud Function.
+      console.log('Archivo eliminado: ',reponse);
+      // ...
+    }).catch(function(error) {
+      // Read result of the Cloud Function.
+      console.log('Archivo eliminado error: ',error);
+      // ...
+    })
   }
   async presentToastWithOptions(message,duration,position) {
     const toast = await this.toastController.create({
