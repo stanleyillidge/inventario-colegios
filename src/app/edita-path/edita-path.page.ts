@@ -18,6 +18,7 @@ export class EditaPathPage implements OnInit {
   SubUbicacion:any={};
   titulo;
   OldArticulo: any = {};
+  ingreso: any = {};
   constructor(
     public plataforma: Platform,
     public route: ActivatedRoute,
@@ -27,14 +28,16 @@ export class EditaPathPage implements OnInit {
     private http: Http
   ) {
     let este = this
-    this.OldArticulo['nombre'] = this.route.snapshot.paramMap.get('articuloNombre')
-    this.OldArticulo['key'] = this.route.snapshot.paramMap.get('articulokey')
-    this.SubUbicacion['nombre'] = this.route.snapshot.paramMap.get('SubUbicacionNombre')
-    this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
-    this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
-    this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
-    this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
-    this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
+    this.ingreso = JSON.parse(localStorage.getItem('ingreso'))
+    console.log('ingreso',this.ingreso)
+    // this.OldArticulo['nombre'] = this.route.snapshot.paramMap.get('articuloNombre')
+    // this.OldArticulo['key'] = this.route.snapshot.paramMap.get('articulokey')
+    // this.SubUbicacion['nombre'] = this.route.snapshot.paramMap.get('SubUbicacionNombre')
+    // this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
+    // this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
+    // this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
+    // this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
+    // this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
     firebase.database().ref('articulos').on('value', function(articulosnapshot) {
       console.log('Entro en articulo-ubicacion a: firebase.database().ref(articulos)')
       este.articulos = []
@@ -65,19 +68,10 @@ export class EditaPathPage implements OnInit {
     }
   }
   open(articulo){
-    console.log(this.sede,this.ubicacion,this.SubUbicacion,articulo)
-    this.navCtrl.navigateForward(['view-articulo',{ 
-      NewArticuloNombre: articulo.nombre,
-      NewArticulokey: articulo.key,
-      articuloNombre: this.OldArticulo.nombre,
-      articulokey: this.OldArticulo.key,
-      SubUbicacionNombre: this.SubUbicacion.nombre,
-      SubUbicacionkey: this.SubUbicacion.key,
-      ubicacionNombre: this.ubicacion.nombre,
-      ubicacionkey: this.ubicacion.key,
-      sedeNombre: this.sede.nombre,
-      sedekey: this.sede.key
-    }]);
+    console.log(this.ingreso)
+    this.ingreso.articulo = articulo.key;
+    localStorage.setItem('ingreso', JSON.stringify(this.ingreso))
+    this.navCtrl.navigateForward(['view-articulo']);
   }
   async Editarticulo(articulo) {
     let este = this

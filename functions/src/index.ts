@@ -233,6 +233,7 @@ type Scores = { string: number }
             // await setTimeout(async function (){
                 
             // }, 500, data)
+            console.log(sheetCopy);
             const update = {
                 auth: jwtClient,
                 spreadsheetId: sheetCopy.data.id,
@@ -255,7 +256,7 @@ type Scores = { string: number }
                 console.log(respuesta);
                 return respuesta
             }).catch((error) => {
-                console.error("No se pudo escribir en el rango: ",data.range," del documento de Id ",data.spreadsheetId);
+                console.error("No se pudo escribir en el rango: ",data.range," del documento de Id ",sheetCopy.data.id);
                 throw new functions.https.HttpsError('internal', error.message);
             })
             // return sheetCopy.data
@@ -355,64 +356,147 @@ type Scores = { string: number }
             throw new functions.https.HttpsError('internal', error.message);
         }); */
     });
-    export const exportaFD = functions.https.onCall(async (data, context) =>{
-        const TemplateId = "1V3xtQbvxQA2llAHJE54r3lSgpjh_Bpf4k0pT6VQ94rg";
-        const copyParameters = {
-            fileId: TemplateId,
-            resource: {
-                parents: ['17-hkb3TAis61HyIvxsZPf6MHSWBA7HoV'],
-                name: "Acta de Resumen de "+ data.titulo +" "+ Date.now()
-            }
-        }
-        return await drive.files.copy(copyParameters).then(async function(DocCopy){
-            let tabla = data.tabla;
-            let updateObject = {
-                documentId: DocCopy.data.id,
-                resource: {
-                    requests: [{
-                        replaceAllText: {
-                            containsText: {
-                              text: '<<RESPONSABLE>>',
-                              matchCase: true,
-                            },
-                            replaceText: 'Stanley illidge',
-                          },
-                        },
-                        {
-                            insertTable: {tabla}
-                        }
-                    ],
-                },
-            };
-            /* const requests = [
-                {
-                    replaceAllText: {
-                      containsText: {
-                        text: '<<RESPONSABLE>>',
-                        matchCase: true,
-                      },
-                      replaceText: 'Stanley illidge',
-                    },
-                  },
-                {
-                    insertTable: {
-                        object(InsertTableRequest)
-                    }
-                }
-            ] */
-            return await Gdocs.documents.batchUpdate(updateObject).then(resp=>{
-                const respuesta = {doc:DocCopy.data, update:resp.data};
-                console.log(respuesta);
-                return respuesta
-            }).catch((error) => {
-                console.error("No se pudo escribir en el documento: ",data.titulo," del documento de Id ",DocCopy.data.id);
-                throw new functions.https.HttpsError('internal', error.message);
-            })
-        }).catch((error) => {
-            console.error("No se pudo copiar el documento");
-            throw new functions.https.HttpsError('internal', error.message);
-        });
-    });
+    // export const exportaFD = functions.https.onCall(async (data, context) =>{
+    //     /* const updateObject = {
+    //         documentId: "1V3xtQbvxQA2llAHJE54r3lSgpjh_Bpf4k0pT6VQ94rg"
+    //     }
+    //     return await Gdocs.documents.get(updateObject).then(resp=>{
+    //         const respuesta = {doc:resp.data};
+    //         console.log(respuesta);
+    //         return respuesta
+    //     }).catch((error) => {
+    //         console.error("No se pudo escribir en el documento: ",error.message);
+    //         throw new functions.https.HttpsError('internal', error.message);
+    //     }) */
+    //     // const TemplateId = "1V3xtQbvxQA2llAHJE54r3lSgpjh_Bpf4k0pT6VQ94rg"; // 
+    //     /* const copyParameters = {
+    //         fileId: TemplateId,
+    //         resource: {
+    //             parents: ['17-hkb3TAis61HyIvxsZPf6MHSWBA7HoV'],
+    //             name: "Acta de Resumen de "+ data.titulo +" "+ Date.now()
+    //         }
+    //     } */
+    //     // return await drive.files.copy(copyParameters).then(async function(DocCopy){
+    //         const celdas = data.tabla.table.celdas
+    //         const requests : any = [];
+    //         for(let i in celdas){
+    //             requests.push(celdas[i])
+    //         }
+    //         const replace = {
+    //             replaceAllText: {
+    //                 containsText: {
+    //                     text: '<<RESPONSABLE>>',
+    //                     matchCase: true,
+    //                 },
+    //                 replaceText: 'Stanley illidge',
+    //             }
+    //         }
+    //         requests.push(replace)
+    //         /* const updateObject = {
+    //             documentId: DocCopy.data.id,
+    //             resource: {
+    //                 requests: [
+    //                     {
+    //                         insertTable: {
+    //                             "rows": data.tabla.table.rows,
+    //                             "columns": data.tabla.table.columns,
+    //                             "location": {
+    //                                 "index": data.tabla.startIndex
+    //                             }
+    //                         }
+    //                     }
+    //                 ],
+    //             },
+    //         }; */
+    //         const updateObject = {
+    //             documentId: '1Jtiph_kVMDic4YbYxWx2PwPCDRUMvrK-IaKWgzDJDJI',
+    //             resource: {
+    //                 requests : [
+    //                 {
+    //                     'insertText': {
+    //                       'location': {
+    //                         'index': 916
+    //                       },
+    //                       'text': 'Hello Word - 1'
+    //                   }
+    //                 },
+    //                 {
+    //                     'insertText': {
+    //                       'location': {
+    //                         'index': 982
+    //                       },
+    //                       'text': 'Hello Word - 2'
+    //                   }
+    //                 },
+    //                 {
+    //                     'insertText': {
+    //                       'location': {
+    //                         'index': 1009
+    //                       },
+    //                       'text': 'Hello Word - 3'
+    //                   }
+    //                 },
+    //                 {
+    //                     'insertText': {
+    //                       'location': {
+    //                         'index': 1037
+    //                       },
+    //                       'text': 'Hello Word - 4'
+    //                   }
+    //                 },
+    //                 {
+    //                     'insertText': {
+    //                       'location': {
+    //                         'index': 1109
+    //                       },
+    //                       'text': 'Hello Word - 5'
+    //                   }
+    //                 },
+    //                 {
+    //                     'insertText': {
+    //                       'location': {
+    //                         'index': 1216
+    //                       },
+    //                       'text': 'Hello Word - 6'
+    //                   }
+    //                 }
+    //               ]
+    //             },
+    //         };
+    //         return await Gdocs.documents.batchUpdate(updateObject).then(async resp=>{
+    //             const respuesta = {updateObject:updateObject,update:resp.data};
+    //             console.log('Copia y tabla creadas',respuesta);
+    //             return respuesta
+    //             /* return await setTimeout(async function (){
+    //                 const celdas = data.tabla.table.celdas
+    //                 const requests : string[] = [];
+    //                 for(let i in celdas){
+    //                     requests.push(celdas[i])
+    //                 }
+    //                 const updateObject2 = {
+    //                     documentId: DocCopy.data.id,
+    //                     resource: {
+    //                         requests: requests
+    //                     },
+    //                 };
+    //                 return await Gdocs.documents.batchUpdate(updateObject2).then(resp2=>{
+    //                     const respuesta2 = {doc:DocCopy.data, update:resp2.data};
+    //                     console.log('Fin:',respuesta2);
+    //                     return respuesta2
+    //                 }).catch((error) => {
+    //                     console.error("No se pudo crear la tabla en el documento: ",data.titulo," del documento de Id ",DocCopy.data.id);
+    //                     throw new functions.https.HttpsError('internal', error.message);
+    //                 })
+    //             }, 1000, data) */
+    //         }).catch((error) => {
+    //             console.error("No se pudo escribir en el documento: ",data.titulo," del documento de Id ");
+    //             throw new functions.https.HttpsError('internal', error.message,updateObject);
+    //         })
+    //     /* }).catch((error) => {
+    //         console.error("No se pudo copiar el documento");
+    //         throw new functions.https.HttpsError('internal', error.message);
+    //     }); */
+    // });
     /* async function CreateSheet(data:any){
         const request = {
             resource: {

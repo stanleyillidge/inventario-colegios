@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { NavController, AlertController, Platform, LoadingController, ToastController } from '@ionic/angular';
 import * as firebase from 'firebase/app';
 import "firebase/functions";
-import { Http } from '@angular/http';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
 
 @Component({
   selector: 'app-sedes',
@@ -40,6 +40,7 @@ export class SedesPage implements OnInit {
   PUSH_CHARS:string = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
   timestamp: string;
   plataforma: any = {};
+  translate: any = {};
   public toggled: boolean = false;
   ruta: any;
   constructor(
@@ -49,14 +50,24 @@ export class SedesPage implements OnInit {
     public alertController: AlertController,
     public loadingController: LoadingController,
     public toastController: ToastController,
-    private http: Http,
+    private nativeStorage: NativeStorage,
     private barcodeScanner: BarcodeScanner,
   ) {
     let este = this
     this.plataforma.desktop = this.platform.is("desktop");
     this.plataforma.android = this.platform.is("android");
+    localStorage.setItem('plataforma', JSON.stringify(this.plataforma))
     this.toggled = false;
     this.contador['sede'] = 0;
+    this.inventario['articulos unicos'] = [];
+    this.inventario['numArticulos'] = 0;
+    this.inventario['detallado'] = [];
+    this.inventario['resumen'] = [];
+    this.inventario['buenos'] = 0;
+    this.inventario['regulares'] = 0;
+    this.inventario['malos'] = 0;
+    this.articulos = null;
+    // this.serialesRef();
     /* "sedes": {
       "sedeId":{
           "nombre":"string",
@@ -67,131 +78,85 @@ export class SedesPage implements OnInit {
       }
     } */
     // Carga inicial y eventos de creacion de sedes
-    firebase.database().ref('sedes').on('child_added', function(added){
-      console.log('Data added',added.val())
-      let sed = {}
-      este.cantidad += 1;
-      sed = added.val();
-      sed['key'] = added.key;
-      sed['imagen'] = "/assets/shapes.svg";
-      if(added.val().imagen){
-        sed['imagen'] = added.val().imagen; 
-      }
-      este.contador['sede'] += added.val().cantidad
-      este.sedes.push(sed)
-      este.sedest.push(sed)
+    this.translate = { sedes:{},ubicaciones:{},subUbicaciones:{} }
+    firebase.database().ref('ubicaciones2').once('value',(data)=>{
+      este.translate.ubicaciones = data.val();
+    }).then(()=>{
+      firebase.database().ref('subUbicaciones2').once('value',(data2)=>{
+        este.translate.subUbicaciones = data2.val();
+      }).then(()=>{
+        firebase.database().ref('sedes').on('child_added', function(added){
+          // console.log('Data added',added.val())
+          let sed = {}
+          este.cantidad += 1;
+          sed = added.val();
+          // sed['codigo'] = '0'+este.cantidad
+          sed['key'] = added.key;
+          sed['imagen'] = "/assets/shapes.svg";
+          if(added.val().imagen){
+            sed['imagen'] = added.val().imagen; 
+          }
+          este.contador['sede'] += added.val().cantidad
+          este.sedes.push(sed)
+          este.sedest.push(sed)
+          este.translate.sedes[added.key] = sed
+          localStorage.setItem('translate', JSON.stringify(este.translate))
+        });
+      });
     });
+    
     // ojo hacer desde cloud functions
     firebase.database().ref('sedes').on('child_changed', function(change){
-      console.log('Data Change',change.val())
-      // este.cargaInicial();
+      console.log('Data Change',change.val(),change.key)
+      console.log(este.translate.sedes[change.key])
+      for(let i in este.sedes){
+        if(este.sedes[i].key == change.key){
+          este.contador['sede'] -= este.sedes[i].cantidad
+          este.sedes[i] = change.val()
+          este.sedes[i]['key'] = change.key;
+          este.sedes[i]['imagen'] = "/assets/shapes.svg";
+          if(change.val().imagen){
+            este.sedes[i]['imagen'] = change.val().imagen; 
+          }
+          este.translate.sedes[change.key] = este.sedes[i]
+          este.contador['sede'] += este.sedes[i].cantidad
+          break
+        }
+      }
     });
     // ojo hacer desde cloud functions
     firebase.database().ref('sedes').on('child_removed', function(removed){
       console.log('Data removed',removed.val())
-      // este.cargaInicial();
+      console.log(este.translate.sedes[removed.key])
+      for(let i in este.sedes){
+        if(este.sedes[i].key == removed.key){
+          este.cantidad -= 1;
+          este.contador['sede'] -= este.sedes[i].cantidad
+          este.sedes.splice(i, 1);
+          delete este.translate.sedes[removed.key]
+          break
+        }
+      }
     });
     firebase.database().ref('articulos').once('value',articulosSnapX=>{
       // console.log('Entro en sedes a: firebase.database().ref(articulos)')
       este.articulosX['existen'] = {}
       este.articulosX['no existen'] = []
       este.articulosX['existen'] = articulosSnapX.val();
-    })
 
-    /* firebase.database().ref('sedes').once('value', function(sedeSnapshot) {
-      // console.log('Entro en home')
-      este.ruta = sedeSnapshot.val();
-      este.contador = {}
-      este.sedes = []
-      let sed = {}
-      este.sede = sedeSnapshot.val();
-      este.cantidad = sedeSnapshot.numChildren();
-      este.contador['sede'] = 0;
-      sedeSnapshot.forEach(sede => {
-        // // console.log(sede.val())
-        sed = sede.val();
-        sed['key'] = sede.key;
-        este.contador['sede'] += sede.val().cantidad
-        este.sedes.push(sed)
-      });
-      este.sedest = este.sedes;
-      firebase.database().ref('ubicaciones').once('value',async ubicaciones=>{
-        este.ruta['ubicaciones']={}
-        este.ruta['subUbicaciones']={}
-        await ubicaciones.forEach(sede=>{
-          este.ruta[sede.key]['ubicaciones']=sede.val();
-          firebase.database().ref('subUbicaciones').once('value',async subUbicaciones=>{
-            await subUbicaciones.forEach(ubicacion=>{
-              este.ruta['ubicaciones'][ubicacion.key]={}
-              este.ruta['ubicaciones'][ubicacion.key] = ubicacion.val();
-              este.ruta['ubicaciones'][ubicacion.key]['sede'] ={
-                key:sede.key,
-                nombre:este.ruta[sede.key].nombre
-              }
-              if(este.ruta[sede.key]['ubicaciones'][ubicacion.key]){
-                este.ruta[sede.key]['ubicaciones'][ubicacion.key]['subUbicaciones']=ubicacion.val();
-              }
-              ubicacion.forEach(subUbicacion=>{
-                // // console.log(este.ruta[sede.key].nombre)
-                if(este.ruta[sede.key]['ubicaciones'][ubicacion.key] && este.ruta[sede.key]){
-                  este.ruta['subUbicaciones'][subUbicacion.key]={
-                    nombre:subUbicacion.val().nombre,
-                    sede:{
-                      key:sede.key,
-                      nombre:este.ruta[sede.key].nombre
-                    },
-                    ubicacion:{
-                      key:ubicacion.key,
-                      nombre:este.ruta[sede.key]['ubicaciones'][ubicacion.key].nombre
-                    }
-                  }
-                }
-              })
-            })
-          })
-        })
+      este.translate['articulos'] = {};
+      este.translate['articulos'] = articulosSnapX.val();
+      articulosSnapX.forEach(articulo=>{
+        este.translate['articulos'][String(articulo.val().nombre).toUpperCase()] = {
+          nombre: articulo.val().nombre,
+          key: articulo.key
+        };
       })
     }).then(()=>{
-      firebase.database().ref('articulos').once('value',articulos=>{
-        este.ruta['articulos'] = {};
-        este.ruta['articulos'] = articulos.val();
-        articulos.forEach(articulo=>{
-          // let n = String(articulo.val().nombre).toUpperCase()
-          este.ruta['articulos'][String(articulo.val().nombre).toUpperCase()] = {
-            nombre: articulo.val().nombre,
-            key: articulo.key
-          };
-        })
-      }).then(()=>{
-        este.corregir().then(()=>{
-          // console.log('Termino de corregir la DB')
-        })
-      })
-    }) */
-
-    // this.serialesRef()
-
-    // this.corregirFechaCreacion();
-
-    /* this.navCtrl.navigateForward(['view-articulo',{
-      articulokey: '-L_doWbgmXaXbwivPkMy',
-      SubUbicacionkey: '-L_d5q7uThSAFV8imtRG' 
-    }]); */
-
-    /* firebase.database().ref('inventario').once('value',subSnap=>{
-      este.articulos = [];
-      subSnap.forEach(articulosSnap=>{
-        articulosSnap.forEach(articulo => {
-          let art = articulo.val();
-          art['key'] = articulo.key;
-          este.articulos.push(art)
-        })
-      })
-    }).then(()=>{
-      este.creaEtiquetas();
-    }) */
-
-    // this.deleteFCloud();
+      console.log("Comienza",este.translate)
+      localStorage.setItem('translate', JSON.stringify(este.translate))
+    })      
+    console.log('Sedes:',este.sedes)
   }
   cargaInicial(){
     let este = this
@@ -628,30 +593,80 @@ export class SedesPage implements OnInit {
     this.resument = true
     this.listat = false
     this.listaR = false
-    if(!este.articulos){
+    if(!this.articulos){
+      this.articulos = [];
       const loading = await this.loadingController.create({
-        message: 'Creando vista'
+        message: 'Creando vista de resumen general...'
       });
       await loading.present();
-      firebase.database().ref('inventario').once('value',articulosSnap=>{
-        este.articulos = [];
-        este.contador.sede = 0;
-        articulosSnap.forEach(articulo => {
-          // // console.log(articulo.val())
-          este.contador.sede += 1;
-          let art = articulo.val();
-          art['key'] = articulo.key;
-          art['sede'] = este.sede[articulo.val().sede]
-          art['ubicacion'] = este.ubicacion[articulo.val().ubicacion]
-          art['subUbicacion'] = este.subUbicacion[articulo.val().subUbicacion]
-          este.articulos.push(art)
-        });
+    // ------ Resumen -----------------------------
+      firebase.database().ref('inventario2').on('value',async ingresos =>{
+        ingresos.forEach(added=>{
+          // console.log(added.val())
+          este.inventario['numArticulos'] += 1;
+          let inv = added.val();
+          if(!este.translate.articulos[added.val().articulo]){
+            inv['nombre'] = este.translate.articulos[added.val().articulo.key].nombre;
+          }else{
+            inv['nombre'] = este.translate.articulos[added.val().articulo].nombre;
+          }
+          inv['key'] = added.key;
+          este.articulos.push(inv)
+          switch (added.val().estado) {
+            case 'Bueno':
+              este.inventario['buenos'] += 1
+              break;
+            case 'Regular':
+              este.inventario['regulares'] += 1
+              break;
+            case 'Malo':
+              este.inventario['malos'] += 1
+              break;
+            default:
+              break;
+          }
+          // Ingreso
+          // Modificación
+          // Ingreso key
+          // Articulo key
+          // Nombre
+          // Sede
+          // Ubicación
+          // Sub-ubicación
+          // Valor
+          // Disponible
+          // Estado
+          // Imagen
+          // Observaciones
+          // Descripcion
+          este.inventario['detallado'].push([
+            added.val().creacion,
+            added.val().modificacion,
+            added.key,
+            added.val().articulo,
+            inv['nombre'],
+            este.translate.sedes[added.val().sede].nombre,
+            este.translate.ubicaciones[added.val().ubicacion].nombre,
+            este.translate.subUbicaciones[added.val().subUbicacion].nombre,
+            added.val().valor,
+            added.val().disponibilidad,
+            added.val().estado,
+            added.val().imagen,
+            added.val().observaciones,
+            added.val().descripcion
+          ]);
+        })
         let artUnicos = este.articulos.map(item => item.nombre).filter((value, index, self) => self.indexOf(value) === index)
-        // // console.log(artUnicos);
-        este.inventario['articulos unicos'] = [];
         este.inventario['articulos'] = este.articulos;
         for(let art in artUnicos){
           este.inventario['articulos unicos'][art] = {
+            nombre: artUnicos[art],
+            cantidad:0,
+            bueno:0,
+            malo:0,
+            regular:0
+          }
+          este.inventario['resumen'][este.translate.articulos[String(artUnicos[art]).toUpperCase()].key] = {
             nombre: artUnicos[art],
             cantidad:0,
             bueno:0,
@@ -662,16 +677,20 @@ export class SedesPage implements OnInit {
           for(let i in este.articulos){
             if(este.articulos[i].nombre == artUnicos[art]){
               este.inventario['articulos unicos'][art]['cantidad'] += 1;
+              este.inventario['resumen'][este.translate.articulos[String(artUnicos[art]).toUpperCase()].key]['cantidad'] += 1;
               este.inventario['articulos unicos'][art].articulos[este.articulos[i].key]=este.articulos[i]
               switch (este.articulos[i].estado) {
                 case 'Bueno':
                   este.inventario['articulos unicos'][art]['bueno'] += 1
+                  este.inventario['resumen'][este.translate.articulos[String(artUnicos[art]).toUpperCase()].key]['bueno'] += 1
                   break;
                 case 'Regular':
                   este.inventario['articulos unicos'][art]['regular'] += 1
+                  este.inventario['resumen'][este.translate.articulos[String(artUnicos[art]).toUpperCase()].key]['regular'] += 1
                   break;
                 case 'Malo':
                   este.inventario['articulos unicos'][art]['malo'] += 1
+                  este.inventario['resumen'][este.translate.articulos[String(artUnicos[art]).toUpperCase()].key]['malo'] += 1
                   break;
                 default:
                   break;
@@ -679,16 +698,102 @@ export class SedesPage implements OnInit {
             }
           }
         }
-        // este.inventario['articulos unicos']['sede'] = este.sede
-        // este.inventario['articulos unicos']['ubicacion'] = este.ubicacion
-        // este.inventario['articulos unicos']['SubUbicacion'] = este.SubUbicacion
-        // firebase.database().ref('resumenes').child(este.SubUbicacion.key).set(este.inventario['articulos unicos'])
-        este.inventario['articulos unicos temp'] = este.inventario['articulos unicos']
-        // console.log('articulos unicos: ',este.inventario['articulos unicos'])
+        este.inventario['articulos unicos temp'] = este.inventario['articulos unicos'];
+        /* firebase.database().ref('resumen').child('general').set({
+          resumen: este.inventario['resumen'],
+          cantidad: este.inventario['numArticulos'],
+          buenos: este.inventario['buenos'],
+          malos: este.inventario['malos'],
+          regulares: este.inventario['regulares'],
+        }) */
         este.articulost = este.articulos;
-      }).then(r=>{
-        loading.dismiss()
+        loading.dismiss();
       })
+    // --------------------------------------------
+    }
+    console.log(este.translate,este.inventario)
+  }
+  async sheet(){
+    let este = this;
+    if(!this.sheetData.url){
+      if(this.articulos){
+        const alert = await this.alertController.create({
+          header: este.tituloAlertas,
+          message: 'Desea <strong>crear un reporte del resumen de su inventario</strong> en Google Sheets!!!',
+          buttons: [
+            {
+              text: 'No',
+              role: 'cancel',
+              cssClass: 'secondary',
+              handler: () => {
+                // console.log('Confirm Cancel: no envio el resumen');
+                this.pregunta = false;
+              }
+            }, {
+              text: 'Si',
+              handler: async () => {
+                // console.log('Confirm Okay: envio el resumen');
+                const loading2 = await this.loadingController.create({
+                  message: '...Generando archivo de resumen en Google Sheets...'
+                });
+                await loading2.present();
+                este.sheetData['values'] = [];
+                este.sheetData['detallado'] = este.inventario['detallado'];
+                este.sheetData['titulo'] = 'General';
+                este.sheetData['sheet'] = ['Resumen','Inventario Detallado'];
+                este.sheetData['range'] = ['Resumen!A2:E','Inventario Detallado!A2:Z'];
+                // este.sheetData['spreadsheetId'] = '1588aKnTpo2G9WXWVPOW5S0c319qkvC1GKj4wkbqz-Lw';
+                for(let fila in este.inventario['articulos unicos']){
+                  // // console.log(este.inventario['articulos unicos'][fila])
+                  este.sheetData.values.push([
+                    este.inventario['articulos unicos'][fila].nombre,
+                    este.inventario['articulos unicos'][fila].cantidad,
+                    este.inventario['articulos unicos'][fila].bueno,
+                    este.inventario['articulos unicos'][fila].malo,
+                    este.inventario['articulos unicos'][fila].regular]
+                  )
+                }
+                let data = este.sheetData
+                console.log('Data a exportar',data)
+                // loading2.dismiss();
+                let exportaFS = firebase.functions().httpsCallable("exportaFS");
+                return exportaFS(data).then(async function(response) {
+                  // Read result of the Cloud Function.
+                  // await console.log('Archivo creado: ',response);
+                  este.sheetData['url'] = 'https://docs.google.com/spreadsheets/d/'+response.data.sheet.id+'/edit#gid=0'
+                  let message = 'El resumen fué creado'
+                  este.presentToastWithOptions(message,3000,'top')
+                  loading2.dismiss();
+                  window.open(este.sheetData.url,'_blank');
+                }).catch(function(error) {
+                  // Read result of the Cloud Function.
+                  loading2.dismiss();
+                  console.log('Error en crear Reporte: ',error);
+                  este.presentToastWithOptions(error.message,3000,'top')
+                })
+              }
+            }
+          ]
+        });
+        await alert.present();
+      }else{
+        const alert = await this.alertController.create({
+          header: 'Necesitas un paso más...',
+          message: 'Primero debes generar un reporte para poder exportarlo!!.',
+          buttons: [
+            {
+              text: 'oK',
+              handler: () => {
+                // console.log('Confirm Cancel: no envio el resumen');
+                this.resumen2();
+              }
+            }]
+        });
+        await alert.present();
+      }
+    }else{
+      window.open(this.sheetData.url,'_blank');
+      return
     }
   }
   async resumen(){
@@ -819,7 +924,7 @@ export class SedesPage implements OnInit {
               handler: async () => {
                 // console.log('Confirm Okay: envio el resumen');
                 const loading2 = await this.loadingController.create({
-                  message: '...Generando y enviando archivo de resumen en Google Sheets...'
+                  message: '...Generando archivo de resumen en Google Sheets...'
                 });
                 await loading2.present();
                 este.sheetData['values'] = [];
@@ -892,9 +997,6 @@ export class SedesPage implements OnInit {
       este.inventario['articulos unicos'] = data.val();
     })
   }
-  sheet(){
-    window.open(this.sheetData.url,'_blank');
-  }
   acta(){
     window.open(this.actaBaja.url,'_blank');
   }
@@ -911,19 +1013,6 @@ export class SedesPage implements OnInit {
   }
   total(articulo){
     let este = this
-    /* firebase.database().ref('inventario/'+this.SubUbicacion.key).once('value', function(articulosnapshot) {
-      este.articulos = []
-      let art = {}
-      este.inventario['numArticulos'] = articulosnapshot.numChildren();
-      articulosnapshot.forEach(articulo => {
-        // // console.log(articulo.val())
-        art = articulo.val();
-        art['key'] = articulo.key;
-        este.articulos.push(art)
-      });
-      este.inventario['articulos'] = este.articulos;
-      este.articulost = este.articulos;
-    }); */
     this.resument = false
     this.listat = false
     this.listaR = true
@@ -935,19 +1024,6 @@ export class SedesPage implements OnInit {
   }
   Buenos(articulo){
     let este = this
-    /* firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Bueno').once('value', function(BuenoSnapshot) {
-      este.inventario['buenos'] = BuenoSnapshot.numChildren();
-      este.articulos = []
-      let art = {}
-      BuenoSnapshot.forEach(articulo => {
-        // console.log('Buenos: ',articulo.val())
-        art = articulo.val();
-        art['key'] = articulo.key;
-        este.articulos.push(art)
-      });
-      este.inventario['articulos'] = este.articulos;
-      este.articulost = este.articulos;
-    }); */
     this.resument = false
     this.listat = false
     this.listaR = true
@@ -962,19 +1038,6 @@ export class SedesPage implements OnInit {
   }
   Malos(articulo){
     let este = this
-    /* firebase.database().ref('inventario/'+this.SubUbicacion.key).orderByChild("estado").equalTo('Malo').once('value', function(MaloSnapshot) {
-      este.inventario['malos'] = MaloSnapshot.numChildren();
-      este.articulos = []
-      let art = {}
-      MaloSnapshot.forEach(articulo => {
-        // console.log('Malos: ',articulo.val())
-        art = articulo.val();
-        art['key'] = articulo.key;
-        este.articulos.push(art)
-      });
-      este.inventario['articulos'] = este.articulos;
-      este.articulost = este.articulos;
-    }); */
     this.resument = false
     this.listat = false
     this.listaR = true

@@ -77,7 +77,9 @@
             "cantidad":"number",
             "descripcion":"string",
             "imagen":"string",
-            "modificacion":"string"
+            "modificaciones":{
+                "modificacionId"
+            },
         }
     },
     "ubicaciones": {
@@ -87,7 +89,9 @@
             "sede":"sedeId",
             "descripcion":"string",
             "imagen":"string",
-            "modificacion":"string"
+            "modificaciones":{
+                "modificacionId"
+            },
         }
     },
     "SubUbicaciones": {
@@ -98,16 +102,22 @@
             "cantidad":"number",
             "descripcion":"string",
             "imagen":"string",
-            "modificacion":"string"
+            "modificaciones":{
+                "modificacionId"
+            },
         }
     },
     "inventarios":{
-        "inventarioId":{
+        "ingresoId":{
             "sede":"sedeId",
             "ubicacion":"ubicacionId",
             "subUbicacion":"SubUbicacionId",
             "articulo":"articuloId",
-            "nombre":"string",
+            "creacion":"date",
+            "fechaModif":"date",
+            "etiqueta":"string",
+            "etiquetaId":"string",
+            "fechaEtiqueta":"date",
             "cantidad":"number",
             "descripcion":"string",
             "disponibilidad":"string",
@@ -117,11 +127,15 @@
             "observaciones":"string",
             "serie":"string",
             "valor":"number",
-            "modificacion":"string"
+            "modificaciones":{
+                "modificacionId"
+            },
+            "codigo":"string"
         }
     },
     "resumen":{
         "general":{
+            "docId":"string",
             "articuloId":{
                 "nombre":"string",
                 "cantidad":"number",
@@ -131,6 +145,7 @@
             }
         },
         "sedeId":{
+            "docId":"string",
             "articuloId":{
                 "nombre":"string",
                 "cantidad":"number",
@@ -140,6 +155,7 @@
             }
         },
         "ubicacionId":{
+            "docId":"string",
             "articuloId":{
                 "nombre":"string",
                 "cantidad":"number",
@@ -149,6 +165,7 @@
             }
         },
         "SubUbicacionId":{
+            "docId":"string",
             "articuloId":{
                 "nombre":"string",
                 "cantidad":"number",

@@ -1,0 +1,543 @@
+{
+    "columns": 5,
+    "rows": 9,
+    "tableRows": [
+      {
+        "startIndex": 905,
+        "endIndex": 949,
+        "tableCells": [
+          {
+            "startIndex": 0,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 0,
+                "endIndex": 0,
+                "paragraph": "Lámpara"
+              }
+            ]
+          },
+          {
+            "startIndex": 0,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 0,
+                "endIndex": 1,
+                "paragraph": 9
+              }
+            ]
+          },
+          {
+            "startIndex": 0,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 0,
+                "endIndex": 2,
+                "paragraph": 5
+              }
+            ]
+          },
+          {
+            "startIndex": 0,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 0,
+                "endIndex": 3,
+                "paragraph": 0
+              }
+            ]
+          },
+          {
+            "startIndex": 0,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 0,
+                "endIndex": 4,
+                "paragraph": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startIndex": 949,
+        "endIndex": 976,
+        "tableCells": [
+          {
+            "startIndex": 1,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 1,
+                "endIndex": 0,
+                "paragraph": "Tablero"
+              }
+            ]
+          },
+          {
+            "startIndex": 1,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 1,
+                "endIndex": 1,
+                "paragraph": 1
+              }
+            ]
+          },
+          {
+            "startIndex": 1,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 1,
+                "endIndex": 2,
+                "paragraph": 0
+              }
+            ]
+          },
+          {
+            "startIndex": 1,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 1,
+                "endIndex": 3,
+                "paragraph": 0
+              }
+            ]
+          },
+          {
+            "startIndex": 1,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 1,
+                "endIndex": 4,
+                "paragraph": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startIndex": 976,
+        "endIndex": 1001,
+        "tableCells": [
+          {
+            "startIndex": 2,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 2,
+                "endIndex": 0,
+                "paragraph": "Escritorio"
+              }
+            ]
+          },
+          {
+            "startIndex": 2,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 2,
+                "endIndex": 1,
+                "paragraph": 1
+              }
+            ]
+          },
+          {
+            "startIndex": 2,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 2,
+                "endIndex": 2,
+                "paragraph": 0
+              }
+            ]
+          },
+          {
+            "startIndex": 2,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 2,
+                "endIndex": 3,
+                "paragraph": 0
+              }
+            ]
+          },
+          {
+            "startIndex": 2,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 2,
+                "endIndex": 4,
+                "paragraph": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startIndex": 1001,
+        "endIndex": 1028,
+        "tableCells": [
+          {
+            "startIndex": 3,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 3,
+                "endIndex": 0,
+                "paragraph": "Silla ACOLCHADA en TELA con estructura de TUBO metalico"
+              }
+            ]
+          },
+          {
+            "startIndex": 3,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 3,
+                "endIndex": 1,
+                "paragraph": 1
+              }
+            ]
+          },
+          {
+            "startIndex": 3,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 3,
+                "endIndex": 2,
+                "paragraph": 1
+              }
+            ]
+          },
+          {
+            "startIndex": 3,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 3,
+                "endIndex": 3,
+                "paragraph": 0
+              }
+            ]
+          },
+          {
+            "startIndex": 3,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 3,
+                "endIndex": 4,
+                "paragraph": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startIndex": 1028,
+        "endIndex": 1100,
+        "tableCells": [
+          {
+            "startIndex": 4,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 4,
+                "endIndex": 0,
+                "paragraph": "Kit silla y mesa pequeña con superficie, espaldar PLASTICO con estructura en TUBO metalico"
+              }
+            ]
+          },
+          {
+            "startIndex": 4,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 4,
+                "endIndex": 1,
+                "paragraph": 40
+              }
+            ]
+          },
+          {
+            "startIndex": 4,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 4,
+                "endIndex": 2,
+                "paragraph": 40
+              }
+            ]
+          },
+          {
+            "startIndex": 4,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 4,
+                "endIndex": 3,
+                "paragraph": 0
+              }
+            ]
+          },
+          {
+            "startIndex": 4,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 4,
+                "endIndex": 4,
+                "paragraph": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startIndex": 1100,
+        "endIndex": 1210,
+        "tableCells": [
+          {
+            "startIndex": 5,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 5,
+                "endIndex": 0,
+                "paragraph": "Abanico de techo"
+              }
+            ]
+          },
+          {
+            "startIndex": 5,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 5,
+                "endIndex": 1,
+                "paragraph": 4
+              }
+            ]
+          },
+          {
+            "startIndex": 5,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 5,
+                "endIndex": 2,
+                "paragraph": 3
+              }
+            ]
+          },
+          {
+            "startIndex": 5,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 5,
+                "endIndex": 3,
+                "paragraph": 1
+              }
+            ]
+          },
+          {
+            "startIndex": 5,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 5,
+                "endIndex": 4,
+                "paragraph": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startIndex": 1210,
+        "endIndex": 1246,
+        "tableCells": [
+          {
+            "startIndex": 6,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 6,
+                "endIndex": 0,
+                "paragraph": "Mega"
+              }
+            ]
+          },
+          {
+            "startIndex": 6,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 6,
+                "endIndex": 1
+              }
+            ]
+          },
+          {
+            "startIndex": 6,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 6,
+                "endIndex": 2
+              }
+            ]
+          },
+          {
+            "startIndex": 6,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 6,
+                "endIndex": 3
+              }
+            ]
+          },
+          {
+            "startIndex": 6,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 6,
+                "endIndex": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startIndex": 1246,
+        "endIndex": 1345,
+        "tableCells": [
+          {
+            "startIndex": 7,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 7,
+                "endIndex": 0,
+                "paragraph": "Aulas de clases"
+              }
+            ]
+          },
+          {
+            "startIndex": 7,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 7,
+                "endIndex": 1
+              }
+            ]
+          },
+          {
+            "startIndex": 7,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 7,
+                "endIndex": 2
+              }
+            ]
+          },
+          {
+            "startIndex": 7,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 7,
+                "endIndex": 3
+              }
+            ]
+          },
+          {
+            "startIndex": 7,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 7,
+                "endIndex": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startIndex": 1345,
+        "endIndex": 1434,
+        "tableCells": [
+          {
+            "startIndex": 8,
+            "endIndex": 0,
+            "content": [
+              {
+                "startIndex": 8,
+                "endIndex": 0,
+                "paragraph": "Aula - 001"
+              }
+            ]
+          },
+          {
+            "startIndex": 8,
+            "endIndex": 1,
+            "content": [
+              {
+                "startIndex": 8,
+                "endIndex": 1
+              }
+            ]
+          },
+          {
+            "startIndex": 8,
+            "endIndex": 2,
+            "content": [
+              {
+                "startIndex": 8,
+                "endIndex": 2
+              }
+            ]
+          },
+          {
+            "startIndex": 8,
+            "endIndex": 3,
+            "content": [
+              {
+                "startIndex": 8,
+                "endIndex": 3
+              }
+            ]
+          },
+          {
+            "startIndex": 8,
+            "endIndex": 4,
+            "content": [
+              {
+                "startIndex": 8,
+                "endIndex": 4
+              }
+            ]
+          }
+        ]
+      }
+    ]
+}

@@ -63,6 +63,7 @@ export class CreaLocacionPage implements OnInit {
     extension: any;
     locacion: any = {};
     locaciones: any = [];
+  translate: any;
   // ---------------------------
   constructor(
     public platform: Platform,
@@ -82,6 +83,7 @@ export class CreaLocacionPage implements OnInit {
   ) {
     // ----------------------------------------------------
       let este = this
+      este.translate = JSON.parse(localStorage.getItem('translate'))
       this.plataforma.desktop = this.platform.is("desktop");
       this.plataforma.android = this.platform.is("android");
 
@@ -89,7 +91,16 @@ export class CreaLocacionPage implements OnInit {
       this.locacion['nombre'] = this.route.snapshot.paramMap.get('locacionNombre')
       this.locacion['child'] = this.route.snapshot.paramMap.get('locacionChild')
       this.locacion['key'] = this.route.snapshot.paramMap.get('locacionkey')
-
+      this.locaciones.listo = false
+      if(this.locacion['child']=='subUbicaciones'){
+        this.locacion['child']='subUbicaciones2'
+      }
+      if(this.locacion['child']=='ubicaciones'){
+        this.locacion['child']='ubicaciones2'
+      }
+      if(this.locacion['child']=='inventario'){
+        this.locacion['child']='inventario2'
+      }
       this.NewArticulo['nombre'] = this.route.snapshot.paramMap.get('NewArticuloNombre')
       this.NewArticulo['key'] = this.route.snapshot.paramMap.get('NewArticulokey')
       this.articulo['nombre'] = this.route.snapshot.paramMap.get('articuloNombre')
@@ -111,11 +122,22 @@ export class CreaLocacionPage implements OnInit {
         SubUbicacionkey: this.SubUbicacion['key'],
         ubicacionNombre: this.ubicacion['nombre'],
         ubicacionkey: this.ubicacion['key'],
-        sedeNombre: this.sede['nombre'],
+        sedeNombre: this.translate.sedes[this.sede['key']].nombre,
         sedekey: this.sede['key'],
       }
       console.log(este.parametros['old'])
-      este.titulo = este.sede.nombre +' / '+ este.ubicacion['nombre'] +' / '+ este.SubUbicacion.nombre
+      if(este.sede.nombre){
+        este.titulo = este.sede.nombre
+        if(este.ubicacion['nombre']){
+          este.titulo = este.sede.nombre +'/'+ este.ubicacion['nombre']
+          if(este.ubicacion['nombre']){
+            este.titulo = este.sede.nombre +'/'+ este.ubicacion['nombre'] +'/'+ este.SubUbicacion.nombre
+          }
+        }
+      }
+      este.titulo = este.sede.nombre +'/'+ este.ubicacion['nombre'] +'/'+ este.SubUbicacion.nombre
+      console.log('Titulo:',este.titulo)
+      console.log('Locacion:',este.locacion)
     //-----------------------------------------------------
       if(this.locacion.accion == 'crear'){
         this.locacion.key = firebase.database().ref(this.locacion.child).push().key;
@@ -134,6 +156,7 @@ export class CreaLocacionPage implements OnInit {
           }
           este.locaciones.push(a)
         }).then(a=>{
+          // console.log('Locaciones:',este.locaciones)
           este.creaFormulario(este.locaciones[0])
         })
       }
@@ -154,6 +177,7 @@ export class CreaLocacionPage implements OnInit {
         ]))
       });
     //-------------------
+    this.locaciones.listo = true
     console.log('locaciones:',this.locaciones)
   }
   camara(){
@@ -305,7 +329,8 @@ export class CreaLocacionPage implements OnInit {
       message: 'Actualizado...'
     });
     await loading.present();
-    let child = this.sede.nombre+'/'+this.locacion.nombre
+    let child = este.titulo+'/'+this.locacion.nombre
+    console.log('Ruta de archivo:',child)
     const imagenes = firebase.storage().ref(child);
     let imagen
     if(this.plataforma.android){
@@ -320,6 +345,7 @@ export class CreaLocacionPage implements OnInit {
       let src = este.Path.substr(ext.length-1);
       imagen = [src,'base64'];
     }
+    console.log('imagen',imagen)
     imagenes.putString(imagen[0],imagen[1]).then(function(snapshot) {
       console.log('Uploaded a data_url string!');
       imagenes.getDownloadURL().then(function(url) {
@@ -341,7 +367,7 @@ export class CreaLocacionPage implements OnInit {
             este.presentToastWithOptions('Error al guardar modificación',2000,'top')
             console.error('Error al guardar modificación',error)
           })
-          console.log('Entro a guardar...')
+          console.log('Entro a guardar...',este.Path,url)
           firebase.database().ref(este.locacion.child).child(este.locacion.key).update({
             imagen: url,
             modificacion: este.updatekey,

@@ -87,6 +87,7 @@ ion-item{
     // margin: 0 -1em 0 -1em;
     &.No{
         --background: #ffb0b0 !important;
+        background: #ffb0b0 !important;
     }
     &.item-card{
       margin: 0 -1em 0 -1em;
@@ -115,6 +116,9 @@ ion-badge{
         background: transparent;
         color: black;
         font-size: 2em;
+    }
+    &.dado_baja{
+      position: relative;
     }
     margin: 2px;
     font-size: 1em;
@@ -149,6 +153,11 @@ ion-icon {
         color: #2a6e19;
         font-size: 1.25rem;
         margin: 0 0 0 0.75em;
+    }
+    &.normal{
+        color: #424242;
+        font-size: 1.25rem;
+        // margin: 0 0 0 0.75em;
     }
 }
 ion-toolbar{
@@ -286,6 +295,25 @@ ion-content{
     color:#666;
     font-weight:600;
   }
+}
+.badgeCard {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition:transform .1s ease-in;
+  
+  display:flex;
+  flex-direction:column;
+  height: fit-content;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    box-shadow: 0 4px 10px 0 rgba(0,0,0,.16);
+    transform:scale(1.025);
+  }
+}
+.badgeGrid{
+  display: grid;
+  align-items: stretch;
 }
 .grid {
   display: grid;

@@ -28,7 +28,8 @@ const routes: Routes = [
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'crea-locacion', loadChildren: './crea-locacion/crea-locacion.module#CreaLocacionPageModule' },
   { path: 'resumen-general', loadChildren: './resumen-general/resumen-general.module#ResumenGeneralPageModule' },
-  { path: 'resumen-articulo', loadChildren: './resumen-articulo/resumen-articulo.module#ResumenArticuloPageModule' }
+  { path: 'resumen-articulo', loadChildren: './resumen-articulo/resumen-articulo.module#ResumenArticuloPageModule' },
+  { path: 'resumen', loadChildren: './resumen/resumen.module#ResumenPageModule' }
 ];
 
 @NgModule({

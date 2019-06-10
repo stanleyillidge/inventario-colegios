@@ -32,7 +32,7 @@
         <div class="container-side-menu">
           <div>
             <button class="button button-icon">
-              <p class="nav-label-numb">{{contador.sede | number}}</p><p class="nav-label">Articulos</p>
+              <p class="nav-label-numb">{{contador.ubicacion | number}}</p><p class="nav-label">Articulos</p>
             </button>
           </div>
         </div>
@@ -188,12 +188,15 @@
       <ion-button (click)="lista()">
         <ion-icon slot="icon-only" name="list"></ion-icon>
       </ion-button>
-      <ion-button (click)="CreateSede()">
+      <ion-button (click)="CreateSububicacion()">
         <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="start">
-      <ion-button (click)="resumen()">
+      <ion-button style="margin: 0 0 0 1em;" (click)="sheet()">
+        <ion-icon slot="icon-only" src="assets/icons/drive-spreadsheet.svg"></ion-icon>
+      </ion-button>
+      <ion-button (click)="resumen2()">
         <ion-icon slot="icon-only" name="stats"></ion-icon>
       </ion-button>
     </ion-buttons>

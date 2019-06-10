@@ -112,15 +112,6 @@
   </ion-grid>
 </ion-content>
 <ion-content *ngIf=resument>
-  <!-- <ion-item *ngFor="let articulo of inventario['articulos unicos']" text-wrap>
-    <ion-label (click)="total(articulo)">
-    <h2>{{ articulo.nombre }}</h2>
-    <ion-badge color="secondary" (click)="total(articulo)">Total {{articulo.cantidad | number}}</ion-badge>
-    <ion-badge color="success" slot="end" (click)="Buenos(articulo)">Buenos {{articulo.bueno | number}}</ion-badge>
-    <ion-badge color="warning" slot="end" (click)="Regular(articulo)">Regular {{articulo.regular | number}}</ion-badge>
-    <ion-badge color="danger" slot="end" (click)="Malos(articulo)">Malos {{articulo.malo | number}}</ion-badge>
-    </ion-label>
-  </ion-item> -->
   <ion-grid class="grid">
     <ion-card *ngFor="let articulo of inventario['articulos unicos']" class="card">
       <ion-card-header>
@@ -209,9 +200,9 @@
     </ion-buttons>
     <ion-buttons slot="start">
       <ion-button (click)="sheet()">
-        <ion-icon *ngIf=sheetData.url class="verde" slot="icon-only" src="assets/icons/drive-spreadsheet.svg"></ion-icon>
+        <ion-icon class="verde" slot="icon-only" src="assets/icons/drive-spreadsheet.svg"></ion-icon>
       </ion-button>
-      <ion-button (click)="resumen()">
+      <ion-button (click)="resumen2()">
         <ion-icon slot="icon-only" name="stats"></ion-icon>
       </ion-button>
     </ion-buttons>

@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="sedes">
+<ion-content *ngIf="locaciones.listo">
   <form [formGroup]="newIngresoForm" padding-right>
     <ion-img *ngIf="plataforma.android" (click)="camara()" [src]="Path"></ion-img>
     <label *ngIf="plataforma.desktop">
