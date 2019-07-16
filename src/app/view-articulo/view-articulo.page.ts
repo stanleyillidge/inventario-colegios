@@ -26,11 +26,11 @@ export class ViewArticuloPage implements OnInit {
   ubicacion:any={};
   SubUbicacion:any={};
   //-------------------
-  esquemaDB:any={};
-  sedes:any=[];
-  ubicaciones:any;
-  SubUbicaciones:any;
-  parametros:any = {};
+    esquemaDB:any={};
+    sedes:any=[];
+    ubicaciones:any;
+    SubUbicaciones:any;
+    parametros:any = {};
   //-------------------
   articulo:any={};
   titulo;
@@ -49,6 +49,7 @@ export class ViewArticuloPage implements OnInit {
   timestamp: string | number | Date;
   translate: any;
   ingreso: any;
+  onchange: any = [];
   constructor(
     public platform: Platform,
     public route: ActivatedRoute,
@@ -92,6 +93,8 @@ export class ViewArticuloPage implements OnInit {
       sedeNombre: this.sede['nombre'],
       sedekey: this.sede['key'],
     }
+    this.onchange['new'] = [];
+    this.onchange['old'] = [];
     this.ingreso = JSON.parse(localStorage.getItem('ingreso'))
     console.log('ingreso',this.ingreso)
     este.translate = JSON.parse(localStorage.getItem('translate'))
@@ -147,7 +150,13 @@ export class ViewArticuloPage implements OnInit {
     this.SubUbicaciones = null;
     for(let i in this.translate.sedes){
       if(this.translate.sedes[i].nombre == s.target.value){
-        este.articulos.sede = i
+        este.onchange['new']['sede'] = i;
+        if(!este.onchange['old']['sede']){
+          este.onchange['old']['sede'] = este.articulos.sede;
+          este.onchange['old']['ubicacion'] = este.articulos.ubicacion;
+          este.onchange['old']['subUbicacion'] = este.articulos.subUbicacion;
+        }
+        este.articulos.sede = i;
         este.articulos.ubicacion = null;
         este.articulos.subUbicacion = null;
         este.articulos.etiquetaId = null;
@@ -167,6 +176,10 @@ export class ViewArticuloPage implements OnInit {
     this.newIngresoForm.get('subUbicacionfrm').setValue(null);
     for(let i in this.translate.ubicaciones){
       if((this.translate.ubicaciones[i].nombre == u.target.value) && (this.translate.ubicaciones[i].sede == este.articulos.sede)){
+        este.onchange['new']['ubicacion'] = i;
+        if(!este.onchange['old']['ubicacion']){
+          este.onchange['old']['ubicacion'] = este.articulos.ubicacion;
+        }
         este.articulos.ubicacion = i;
         este.articulos.subUbicacion = null;
         este.articulos.etiquetaId = null;
@@ -186,6 +199,10 @@ export class ViewArticuloPage implements OnInit {
     este.articulos.etiquetaId = null;
     for(let i in this.translate.subUbicaciones){
       if(this.translate.subUbicaciones[i].nombre == sub.target.value && (this.translate.subUbicaciones[i].ubicacion == este.articulos.ubicacion) && (this.translate.subUbicaciones[i].sede == este.articulos.sede)){
+        este.onchange['new']['subUbicacion'] = i;
+        if(!este.onchange['old']['subUbicacion']){
+          este.onchange['old']['subUbicacion'] = este.articulos.subUbicacion;
+        }
         este.articulos.subUbicacion = i;
       }
     }
@@ -426,11 +443,11 @@ export class ViewArticuloPage implements OnInit {
   }
   async update(){
     let este = this
-    if(this.parametros.new){
+    /* if(this.parametros.new){
       console.log('Se modificó la ubicacion del articulo!')
       this.Createarticulo()
       return
-    }
+    } */
     const loading = await this.loadingController.create({
       message: 'Actualizado...'
     });
@@ -454,6 +471,18 @@ export class ViewArticuloPage implements OnInit {
     firebase.database().ref('inventario2')
     .child(este.articulos.key).update(este.articulos)
     .then(()=>{
+      // ---- Verifica si hubo cambios de ubicación --
+        console.log('Update: ',this.onchange)
+        if(este.onchange.new.sede){
+          console.log('cambio de sede')
+          este.cambioSede(este.onchange);
+        }else if(este.onchange.new.ubicaciones){
+          console.log('cambio de ubicaciones')
+          este.cambioUbicacion(este.onchange);
+        }else if(este.onchange.new.subUbicacion){
+          console.log('cambio de subUbicacion')
+          este.cambioSubUbicacion(este.onchange);
+        }
       // ---- Actualiza la tabla de seriales ---------
         if(este.articulos.serie!=''){
           firebase.database().ref('seriales')
@@ -476,6 +505,105 @@ export class ViewArticuloPage implements OnInit {
         }
       // ---------------------------------------------
     })
+  }
+  cambioSede(data){
+    // ---- Sumo la unidad en la nueva sede ------------------
+      firebase.database().ref('sede').child(data.new.sede)
+      .child('cantidad').once('value',cantSede=>{
+        let cant1 = cantSede.val() + 1;
+        firebase.database().ref('sede').child(data.new.sede)
+        .child('cantidad').set(cant1)
+      }).then(old =>{
+        // ---- Resto la unidad en la vieja sede ----------------
+        firebase.database().ref('sede').child(data.old.sede)
+        .child('cantidad').once('value',cantSede=>{
+          let cant0 = cantSede.val() - 1;
+          firebase.database().ref('sede').child(data.old.sede)
+          .child('cantidad').set(cant0)
+        })
+      })
+    // ---- Sumo la unidad en la nueva Ubicacion -------------
+      firebase.database().ref('ubicaciones2').child(data.new.ubicacion)
+      .child('cantidad').once('value',cantubicaciones=>{
+        let cant1 = cantubicaciones.val() + 1;
+        firebase.database().ref('ubicaciones2').child(data.new.ubicacion)
+        .child('cantidad').set(cant1)
+      }).then(old =>{
+        // ---- Resto la unidad en la vieja ubicaciones ----------------
+        firebase.database().ref('ubicaciones2').child(data.old.ubicacion)
+        .child('cantidad').once('value',cantubicaciones=>{
+          let cant0 = cantubicaciones.val() - 1;
+          firebase.database().ref('ubicaciones2').child(data.old.ubicacion)
+          .child('cantidad').set(cant0)
+        })
+      })
+    // ---- Sumo la unidad en la nueva subUbicacion ----------
+      firebase.database().ref('subUbicaciones2').child(data.new.subUbicacion)
+      .child('cantidad').once('value',cantsubUbicacion=>{
+        let cant1 = cantsubUbicacion.val() + 1;
+        firebase.database().ref('subUbicaciones2').child(data.new.subUbicacion)
+        .child('cantidad').set(cant1)
+      }).then(old =>{
+        // ---- Resto la unidad en la vieja subUbicacion ----------------
+        firebase.database().ref('subUbicaciones2').child(data.old.subUbicacion)
+        .child('cantidad').once('value',cantsubUbicacion=>{
+          let cant0 = cantsubUbicacion.val() - 1;
+          firebase.database().ref('subUbicaciones2').child(data.old.subUbicacion)
+          .child('cantidad').set(cant0)
+        })
+      })
+    // -------------------------------------------------------
+  }
+  cambioUbicacion(data){
+    // ---- Sumo la unidad en la nueva Ubicacion -------------
+      firebase.database().ref('ubicaciones2').child(data.new.ubicaciones)
+      .child('cantidad').once('value',cantubicaciones=>{
+        let cant1 = cantubicaciones.val() + 1;
+        firebase.database().ref('ubicaciones2').child(data.new.ubicaciones)
+        .child('cantidad').set(cant1)
+      }).then(old =>{
+        // ---- Resto la unidad en la vieja ubicaciones ----------------
+        firebase.database().ref('ubicaciones2').child(data.old.ubicaciones)
+        .child('cantidad').once('value',cantubicaciones=>{
+          let cant0 = cantubicaciones.val() - 1;
+          firebase.database().ref('ubicaciones2').child(data.old.ubicaciones)
+          .child('cantidad').set(cant0)
+        })
+      })
+    // ---- Sumo la unidad en la nueva subUbicacion ----------
+      firebase.database().ref('subUbicaciones2').child(data.new.subUbicacion)
+      .child('cantidad').once('value',cantsubUbicacion=>{
+        let cant1 = cantsubUbicacion.val() + 1;
+        firebase.database().ref('subUbicaciones2').child(data.new.subUbicacion)
+        .child('cantidad').set(cant1)
+      }).then(old =>{
+        // ---- Resto la unidad en la vieja subUbicacion ----------------
+        firebase.database().ref('subUbicaciones2').child(data.old.subUbicacion)
+        .child('cantidad').once('value',cantsubUbicacion=>{
+          let cant0 = cantsubUbicacion.val() - 1;
+          firebase.database().ref('subUbicaciones2').child(data.old.subUbicacion)
+          .child('cantidad').set(cant0)
+        })
+      })
+    // -------------------------------------------------------
+  }
+  cambioSubUbicacion(data){
+    // ---- Sumo la unidad en la nueva subUbicacion ----------
+      firebase.database().ref('subUbicaciones2').child(data.new.subUbicacion)
+      .child('cantidad').once('value',cantsubUbicacion=>{
+        let cant1 = cantsubUbicacion.val() + 1;
+        firebase.database().ref('subUbicaciones2').child(data.new.subUbicacion)
+        .child('cantidad').set(cant1)
+      }).then(old =>{
+        // ---- Resto la unidad en la vieja subUbicacion ----------------
+        firebase.database().ref('subUbicaciones2').child(data.old.subUbicacion)
+        .child('cantidad').once('value',cantsubUbicacion=>{
+          let cant0 = cantsubUbicacion.val() - 1;
+          firebase.database().ref('subUbicaciones2').child(data.old.subUbicacion)
+          .child('cantidad').set(cant0)
+        })
+      })
+    // -------------------------------------------------------
   }
   decodeFbPushId(id) {
     id = id.substring(0,8);
