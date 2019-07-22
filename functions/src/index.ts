@@ -804,7 +804,7 @@ type Scores = { string: number }
     });
 // ---- Ubicaciones ----------------------------------------------------------------
     export const Editubicaciones = functions.https.onCall(async (data, context) => {
-        ref.child('ubicaciones/'+data.sedekey+'/'+data.ubicacionkey+'/nombre').set(data.ubicacion)
+        ref.child('ubicaciones2/'+data.ubicacionkey).update(data.ubicacion)
         .then(function(responseEdit) {
             console.log('Edit ',data.ubicacion,' Ok');
             return responseEdit
@@ -814,12 +814,12 @@ type Scores = { string: number }
         });
     });
     export const Createubicaciones = functions.https.onCall(async (data, context) => {
-        // firebase.database().ref('ubicaciones/'+this.sede.key).push({
-        //     nombre: d.ubicacion
-        //   });
-        ref.child('ubicaciones/'+data.sedekey).push({
-            nombre: data.ubicacion,
-            cantidad: 0
+        ref.child('ubicaciones2/').push({
+            nombre: data.nombre,
+            cantidad: 0,
+            sede: data.sedekey,
+            codigo: data.codigo,
+            imagen: '/assets/shapes.svg'
         })
         .then(function(responseCreate) {
             console.log('Create ',data.sede,' Ok');
@@ -830,8 +830,7 @@ type Scores = { string: number }
         });
     });
     export const Removeubicaciones = functions.https.onCall(async (data, context) => {
-        // firebase.database().ref('ubicaciones/'+este.sede.key+'/'+ubicacion.key).remove()
-        ref.child('ubicaciones/'+data.sedekey+'/'+data.ubicacionkey).remove()
+        ref.child('ubicaciones/'+data.ubicacionkey).remove()
         .then(function(responseRemove) {
             console.log('Remove ',data.sede,' Ok');
             return responseRemove
@@ -842,8 +841,7 @@ type Scores = { string: number }
     });
 // ---- subUbicaciones -------------------------------------------------------------
     export const EditSububicaciones = functions.https.onCall(async (data, context) => {
-        // firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key+'/nombre').set(d.articulo)
-        ref.child('subUbicaciones/'+data.ubicacionkey+'/'+data.key+'/nombre').set(data.articulo)
+        ref.child('subUbicaciones2/'+data.key).update(data.subUbicacion)
         .then(function(responseEdit) {
             console.log('Edit ',data.ubicacion,' Ok');
             return responseEdit
@@ -853,12 +851,14 @@ type Scores = { string: number }
         });
     });
     export const CreateSububicaciones = functions.https.onCall(async (data, context) => {
-        // firebase.database().ref('subUbicaciones/'+this.ubicacion.key).push({
-        //   nombre: d.subUbicacion
-        // });
-        ref.child('subUbicaciones/'+data.ubicacionkey).push({
-            nombre: data.subUbicacion,
-            cantidad: 0
+        ref.child('subUbicaciones2/').push({
+            nombre: data.nombre,
+            ubicacion: data.ubicacionkey,
+            sede: data.sedekey,
+            cantidad: 0,
+            codigo: data.codigo,
+            descripcion: '',
+            imagen: '/assets/shapes.svg'
         })
         .then(function(responseCreate) {
             console.log('Create ',data.subUbicacion,' Ok');
@@ -870,7 +870,7 @@ type Scores = { string: number }
     });
     export const RemoveSububicaciones = functions.https.onCall(async (data, context) => {
         // firebase.database().ref('subUbicaciones/'+this.ubicacion.key+'/'+articulo.key).remove()
-        ref.child('subUbicaciones/'+data.ubicacionkey+'/'+data.key).remove()
+        ref.child('subUbicaciones2/'+data.key).remove()
         .then(function(responseRemove) {
             console.log('Remove ',data.subUbicacion,' Ok');
             return responseRemove

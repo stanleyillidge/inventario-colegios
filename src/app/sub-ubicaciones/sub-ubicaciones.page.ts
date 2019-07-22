@@ -726,6 +726,7 @@ export class SubUbicacionesPage implements OnInit {
     return
   }
   async CreateSububicacion() {
+    let este = this;
     const alert = await this.alertController.create({
       header: 'subUbicacion!',
       inputs: [
@@ -750,9 +751,11 @@ export class SubUbicacionesPage implements OnInit {
             //   nombre: d.subUbicacion
             // });
             let CreateSububicaciones = firebase.functions().httpsCallable("CreateSububicaciones");
-            let data = {
+            let data = { 
               ubicacionkey: this.ubicacion.key,
-              subUbicacion: d.subUbicacion
+              nombre: d.subUbicacion,
+              sedekey: este.translate.ubicaciones[this.ubicacion.key].sede,
+              codigo: este.translate.sedes[este.translate.ubicaciones[this.ubicacion.key].sede].codigo + este.translate.ubicaciones[this.ubicacion.key].codigo + '0' + este.cantidad
             }
             await CreateSububicaciones(data).then(function(reponse) {
               // Read result of the Cloud Function.

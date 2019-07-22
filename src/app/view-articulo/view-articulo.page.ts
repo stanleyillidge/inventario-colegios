@@ -377,11 +377,11 @@ export class ViewArticuloPage implements OnInit {
       console.log('Uploaded a data_url string!');
       imagenes.getDownloadURL().then(function(url) {
         // Insert url into an <img> tag to "download"
-        console.log('ojo entro!');
         este.Path = url;
         // hago copia de respaldo por modificación
         este.updatekey = firebase.database().ref('modificaciones').push().key
         // ---- Actualizo la data local antes de escribirlo --------
+        este.articulos.imagen = url;
         este.articulos.disponibilidad = este.newIngresoForm.value.disponibilidad;
         este.articulos.estado = este.newIngresoForm.value.estado;
         este.articulos.descripcion = este.newIngresoForm.value.descripcion;
@@ -390,6 +390,7 @@ export class ViewArticuloPage implements OnInit {
         este.articulos.serie = este.newIngresoForm.value.serie;
         este.articulos.modificacion = new Date().toLocaleDateString();
         este.articulos.nombre = este.translate.articulos[este.articulos.articulo].nombre;
+        console.log('ojo entro!',este.articulos);
         // ---- Registro de modificaciones -------------
         firebase.database().ref('modificaciones')
         .child(este.articulos.key).child(este.updatekey).set(este.articulos)

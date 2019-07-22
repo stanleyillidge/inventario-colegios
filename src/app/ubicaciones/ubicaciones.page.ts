@@ -706,6 +706,7 @@ export class UbicacionesPage implements OnInit {
     return
   }
   async Createubicacion() {
+    let este = this;
     const alert = await this.alertController.create({
       header: 'ubicacion!',
       inputs: [
@@ -732,7 +733,8 @@ export class UbicacionesPage implements OnInit {
             let Createubicaciones = firebase.functions().httpsCallable("Createubicaciones");
             let data = {
               sedekey: this.sede.key,
-              ubicacion: d.ubicacion
+              nombre: d.ubicacion,
+              codigo: este.translate.sedes[this.sede.key].codigo + '0' + este.cantidad
             }
             await Createubicaciones(data).then(function(reponse) {
               // Read result of the Cloud Function.
