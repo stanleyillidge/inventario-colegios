@@ -134,7 +134,7 @@ export class SubUbicacionesPage implements OnInit {
       este.subUbicaciones = [];
       este.subUbicacionest = [];
       firebase.database().ref('subUbicaciones2').orderByChild("ubicacion").equalTo(this.ubicacion['key']).on('child_added',(added)=>{
-        // console.log('Ubicaciones added',added.val())
+        console.log('Ubicaciones added',added.val())
         let ubi = {}
         este.cantidad += 1;
         ubi = added.val();

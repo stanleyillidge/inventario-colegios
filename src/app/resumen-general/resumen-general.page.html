@@ -1,9 +1,130 @@
-<ion-header>
+<ion-header class="header">
   <ion-toolbar>
-    <ion-title>resumenGeneral</ion-title>
+    <ion-buttons *ngIf="!toggled" slot="start">
+      <ion-menu-button></ion-menu-button>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-row align-items-center>
+        <ion-title *ngIf="!toggled">Resumen general</ion-title>
+      <ion-col align-items-center *ngIf="toggled" no-padding size="12">
+        <ion-searchbar
+          #searchbar
+          (ionChange)="onInput($event)"
+          (ionBlur)="onBlur($event)"
+          show-cancel-button>
+        </ion-searchbar>
+      </ion-col>
+          <ion-icon class="sb" *ngIf="!toggled" (click)="toggle()" name="search"></ion-icon>
+    </ion-row>
+  </ion-toolbar>
+  <ion-toolbar class="toolbar2">
+    <ion-row align-items-center>
+      <ion-col class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p *ngIf=estados class="nav-label-numb">{{database.cantidad(database.Articulos) | number}}</p><p class="nav-label">Articulos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p *ngIf=estados class="buenos nav-label-numb">{{estados.bueno | number}}</p><p class="nav-label">Buenos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p *ngIf=estados class="regulares nav-label-numb">{{estados.regular | number}}</p><p class="nav-label">regulares</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p *ngIf=estados class="malos nav-label-numb">{{estados.malo | number}}</p><p class="nav-label">malos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-
+<ion-content *ngIf=resumenArray>
+  <ion-grid class="grid">
+    <ion-card *ngFor="let articulo of resumenArray; let i = index" class="card">
+      <ion-card-header>
+        <ion-item (click)="resumenArticulo(articulo,i)" class="item-card">
+          <ion-card-title>{{ articulo.nombre }}</ion-card-title>
+          <ion-badge class="badge-card" color="success" slot="end"><b>{{articulo.cantidad | number}}</b></ion-badge>
+        </ion-item>
+        <ion-card-content>
+          <ion-row align-items-center>
+            <ion-col (click)="Buenos(articulo,i)" class="categoria" size="4">
+              <div class="container-side-menu">
+                <div>
+                  <button class="button button-icon">
+                    <p class="buenos nav-label-numb">{{articulo.Bueno | number}}</p><p class="nav-label">Buenos</p>
+                  </button>
+                </div>
+              </div>
+            </ion-col>
+            <ion-col (click)="Regular(articulo,i)" class="categoria" size="4">
+              <div class="container-side-menu">
+                <div>
+                  <button class="button button-icon">
+                    <p class="regulares nav-label-numb">{{articulo.Regular | number}}</p><p class="nav-label">Regulares</p>
+                  </button>
+                </div>
+              </div>
+            </ion-col>
+            <ion-col (click)="Malos(articulo,i)" class="categoria" size="4">
+              <div class="container-side-menu">
+                <div>
+                  <button class="button button-icon">
+                    <p class="malos nav-label-numb">{{articulo.Malo | number}}</p><p class="nav-label">Malos</p>
+                  </button>
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card-header>
+    </ion-card>
+  </ion-grid>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar class="toolbar-footer">
+    <ion-buttons slot="secondary">
+      <!-- <ion-button (click)="lista()">
+        <ion-icon slot="icon-only" name="list"></ion-icon>
+      </ion-button> -->
+      <!-- <ion-button (click)="CreateSede()">
+        <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+      </ion-button> -->
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-button (click)="sheet()">
+        <ion-icon class="verde" slot="icon-only" src="assets/icons/drive-spreadsheet.svg"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <ion-icon color="primary" slot="icon-only" name="stats"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
+<ion-fab *ngIf=!this.plataforma.desktop class="fab-scan" vertical="bottom" horizontal="center" slot="fixed">
+  <ion-fab-button (click)="escaner()">
+    <ion-icon name="barcode"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

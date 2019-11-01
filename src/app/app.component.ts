@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
+import { Platform, Events } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
@@ -8,6 +8,8 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthGuardService } from './auth-guard-service.service';
+import { DataService } from './providers/data-service';
+import { NetworkProvider } from './providers/network-service';
 
 @Component({
   selector: 'app-root',
@@ -40,7 +42,10 @@ export class AppComponent {
     private nativeStorage: NativeStorage,
     private router: Router,
     public afAuth: AngularFireAuth,
-    public guard: AuthGuardService
+    public guard: AuthGuardService,
+    public ds: DataService,
+    public networkProvider: NetworkProvider,
+    public events: Events,
   ) {
     this.initializeApp();
   }
@@ -51,11 +56,23 @@ export class AppComponent {
       this.afAuth.authState.subscribe(user => {
         este.guard.authState = user;
         if (user) {
-          este.router.navigate(["/sedes"]);
-          este.splashScreen.hide();
+          este.ds.initDatabase().then(()=>{
+            este.networkProvider.initializeNetworkEvents('administrador',user.uid);
+            // Offline event
+            // este.events.subscribe('network:offline', () => {
+            //     alert('network:offline ==> '+este.network.type);    
+            // });
+            // Online event
+            this.events.subscribe('network:online', () => {
+              let message = 'network:online'
+              este.ds.presentToastWithOptions(message,3000,'top')
+            });
+            este.splashScreen.hide();
+            este.router.navigate(["/sedes"]);
+          })
         }else{
-          este.router.navigate(["/login"]);
           este.splashScreen.hide();
+          este.router.navigate(["/login"]);
         }
       })
       this.statusBar.styleDefault();

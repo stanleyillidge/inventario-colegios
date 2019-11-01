@@ -19,6 +19,8 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import * as firebase from 'firebase/app';
 
 import { File } from '@ionic-native/file/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { SocialSharing } from "@ionic-native/social-sharing/ngx"
 import { ImageResizer } from '@ionic-native/image-resizer/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
@@ -26,6 +28,12 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { AuthGuardService } from './auth-guard-service.service';
+import { IonicStorageModule } from '@ionic/storage';
+import { AuthService } from './providers/auth-service';
+import { DataService } from './providers/data-service';
+import { NetworkProvider } from './providers/network-service';
+import { Network } from '@ionic-native/network/ngx';
+import { ScanerService } from './providers/scaner-service';
 
 export const config = {
   production: true,
@@ -63,7 +71,8 @@ firebase.initializeApp(config.firebase);
     AngularFireModule.initializeApp(config.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    IonicStorageModule.forRoot()
   ],
   providers: [
     StatusBar,
@@ -71,12 +80,19 @@ firebase.initializeApp(config.firebase);
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     BarcodeScanner,
     File,
+    FileTransfer,
+    WebView,
     SocialSharing,
     ImageResizer,
     Camera,
     GooglePlus,
     NativeStorage,
-    AuthGuardService
+    AuthGuardService,
+    AuthService,
+    DataService,
+    NetworkProvider,
+    Network,
+    ScanerService
   ],
   bootstrap: [AppComponent]
 })

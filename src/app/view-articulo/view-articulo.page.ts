@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavController, AlertController, Platform, ToastController } from '@ionic/angular';
-import { Http } from '@angular/http';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
@@ -11,6 +10,9 @@ import 'firebase/storage';
 import "firebase/functions";
 import { FormGroup, FormControl, Validators, FormBuilder }  from '@angular/forms';
 import { LoadingController } from '@ionic/angular';
+import { DataService } from '../providers/data-service';
+import { ScanerService } from '../providers/scaner-service';
+import { LocalDatabase, Ubicacion, Articulo } from '../models/user-model';
 
 @Component({
   selector: 'app-view-articulo',
@@ -18,45 +20,29 @@ import { LoadingController } from '@ionic/angular';
   styleUrls: ['./view-articulo.page.scss'],
 })
 export class ViewArticuloPage implements OnInit {
+  key: any;
+  plataforma: any;
+  database: LocalDatabase;
+  articulo: any;
+  SedesArray: any = [];
+  UbicacionesArray: any = [];
+  SubUbicacionesArray: any = [];
   newIngresoForm: FormGroup;
-  articulos:any=[]
-  articulost:any
-  articulosKeys:any=[]
-  sede:any={};
-  ubicacion:any={};
-  SubUbicacion:any={};
-  //-------------------
-    esquemaDB:any={};
-    sedes:any=[];
-    ubicaciones:any;
-    SubUbicaciones:any;
-    parametros:any = {};
-  //-------------------
-  articulo:any={};
-  titulo;
-  scanData;
-  PUSH_CHARS:string = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
-  Path:any="/assets/shapes.svg";
-  base64Image;
-  numArt:any=0;
-  plataforma:any=[];
-  imagen: File = null;
-  NewArticulo: any = {};
-  ArticuloChild: string;
-  NewArticuloChild: string;
-  updatekey: string;
-  etiqueta: any[];
-  timestamp: string | number | Date;
-  translate: any;
-  ingreso: any;
-  onchange: any = [];
+  articulot: any;
+  sede: any = [];
+  ubicacion: any = [];
+  Path: any = "/assets/shapes.svg";
+  subUbicacion: any;
+  articuloBasekey: string;
+  imagen: File | Blob;
+  newEtiqueta: boolean = false;
+
   constructor(
     public platform: Platform,
     public route: ActivatedRoute,
     public router: Router,
     public navCtrl: NavController,
     public alertController: AlertController,
-    private http: Http,
     private barcodeScanner: BarcodeScanner,
     private camera: Camera,
     private imageResizer: ImageResizer,
@@ -64,56 +50,231 @@ export class ViewArticuloPage implements OnInit {
     public fb: FormBuilder,
     public loadingController: LoadingController,
     public toastController: ToastController,
-    private _cdr: ChangeDetectorRef
+    private _cdr: ChangeDetectorRef,
+    public ds: DataService,
+    private scanner: ScanerService
   ) {
-    let este = this
-    this.plataforma.desktop = this.platform.is("desktop");
-    this.plataforma.android = this.platform.is("android");
-    this.NewArticulo['nombre'] = this.route.snapshot.paramMap.get('NewArticuloNombre')
-    this.NewArticulo['key'] = this.route.snapshot.paramMap.get('NewArticulokey')
-    this.articulo['nombre'] = this.route.snapshot.paramMap.get('articuloNombre')
-    this.articulo['key'] = this.route.snapshot.paramMap.get('articulokey')
-    this.SubUbicacion['nombre'] = this.route.snapshot.paramMap.get('SubUbicacionNombre')
-    this.SubUbicacion['key'] = this.route.snapshot.paramMap.get('SubUbicacionkey')
-    this.ubicacion['nombre'] = this.route.snapshot.paramMap.get('ubicacionNombre')
-    this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
-    this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
-    this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
-    this.ArticuloChild = 'inventario/'+this.SubUbicacion.key+'/'+this.articulo.key;
-    this.parametros['old'] = {
-      ArticuloChild: this.ArticuloChild,
-      NewArticuloNombre: this.NewArticulo['nombre'],
-      NewArticulokey: this.NewArticulo['key'],
-      articuloNombre: this.articulo['nombre'],
-      articulokey: this.articulo['key'],
-      SubUbicacionNombre: this.SubUbicacion['nombre'],
-      SubUbicacionkey: this.SubUbicacion['key'],
-      ubicacionNombre: this.ubicacion['nombre'],
-      ubicacionkey: this.ubicacion['key'],
-      sedeNombre: this.sede['nombre'],
-      sedekey: this.sede['key'],
-    }
-    this.onchange['new'] = [];
-    this.onchange['old'] = [];
-    this.ingreso = JSON.parse(localStorage.getItem('ingreso'))
-    console.log('ingreso',this.ingreso)
-    este.translate = JSON.parse(localStorage.getItem('translate'))
-    console.log(este.translate,this.articulo,este.parametros['old'])
-    // ---- Nueva forma de leer los datos ------
-      este.articulos = [];
-      if(!this.ingreso){
-        firebase.database().ref('inventario2').child(this.articulo.key).once('value',(added)=>{
-          console.log('Articulo added',added.val())
-          // --------------------------------------------
-            este.cargaInicial(added.val(),added.key)
-          // --------------------------------------------
-        });
-      }else{
-        este.cargaInicial(this.ingreso,this.ingreso.key)
-      }
-    // -----------------------------------------
+    
   }
-  cargaInicial(inv:any,key:any){
+  ngOnInit() {
+    let este = this;
+    this.key = this.route.snapshot.paramMap.get('articulokey');
+    this.articuloBasekey = this.route.snapshot.paramMap.get('articulo');
+    console.log(this.key,this.articuloBasekey)
+    this.plataforma = this.ds.plataforma
+    this.database = this.ds.Database;
+    this.articulo = this.database.Articulos[this.key]
+    this.articulo.articulo = this.articuloBasekey;
+    this.articulo.nombre = this.database.ArticulosBase[this.articuloBasekey].nombre
+    if(this.articulo.imagen){
+      this.Path = this.articulo.imagen
+    }
+    Object.keys(this.database.Sedes).map(function(i){
+      este.SedesArray.push(este.database.Sedes[i]);
+    });
+    this.onSedeChange(este.database.Sedes[this.articulo.sede])
+    this.onUbicacionChange(este.database.Ubicaciones[this.articulo.ubicacion])
+    this.creaFormulario(this.articulo)
+    this.newEtiqueta = false;
+  }
+  camara(){
+    const options: CameraOptions = {
+      quality: 100,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE
+    }
+    
+    this.camera.getPicture(options).then((imageData) => {
+     // imageData is either a base64 encoded string or a file URI
+     // If it's base64 (DATA_URL):
+     let options = {
+      uri: imageData,
+      quality: 100,
+      width: 700,
+      height: 300
+     } as ImageResizerOptions;
+     
+     this.imageResizer
+       .resize(options)
+       .then((filePath: string) => {
+         this.Path = filePath;
+          this.file.resolveLocalFilesystemUrl(filePath).then((entry:any)=>{
+            entry.file((file1)=>{
+              // this.imagen = <File>file1;
+              var reader = new FileReader();
+              reader.onload =  (encodedFile: any)=>{
+                var src = encodedFile.target.result;
+                this.Path = src;
+                this.imagen = this.convertDataUrlToBlob(src)
+              }
+              reader.readAsDataURL(file1);   
+            })
+          }).catch((error)=>{
+            console.log(error);
+          })
+         console.log('FilePath => ', filePath)
+        })
+       .catch(e => console.log(e));
+
+    }, (err) => {
+     // Handle error
+     console.log(err)
+    });
+  }
+  convertDataUrlToBlob(dataUrl): Blob {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new Blob([u8arr], {type: mime});
+  }
+  onFile(e) {
+    let este = this;
+    this.imagen = <File>e.target.files[0];
+
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+      let src: any = e.target["result"];
+      este.Path = src;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  }
+  update(){
+    this.ds.update(this.newIngresoForm.value,this.articulo,this.imagen,this.newEtiqueta)
+  }
+  RemoveArticulo(articulo){}
+  onSedeChange(sede){
+    let este = this;
+    // if(this.articulo.sede != sede.key){
+      this.articulo.sede = sede.key
+      this.newEtiqueta = true; 
+      console.log('sede',sede)
+      this.UbicacionesArray = [];
+      this.SubUbicacionesArray = null;
+      this.sede = sede
+      if(sede.target){ this.sede = sede.target.value; }
+      let array: any = this.database.Ubicaciones;
+      for(let i in array){
+        if(this.database.Sedes[array[i].sede].nombre == this.sede.nombre){
+          this.UbicacionesArray.push(array[i])
+        }
+      };
+      // console.log(this.UbicacionesArray)
+      this._cdr.detectChanges();
+    // }
+  }
+  onUbicacionChange(ubicacion){
+    let este = this;
+    // if(this.articulo.ubicacion != ubicacion.key){
+      this.articulo.ubicacion = ubicacion.key
+      this.newEtiqueta = true;
+      console.log('ubi',ubicacion)
+      this.SubUbicacionesArray = [];
+      this.ubicacion = ubicacion
+      if(ubicacion.target){this.ubicacion = ubicacion.target.value;}
+      let array: any = this.database.SubUbicaciones;
+      for(let i in array){
+        if((this.database.Sedes[array[i].sede].nombre == this.sede.nombre) && (this.database.Ubicaciones[array[i].ubicacion].nombre == this.ubicacion.nombre)){
+          this.SubUbicacionesArray.push(array[i])
+        }
+      };
+      // console.log(this.SubUbicacionesArray)
+      this._cdr.detectChanges();
+    // }
+  }
+  onSubUbicacionChange(subUbicacion){
+    if(this.articulo.subUbicacion != subUbicacion.key){
+      this.newEtiqueta = true;
+      this.articulo.subUbicacion = subUbicacion.key
+      this.subUbicacion = subUbicacion
+      if(subUbicacion.target){this.subUbicacion = subUbicacion.target.value;}
+      // console.log(subUbicacion)
+      this._cdr.detectChanges();
+    }
+  }
+  modificaNombre(){
+    console.log(this.sede,this.ubicacion,this.subUbicacion)
+    this.navCtrl.navigateForward(['edita-path',{
+      articulokey: this.key
+    }]);
+  }
+  escaner(){
+    let serial: any = this.scanner.getSerial()
+    let data = this.newIngresoForm.value
+    data['serie'] = serial.text;
+    this.articulo['serie'] = serial.text;
+    console.log('Barcode data', serial);
+    console.log('Form data', data);
+    this.creaFormulario(data)
+  }
+  creaFormulario(data){
+    let este = this
+    console.log('data:',data)
+    //---------------------------------------------------------------------------------------
+      this.newIngresoForm = this.fb.group({
+        sedefrm: new FormControl(este.database.Sedes[data.sede], Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        ubicacionfrm: new FormControl(este.database.Ubicaciones[data.ubicacion], Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        subUbicacionfrm: new FormControl(este.database.SubUbicaciones[data.subUbicacion], Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        valor: new FormControl(data.valor, Validators.compose([
+          // Validators.required,
+          // Validators.maxLength(7),
+          // Validators.minLength(1),
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        nombre: new FormControl(data.nombre, Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        serie: new FormControl(data.serie, Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        estado: new FormControl(data.estado, Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        disponibilidad: new FormControl(data.disponibilidad, Validators.compose([
+          Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        observaciones: new FormControl(data.observaciones, Validators.compose([
+          // Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        descripcion: new FormControl(data.descripcion, Validators.compose([
+          // Validators.required,
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ])),
+        cantidad: new FormControl(data.cantidad, Validators.compose([
+          // Validators.required,
+          // Validators.minLength(1),
+          // Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+        ]))
+      });
+    //---------------------------------------------------------------------------------------
+    // this.onSedeChange(this.database.Sedes[data.sede])
+    // this.onUbicacionChange(this.database.Ubicaciones[data.ubicacion])
+    // this.onSubUbicacionChange(this.database.SubUbicaciones[data.subUbicacion])
+    this.articulot = this.articulo; // <= Ojo aqui aseguro que la data del formulario este
+  }
+  /*cargaInicial(inv:any,key:any){
     let este = this;
     este.Path = inv.imagen;
     inv['nombre'] = este.translate.articulos[inv.articulo].nombre;
@@ -444,11 +605,6 @@ export class ViewArticuloPage implements OnInit {
   }
   async update(){
     let este = this
-    /* if(this.parametros.new){
-      console.log('Se modificó la ubicacion del articulo!')
-      this.Createarticulo()
-      return
-    } */
     const loading = await this.loadingController.create({
       message: 'Actualizado...'
     });
@@ -833,9 +989,5 @@ export class ViewArticuloPage implements OnInit {
       // closeButtonText: 'Done'
     });
     toast.present();
-  }
-  ngOnInit() {
-    
-  }
-
+  } */
 }

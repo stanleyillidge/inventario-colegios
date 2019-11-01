@@ -38,6 +38,8 @@ export class InventarioSububicacionPage implements OnInit {
   cantidad: number;
   scanData: { subkey: string; artkey: string; };
   PUSH_CHARS:string = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
+  parametros: any = [];
+  ArticuloChild: string;
   constructor(
     public platform: Platform,
     public route: ActivatedRoute,
@@ -58,6 +60,16 @@ export class InventarioSububicacionPage implements OnInit {
     this.ubicacion['key'] = this.route.snapshot.paramMap.get('ubicacionkey')
     this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
     this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
+    this.ArticuloChild = 'inventario/'+this.SubUbicacion.key;
+    this.parametros['old'] = {
+      ArticuloChild: this.ArticuloChild,
+      SubUbicacionNombre: this.SubUbicacion['nombre'],
+      SubUbicacionkey: this.SubUbicacion['key'],
+      ubicacionNombre: this.ubicacion['nombre'],
+      ubicacionkey: this.ubicacion['key'],
+      sedeNombre: this.sede['nombre'],
+      sedekey: this.sede['key'],
+    }
     // this.titulo
     este.inventario['numArticulos'] = 0;
     este.inventario['buenos'] = 0;
@@ -172,7 +184,7 @@ export class InventarioSububicacionPage implements OnInit {
       este.inventario['detallado'] = [];
       este.inventario['articulos unicos'] = [];
       firebase.database().ref('inventario2').orderByChild("subUbicacion").equalTo(this.SubUbicacion['key']).on('child_added',async (added)=>{
-        // console.log('Articulo added',added.val())
+        console.log('Articulo added',added.val())
         // ------ Resumen -----------------------------
           este.inventario['numArticulos'] += 1;
           let inv = added.val();
@@ -823,7 +835,86 @@ export class InventarioSububicacionPage implements OnInit {
 
     await alert.present();
   }
-  async Removearticulo(articulo){
+  async RemoveArticulo(articulo){
+    let este = this
+    const alert = await this.alertController.create({
+      header: 'Cuidado!',
+      message: 'Se <strong>eliminará</strong> la articulo '+este.translate.articulos[articulo.articulo].nombre+' !!!',
+      buttons: [
+        {
+          text: 'cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Eliminar Cancel: blah');
+          }
+        }, {
+          text: 'eliminar',
+          handler: () => {
+            this.remueveArticulo(articulo).then(()=>{
+              localStorage.removeItem("ingreso");
+              este.navCtrl.navigateBack(['inventario-sububicacion',este.parametros['old']]);
+            })
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+  async remueveArticulo(articulo){
+    let este = this
+    console.log('Entro en remueveArticulo',articulo)
+    return firebase.database().ref('inventario2').child(articulo.key).remove()
+    .then(()=>{
+      // ---- Leo la cantidad en la subUbicacion -----------------------------------
+      firebase.database().ref('subUbicaciones2').child(articulo.subUbicacion)
+      .child('cantidad').once('value',sub=>{
+        let subnc = sub.val() - 1;
+        // ---- Escribo la nueva cantidad en la subUbicacion -----------------------
+        firebase.database().ref('subUbicaciones2').child(articulo.subUbicacion)
+        .child('cantidad').set(subnc)
+      }).then(()=>{
+        // ---- Leo la cantidad en la Ubicacion -----------------------------------
+        firebase.database().ref('ubicaciones2').child(articulo.ubicacion)
+        .child('cantidad').once('value',u=>{
+          let unc = u.val() - 1;
+          // ---- Escribo la nueva cantidad en la Ubicacion -----------------------
+          firebase.database().ref('ubicaciones2').child(articulo.ubicacion)
+          .child('cantidad').set(unc)
+        }).then(()=>{
+          // ---- Leo la cantidad en la sede -----------------------------------
+          firebase.database().ref('sedes').child(articulo.sede)
+          .child('cantidad').once('value',s=>{
+            let snc = s.val() - 1;
+            // ---- Escribo la nueva cantidad en la sede -----------------------
+            firebase.database().ref('sedes').child(articulo.sede)
+            .child('cantidad').set(snc)
+            // ---- Borro la etiqueta del articulo -----------------------------
+            este.deleteFCloud(articulo.etiquetaId).then(async ()=>{
+              localStorage.removeItem("ingreso");
+              console.log('Articulo y Etiqueta de articulo eliminados')
+              localStorage.removeItem("ingreso");
+              este.navCtrl.navigateBack(['inventario-sububicacion',este.parametros['old']]);
+            })
+          })
+        })
+      })
+    })
+  }
+  async deleteFCloud(key){
+    let deleteF = firebase.functions().httpsCallable("deleteF");
+    return await deleteF(key).then(function(reponse) {
+      // Read result of the Cloud Function.
+      console.log('Archivo eliminado: ',reponse);
+      // ...
+    }).catch(function(error) {
+      // Read result of the Cloud Function.
+      console.log('Archivo eliminado error: ',error);
+      // ...
+    })
+  }
+  async Removearticulo0(articulo){
     let este = this
     const alert = await this.alertController.create({
       header: 'Cuidado!',
@@ -850,7 +941,7 @@ export class InventarioSububicacionPage implements OnInit {
 
     await alert.present();
   }
-  RemoveArticulo(articulo){
+  RemoveArticulo0(articulo){
     let este = this
     firebase.database().ref('subUbicaciones')
     .child(articulo.ubicacion.key).child(articulo.subUbicacion.key).once('value',a0=>{

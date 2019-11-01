@@ -36,6 +36,10 @@ export class IngresoPage implements OnInit {
   imagen: File;
   validarImagen:any=false;
   ingresokey: string;
+  updatekey: string;
+  translate: any;
+  etiqueta: any = [];
+  parametros: any = [];
   constructor(
     public platform: Platform,
     public route: ActivatedRoute,
@@ -52,6 +56,7 @@ export class IngresoPage implements OnInit {
     public toastController: ToastController
   ) {
     let este = this
+    este.translate = JSON.parse(localStorage.getItem('translate'))
     this.plataforma.desktop = this.platform.is("desktop");
     this.plataforma.android = this.platform.is("android");
     this.articulo['nombre'] = this.route.snapshot.paramMap.get('articuloNombre')
@@ -63,6 +68,17 @@ export class IngresoPage implements OnInit {
     this.sede['nombre'] = this.route.snapshot.paramMap.get('sedeNombre')
     this.sede['key'] = this.route.snapshot.paramMap.get('sedekey')
     this.titulo = this.sede.nombre +' / '+ this.ubicacion['nombre'] +' / '+ this.SubUbicacion.nombre
+    this.parametros['old'] = {
+      ArticuloChild: 'inventario/'+this.SubUbicacion.key+'/'+this.articulo.key,
+      articuloNombre: this.articulo['nombre'],
+      articulokey: this.articulo['key'],
+      SubUbicacionNombre: this.SubUbicacion['nombre'],
+      SubUbicacionkey: this.SubUbicacion['key'],
+      ubicacionNombre: this.ubicacion['nombre'],
+      ubicacionkey: this.ubicacion['key'],
+      sedeNombre: this.sede['nombre'],
+      sedekey: this.sede['key'],
+    }
     // --- Creo el formulario ----
     let data ={
       valor:0,
@@ -75,7 +91,6 @@ export class IngresoPage implements OnInit {
       cantidad:''
     };
     this.creaFormulario(data)
-    
     // ---------------------------
   }
   creaFormulario(data){
@@ -242,19 +257,13 @@ export class IngresoPage implements OnInit {
 
     await alert.present();
   }
-  async Createarticulo() {
+  async Createarticulo0() {
     let este = this
     if(this.validarImagen){
       const loading = await this.loadingController.create({
         message: 'Ingreso en '+this.SubUbicacion.nombre
       });
       await loading.present();
-      // firebase.database().ref('inventario').once('value', function(articulos) {
-      //   articulos.forEach(articulo => {
-      //     // console.log(articulo.val())
-      //    este.numArt += articulo.numChildren() + 1;
-      //   });
-      // });
       firebase.database().ref('subUbicaciones').child(this.ubicacion.key).child(this.SubUbicacion.key).once('value', function(subUbicacionSN) {
         este.cantidad = subUbicacionSN.val().cantidad;
         este.numArt = subUbicacionSN.val().cantidad +1;
@@ -403,6 +412,160 @@ export class IngresoPage implements OnInit {
     }else{
       este.presentToastWithOptions('Debes cargar una imagen',3000,'top')
     }
+  }
+  async Createarticulo(){
+    let este = this
+    const loading = await this.loadingController.create({
+      message: 'Actualizando...'
+    });
+    await loading.present();
+    let child = 'inventario/'+this.sede.nombre+'/'+this.ubicacion.nombre+'/'+this.SubUbicacion.nombre+'/'+this.articulos.nombreImagen
+    const imagenes = firebase.storage().ref(child);
+    let imagen
+    if(this.plataforma.android){
+      imagen = [este.Path,'data_url'];
+    }else{
+      let src = este.Path.substr("data:image/jpeg;base64,/".length - 1);
+      imagen = [src,'base64'];
+    }
+    imagenes.putString(imagen[0],imagen[1]).then(function(snapshot) {
+      console.log('Uploaded a data_url string!');
+      imagenes.getDownloadURL().then(function(url) {
+        // Insert url into an <img> tag to "download"
+        este.Path = url;
+        // ---- Actualizo la data local antes de escribirlo --------
+        let data = {
+          imagen: url,
+          creacion: new Date().toLocaleDateString(),
+          nombre: este.articulo.nombre,
+          articulo: este.articulo['key'],
+          cantidad: 1,
+          disponibilidad: este.newIngresoForm.value.disponibilidad,
+          estado: este.newIngresoForm.value.estado,
+          descripcion: este.newIngresoForm.value.descripcion,
+          observaciones: este.newIngresoForm.value.observaciones,
+          valor: este.newIngresoForm.value.valor,
+          serie: este.newIngresoForm.value.serie,
+          sede: este.sede['key'],
+          ubicacion: este.ubicacion['key'],
+          subUbicacion: este.SubUbicacion['key']
+        }
+        data['key'] = firebase.database().ref('inventario2').push().key
+        for(let index in data){
+          if(data[index] == "undefined"){
+            data[index] = ''
+          }
+        }
+        console.log('ojo entro!',data);
+        // ---- Creacion de los datos -------------
+          firebase.database().ref('inventario2')
+          .child(data['key']).set(data);
+        // ---- Actualiza la tabla de seriales ---------
+          if(data.serie!=''){
+            firebase.database().ref('seriales')
+            .child(data.serie).set({
+              articulokey: data['key'],
+              subUbicacionkey: data.subUbicacion
+            })
+          }
+        // ---- Actualiza Etiqueta de ser necesario ----
+          if(!data['etiquetaId']){
+            este.crearEtiqueta(data).then(()=>{
+              loading.dismiss();
+            })
+          }else{
+            loading.dismiss();
+          }
+        // ---- Actualizo los contadores -------------------
+          let cantidadNew = 0;
+          firebase.database().ref('sedes').child(data.sede)
+          .child('cantidad').once('value',cantidadSedeOld =>{
+            cantidadNew = cantidadSedeOld.val() +1;
+            firebase.database().ref('sedes').child(data.sede)
+            .child('cantidad').set(cantidadNew).then(outSedes =>{
+              firebase.database().ref('ubicaciones2').child(data.ubicacion)
+              .child('cantidad').once('value',cantidadUbiOld =>{
+                cantidadNew = cantidadUbiOld.val() +1;
+                firebase.database().ref('ubicaciones2').child(data.ubicacion)
+                .child('cantidad').set(cantidadNew).then(outubi =>{
+                  firebase.database().ref('subUbicaciones2').child(data.subUbicacion)
+                  .child('cantidad').once('value',cantidadSubOld =>{
+                    let cantidadNew = cantidadSubOld.val() +1;
+                    firebase.database().ref('subUbicaciones2').child(data.subUbicacion)
+                    .child('cantidad').set(cantidadNew).then(out=>{
+                      este.navCtrl.navigateBack(['inventario-sububicacion',este.parametros['old']]);
+                    })
+                  })
+                })// end actualiza ubi
+              })// end lee ubi
+            })// end actualiza sedes
+          });// end lee sedes
+        // -------------------------------------------------
+      }).catch(function(error) {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/object-not-found':
+            console.log('storage/object-not-found')
+            // File doesn't exist
+            break;
+  
+          case 'storage/unauthorized':
+            console.log('storage/unauthorized')
+            // User doesn't have permission to access the object
+            break;
+  
+          case 'storage/canceled':
+            console.log('storage/canceled')
+            // User canceled the upload
+            break;
+  
+          case 'storage/unknown':
+            console.log('storage/unknown')
+            // Unknown error occurred, inspect the server response
+            break;
+        }
+      });
+    });
+  }
+  async crearEtiqueta(articulo){
+    let este = this
+    console.log('Entro a crear etiqueta',articulo)
+    let createLabels = firebase.functions().httpsCallable("createLabels");
+    articulo['fecha'] = new Date().toLocaleDateString();
+    let qrData = {
+      "subUbicacion": articulo.subUbicacion,
+      "ingreso": articulo.key
+    }
+    let query = "";
+    for (let key in qrData) {
+        query += encodeURIComponent(key)+"="+encodeURIComponent(qrData[key])+"&";
+    }
+    let uri = 'https://chart.googleapis.com/chart?chs=400x400&cht=qr&chl='+encodeURIComponent(query)//escape(JSON.stringify(qrData))
+    articulo['qrUrl'] = encodeURI(uri)
+    // console.log('data para crear el acta:',data)
+    await createLabels(articulo).then(async function(response) {
+      // Read result of the Cloud Function.
+      este.etiqueta=[]
+      // console.log(conta,i,data,'Funcion Etiqueta respondio ok: ',response);
+      este.etiqueta['url'] = 'https://docs.google.com/presentation/d/'+response.data.etiqueta.id+'/edit'//'/export/pdf'//'https://docs.google.com/document/d/'+response.data.doc.id+'/edit'
+      await firebase.database().ref('inventario2')
+      .child(articulo.key)
+      .update({
+        etiqueta: este.etiqueta['url'],
+        etiquetaId: response.data.etiqueta.id,
+        fechaEtiqueta: new Date().toLocaleDateString()
+      }).then(re=>{
+        let message = 'La etiqueta fue creada'
+        console.log(message,articulo)
+        // este.presentToastWithOptions(message,3000,'top')
+      })
+    }).catch(function(error) {
+      // Read result of the Cloud Function.
+      console.log('Error en crear Etiqueta: ',error);
+      // let message = 'Error en crear Etiqueta: '+error
+      // este.presentToastWithOptions(message,3000,'top')
+    })
   }
   async Removearticulo(articulo){
     let este = this

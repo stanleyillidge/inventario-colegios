@@ -4,16 +4,23 @@ admin.initializeApp(functions.config().firebase);
 const ref = admin.database().ref();
 import * as _ from 'lodash'
 import { google } from 'googleapis'
+import * as fs from 'fs-extra'
+import * as sharp from 'sharp';
+import { tmpdir } from 'os';
+import { join, dirname } from 'path';
+// import * as Storage from '@google-cloud/storage'
+const {Storage} = require('@google-cloud/storage');
+const gcs = new Storage();
 
 const serviceAccount = require('../serviceAccount.json')
 const jwtClient = new google.auth.JWT({
     email: serviceAccount.client_email,
     key: serviceAccount.private_key,
     scopes: [ 'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/documents',
-    'https://www.googleapis.com/auth/presentations',
-    'https://www.googleapis.com/auth/drive'
-],  // read and write sheets
+            'https://www.googleapis.com/auth/documents',
+            'https://www.googleapis.com/auth/presentations',
+            'https://www.googleapis.com/auth/drive'
+    ],  // read and write sheets
 })
 const jwtAuthPromise = jwtClient.authorize().then(function(auto){
     console.log(auto)
@@ -171,6 +178,119 @@ type Scores = { string: number }
             });
         })
     }); */
+// ---- Imagenes -------------------------------------------------------------------
+    export const uploadImagen = functions.https.onCall(async (data, context) => {
+        const createParameters = {
+            fields: 'id',
+            resource: {
+                name: data.nombre,
+                parents: ['1A95EyNrhC_PauMCZlr0YNLy3lP4PLvJx'] // drive/Imagenes/thumbs
+            },
+            media: {
+                mimeType: 'image/jpeg',
+                body: data.path//fs.createReadStream(data.path)
+            }
+        }
+        return await drive.files.create(createParameters)
+        .then(async function(file) {
+            console.log('Imagen Id: ', file);
+            return file
+        })
+        .catch(function(err) {
+            console.error('Error imagen',err);
+            return err
+        })
+        /* const sizes = [64, 128, 256];
+        const workingDir = join(tmpdir(), 'thumbs');
+        // const tmpFilePath = join(workingDir, data.fileName);
+
+        const uploadPromises = sizes.map(async size => {
+            const thumbName = `thumb@${size}_${data.fileName}`;
+            const thumbPath = join(workingDir, thumbName);
+
+            // Resize source image
+            await sharp(data.path)
+                .resize(size, size)
+                .toFile(thumbPath);
+
+            // Upload to GCS
+            const createParameters = {
+                fields: 'id',
+                resource: {
+                    name: data.nombre,
+                    parents: ['1A95EyNrhC_PauMCZlr0YNLy3lP4PLvJx'], // drive/Imagenes/thumbs
+                    mimeType: 'image/jpeg'
+                },
+                media: {
+                    mimeType: 'image/jpeg',
+                    body: fs.createReadStream(thumbPath)
+                }
+            }
+            return await drive.files.create(createParameters)
+            .then(async function(file) {
+                console.log('Imagen Id: ', file);
+                return file
+            })
+            .catch(function(err) {
+                console.error('Error imagen',err);
+                return err
+            })
+        });
+
+        // 4. Run the upload operations
+        await Promise.all(uploadPromises);
+
+        // 5. Cleanup remove the tmp/thumbs from the filesystem
+        return fs.remove(workingDir); */
+    });
+    export const generateThumbs = functions.storage
+    .object()
+    .onFinalize(async function (object:any){
+        const bucket = gcs.bucket(object.bucket);
+        const filePath:any = object.name;
+        const fileName = filePath.split('/').pop();
+        const bucketDir = dirname(filePath);
+
+        const workingDir = join(tmpdir(), 'thumbs');
+        const tmpFilePath = join(workingDir, 'source.png');
+
+        if (fileName.includes('thumb@') || !object.contentType.includes('image')) {
+            console.log('exiting function');
+            return false;
+        }
+
+        // 1. Ensure thumbnail dir exists
+        await fs.ensureDir(workingDir);
+
+        // 2. Download Source File
+        await bucket.file(filePath).download({
+            destination: tmpFilePath
+        });
+
+        // 3. Resize the images and define an array of upload promises
+        const sizes = [64, 128, 256];
+
+        const uploadPromises = sizes.map(async size => {
+            const thumbName = `thumb@${size}_${fileName}`;
+            const thumbPath = join(workingDir, thumbName);
+
+            // Resize source image
+            await sharp(tmpFilePath)
+                .resize(size, size)
+                .toFile(thumbPath);
+
+            // Upload to GCS
+            return bucket.upload(thumbPath, {
+                destination: join(bucketDir, thumbName)
+            });
+        });
+
+        // 4. Run the upload operations
+        await Promise.all(uploadPromises);
+
+        // 5. Cleanup remove the tmp/thumbs from the filesystem
+        return fs.remove(workingDir);
+    });
 // ---- Baja de articulo -----------------------------------------------------------
     export const BajaDeArticulo = functions.https.onCall(async (data, context) => {
         const TemplateId = "1lPqOz0S-CUl67tWZHJn7JENiJ_fpcxFTgBZHSm-1lQQ";

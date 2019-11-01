@@ -132,6 +132,28 @@
                 "modificacionId"
             },
             "codigo":"string"
+        },
+        "data":{
+            "articulo":"-L_cXB0Yy_5b_KgybFRE",
+            "cantidad": 1,
+            "codigo": "0101015010101504-04",
+            "creacion": "21/3/2019",
+            "descripcion": "",
+            "disponibilidad": "Si",
+            "estado": "Bueno",
+            "etiqueta": "https://docs.google.com/presentation/d/17fetHpE...",
+            "etiquetaId": "17fetHpEGmaGTZADflxxWV76jWKgZQrcnXSPLKFos93g",
+            "fechaEtiqueta": "7/4/2019",
+            "imagen": "https://firebasestorage.googleapis.com/v0/b/inv...",
+            "key": "-LaVmAdWl77Ca7wVia36",
+            "nombre": "Silla plastica sin descansa brazo color AZUL",
+            "nombreImagen": "Silla plastica sin descansa brazo color AZUL - ...",
+            "observaciones": "",
+            "sede": "-L_YhRmBKT7RUMII5AuG",
+            "serie": "",
+            "subUbicacion": "-LaVioJHBHNE-9ng9DWJ",
+            "ubicacion": "-L_Z0-IZc2yTYB1wij1h",
+            "valor": 0
         }
     },
     "resumen":{

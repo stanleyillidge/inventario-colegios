@@ -3,11 +3,11 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>{{titulo}}</ion-title>
+    <ion-title>Articulo</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="articulost">
+<ion-content *ngIf="articulot">
   <form [formGroup]="newIngresoForm" padding-right>
     <ion-img *ngIf="plataforma.android" (click)="camara()" [src]="Path"></ion-img>
     <label *ngIf="plataforma.desktop">
@@ -17,12 +17,12 @@
     <ion-item>
       <ion-chip color="success">
         <ion-icon name="calendar"></ion-icon>
-        <ion-label color="dark">{{articulos.creacion}}</ion-label>
+        <ion-label color="dark">{{articulo.creacion}}</ion-label>
       </ion-chip>
       
-      <ion-chip color="warning" *ngIf="articulos.modificacion">
+      <ion-chip color="warning" *ngIf="articulo.modificacion">
         <ion-icon name="calendar"></ion-icon>
-        <ion-label color="dark">{{articulos.modificacion}}</ion-label>
+        <ion-label color="dark">{{articulo.modificacion}}</ion-label>
       </ion-chip>
     </ion-item>
     <ion-item (click)="modificaNombre()">
@@ -33,21 +33,21 @@
       <ion-item>
         <ion-label>Sede</ion-label>
         <ion-select formControlName="sedefrm" (ionChange)="onSedeChange($event)" okText="Okay" cancelText="Cancelar">
-          <ion-select-option *ngFor="let sede of sedes" [value]="sede.nombre">{{sede.nombre}}</ion-select-option>
+          <ion-select-option *ngFor="let sede of SedesArray" [value]="sede">{{sede.nombre}}</ion-select-option>
         </ion-select>
       </ion-item>
   
-      <ion-item *ngIf="ubicaciones">
+      <ion-item *ngIf="UbicacionesArray">
         <ion-label>Ubicacion</ion-label>
         <ion-select formControlName="ubicacionfrm" (ionChange)="onUbicacionChange($event)">
-          <ion-select-option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.nombre">{{ubicacion.nombre}}</ion-select-option>
+          <ion-select-option *ngFor="let ubicacion of UbicacionesArray" [value]="ubicacion">{{ubicacion.nombre}}</ion-select-option>
         </ion-select>
       </ion-item>
 
-      <ion-item *ngIf="SubUbicaciones">
+      <ion-item *ngIf="SubUbicacionesArray">
         <ion-label>Sub Ubicacion</ion-label>
         <ion-select formControlName="subUbicacionfrm" (ionChange)="onSubUbicacionChange($event)">
-          <ion-select-option *ngFor="let SubUbicacion of SubUbicaciones" [value]="SubUbicacion.nombre">{{SubUbicacion.nombre}}</ion-select-option>
+          <ion-select-option *ngFor="let SubUbicacion of SubUbicacionesArray" [value]="SubUbicacion">{{SubUbicacion.nombre}}</ion-select-option>
         </ion-select>
       </ion-item>
     </ion-list>
@@ -84,23 +84,14 @@
       <ion-input type="number" formControlName="valor"></ion-input>
     </ion-item>
   </form>
-  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="update()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button  (click)="RemoveArticulo(articulos)">
-      <ion-icon name="trash"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button>
-      <ion-icon name="arrow-dropup"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button (click)="update()"><ion-icon name="done-all"></ion-icon></ion-fab-button>
-      <ion-fab-button (click)="RemoveArticulo(articulos)"><ion-icon name="trash"></ion-icon></ion-fab-button>
-    </ion-fab-list>
-  </ion-fab>
 </ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button>
+    <ion-icon name="arrow-dropup"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="top">
+    <ion-fab-button (click)="update()"><ion-icon name="done-all"></ion-icon></ion-fab-button>
+    <ion-fab-button (click)="RemoveArticulo(articulo)"><ion-icon name="trash"></ion-icon></ion-fab-button>
+  </ion-fab-list>
+</ion-fab>

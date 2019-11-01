@@ -1,9 +1,97 @@
-<ion-header>
+<ion-header class="header">
   <ion-toolbar>
-    <ion-title>resumenArticulo</ion-title>
+    <ion-buttons *ngIf="!toggled" slot="start">
+      <ion-menu-button></ion-menu-button>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-row align-items-center>
+        <ion-title *ngIf="!toggled">Resumen de articulo</ion-title>
+      <ion-col align-items-center *ngIf="toggled" no-padding size="12">
+        <ion-searchbar
+          #searchbar
+          (ionChange)="onInput($event)"
+          (ionBlur)="onBlur($event)"
+          show-cancel-button>
+        </ion-searchbar>
+      </ion-col>
+          <ion-icon class="sb" *ngIf="!toggled" (click)="toggle()" name="search"></ion-icon>
+    </ion-row>
+  </ion-toolbar>
+  <ion-toolbar class="toolbar2">
+    <ion-row align-items-center>
+      <ion-col class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p *ngIf=estados class="nav-label-numb">{{articulo.cantidad | number}}</p><p class="nav-label">Articulos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p *ngIf=estados class="buenos nav-label-numb">{{articulo.Bueno | number}}</p><p class="nav-label">Buenos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p *ngIf=estados class="regulares nav-label-numb">{{articulo.Regular | number}}</p><p class="nav-label">regulares</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col class="art" size="2.5">
+        <div class="container-side-menu">
+          <div>
+            <button class="button button-icon">
+              <p *ngIf=estados class="malos nav-label-numb">{{articulo.Malo | number}}</p><p class="nav-label">malos</p>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-
+<ion-content *ngIf=resumenArray>
+  <ion-virtual-scroll [items]="resumenArray">
+    <ion-item-sliding class="item" *virtualItem="let articulo;">
+      <ion-item [ngClass]='articulo.disponibilidad'>
+        <ion-thumbnail slot="start">
+          <ion-img [src]="articulo.imagen"></ion-img>
+        </ion-thumbnail>
+        <ion-label *ngIf='articulo.disponibilidad == "Si"' (click)="detalle(articulo)">
+          <b>{{ articulo.nombre }}</b> en {{articulo.sede}} / {{articulo.ubicacion}} / {{articulo.subUbicacion}}
+        </ion-label>
+        <ion-label *ngIf='articulo.disponibilidad == "No"'>
+          <b>{{ articulo.nombre }}</b> en {{articulo.sede}} / {{articulo.ubicacion}} / {{articulo.subUbicacion}}
+        </ion-label>
+        <ion-badge *ngIf='articulo.estado == "Bueno"' color="success" slot="end">Bueno</ion-badge>
+        <ion-badge *ngIf='articulo.estado == "Regular"' color="warning" slot="end">Regular</ion-badge>
+        <ion-badge *ngIf='articulo.estado == "Malo"' color="danger" slot="end">Malo</ion-badge>
+        <ion-badge *ngIf='articulo.disponibilidad == "No"' color="danger" slot="end">Dado de baja</ion-badge>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option *ngIf='!articulo.etiqueta && articulo.disponibilidad == "Si"' class="sliding-icon-card" (click)="creaEtiqueta(articulo)">
+          <ion-icon class="sliding-icon" src="assets/icons/tag-4.svg" slot="end"></ion-icon>
+        </ion-item-option>
+        <ion-item-option *ngIf='articulo.etiqueta && articulo.disponibilidad == "Si"' class="sliding-icon-card" (click)="Etiqueta(articulo)">
+          <ion-icon class="sliding-icon" src="assets/icons/tag-7.svg" slot="end"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger">
+          <ion-icon *ngIf='articulo.disponibilidad == "Si"' (click)="BajaArticulo(articulo)" class="sliding-icon" src="assets/icons/document-down-0.svg"></ion-icon>
+          <ion-icon *ngIf='articulo.disponibilidad == "No"' (click)="acta2(articulo)" class="sliding-icon" src="assets/icons/document-down-3.svg"></ion-icon>
+        </ion-item-option>
+        <ion-item-option (click)="RemoveArticulo(articulo)">
+          <ion-icon class="sliding-icon" name="trash" slot="end"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-virtual-scroll>
 </ion-content>
