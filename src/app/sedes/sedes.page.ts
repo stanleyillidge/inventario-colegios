@@ -108,5 +108,5 @@ export class SedesPage implements OnInit {
     this.database = this.ds.Database;
     this.actualizaSedes(this.database)
     console.log('ngOnInit',this.database)
-2  }
+  }
 }

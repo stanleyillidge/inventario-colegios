@@ -13,7 +13,6 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
 import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
-
 @Injectable()
 export class DataService {
     public SedesObserver: ReplaySubject<any> = new ReplaySubject<any>();
